@@ -1,0 +1,9 @@
+
+---
+
+out_dir_test: '/dados/vitoria/time_clines_workflow_test/SRA_files'
+SRAs: # from project number PRJNA256231
+  - SRR1525696 #SC 48 males descended (<5 generations) from wild females collected in 7/2008 and 7/2010
+  - SRR1525695 #GA 51 male flies descended (<5 generations) from wild females collected in 7/2008 and 7/2010
+
+SRA_names: {SRR1525696: dlSC10 , SRR1525695: dlGA10}

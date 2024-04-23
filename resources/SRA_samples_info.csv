@@ -1,0 +1,4 @@
+#latitude and longitude based on the town, as studies did not explicit this info
+SRA,state,town,n_of_flies,flie_sex,obs,collection_month,collection_year,latitude,longitude,sample_name
+SRR1525696,SC,Euatwville,48,male,5 genarations after caught,7,2008/2010,33.3938,-80.3448,dlSC10
+SRR1525695,GA,Hahira,51,male,5 genarations after caught,7,2008/2010,30.991306,-83.372658,dlGA10
