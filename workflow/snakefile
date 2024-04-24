@@ -6,4 +6,5 @@ names_SRAs = [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for sa
 
 rule all:
     input:
-        expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs'].values())
+        expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs'].values()) +
+        expand(os.path.join(config['out_dir_test'], "{samples}_filtered.fastq.gz.htmp"),samples=config['SRAs'].values())
