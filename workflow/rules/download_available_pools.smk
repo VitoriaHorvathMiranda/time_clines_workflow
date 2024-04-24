@@ -21,9 +21,9 @@ rule rename_downloads: #deve ter um jeito melhor de fazer isso
 
 #-----------------------------------------------------------------------------------------------------------------
 rule fastp_dl:
-    input: os.path.join(config['out_dir_test'], "{samples}.fastq.gz")
+    input: os.path.join(config['out_dir_test'], "{samples}.fastq.gz") 
     output: 
-        filtered = os.path.join(config['out_dir_test'], "{samples}_filtered.fastq.gz"),
-        html_report = os.path.join(config['out_dir_test'], "{samples}_filtered.fastq.gz.htmp")
+        filtered = os.path.join(config['processed_path'], "{samples}_merged.fastq.gz"),
+        html_report = os.path.join(config['processed_path'], "{samples}_merged.fastq.gz.html")
     threads: 5
     shell: "fastp --thread {threads} -i {input} -o {output.filtered} -h {output.html_report}"
