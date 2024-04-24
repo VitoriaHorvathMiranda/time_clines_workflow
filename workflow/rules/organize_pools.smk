@@ -44,8 +44,8 @@ for fq in fqs_pref:
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 1 - Trim/Elimina reads de baixa qualidade, e junta os paired-end read (R1.fastq.gz e R2.fastq.gz) em um arquivo soh merged.fastq.gz
 rule fastp:
-    input: r1="/dados/time_clines/data/seqs/raw/{id}_R1.fastq.gz", r2="/dados/time_clines/data/seqs/raw/{id}_R2.fastq.gz"
-    output: merged_fq=temp("/dados/time_clines/data/seqs/processed/{id}_merged.fastq.gz"), html="/dados/time_clines/data/seqs/processed/{id}_merged.fastq.gz.html"
+    input: r1=os.path.join(config['raw_fqs_path'], "{id}_R1.fastq.gz"), r2=os.path.join(config['raw_fqs_path'], "{id}_R1.fastq.gz")
+    output: merged_fq=temp(os.path.join(config['processed_path'], "{id}_merged.fastq.gz")), html=os.path.join(config['processed_path'], "{id}_merged.fastq.gz.html")
     #wildcard_constraints: lane="\d"
     threads: 4
     shell:
