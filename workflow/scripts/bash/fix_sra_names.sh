@@ -14,8 +14,8 @@ input_file="$1"
 sequence_dir="$2"
 
 # Change to the specified directory
-cd "$sequence_dir" || { echo "Directory not found: $sequence_dir"; exit 1; }
-echo "Current directory: $PWD" 
+#cd "$sequence_dir" || { echo "Directory not found: $sequence_dir"; exit 1; }
+#echo "Current directory: $PWD" 
 
 
 # Check if the input file exists
@@ -42,12 +42,12 @@ echo "sample names: '${sample[@]}'"
 # Iterate over indices of arrays
 for ((i = 0; i < ${#sra[@]}; i++)); do
     # Construct file paths
-    old_path="${sra[i]}.fastq.gz"
-    new_path="${sample[i]}.fastq.gz"
+    old_path="$2/${sra[i]}.fastq.gz"
+    new_path="$2/${sample[i]}.fastq.gz"
     
     # Check if the file exists before renaming
     if [ -f "$old_path" ]; then
-        #mv "$old_path" "$new_path"
+        mv "$old_path" "$new_path"
         echo "Renamed: $old_path -> $new_path"
     else
         echo "Warning: File not found - $old_path"

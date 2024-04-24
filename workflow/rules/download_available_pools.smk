@@ -3,16 +3,18 @@
 #-----------------------------------------------------------------------------------------------------------------
 rule download_files: #download ncbi sequences based on SRA access number (see config file)
     input: 
-    output: os.path.join(config['out_dir_test'], "{SRAs}.fastq.gz", SRAs=config['SRAs'])
+    output: temp(os.path.join(config['out_dir_test'], "{SRAs}.fastq.gz"))
     params: out_path = config['out_dir_test']
+    wildcard_constraints: SRAs=config['SRAs'].keys()
     shell: "fastq-dump --skip-technical --gzip {wildcards.SRAs} --outdir {params.out_path}"
 
 #-----------------------------------------------------------------------------------------------------------------
 rule rename_downloads:
     input:
-        os.path.join(config['out_dir_test'], "{SRAs}.fastq.gz", SRAs=config['SRAs'])
+        SRAs = [os.path.join(config['out_dir_test'], SRAs + ".fastq.gz") for SRAs in config['SRAs'].keys()],
+        SRAs_info = config['SRA_info']
     output:
-        #lambda wildcards: 
-        os.path.join(config['out_dir_test'], config['SRA_names'][wildcards.SRAs] + ".fastq.gz")
+        [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for samples in config['SRAs'].values()]
+    params: out_path = config['out_dir_test'] 
     shell:
-        "mv {input} {output}"     
+        "bash scripts/bash/fix_sra_names.sh {input.SRAs_info} {params.out_path}"     

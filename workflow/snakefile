@@ -1,6 +1,9 @@
 configfile: '../config/config.yaml'
 include: 'rules/download_available_pools.smk'
 
+downloaded_SRAs = [os.path.join(config['out_dir_test'], SRAs + ".fastq.gz") for SRAs in config['SRAs'].keys()]
+names_SRAs = [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for samples in config['SRAs'].values()]
+
 rule all:
-    input: #expand(os.path.join(config['out_dir_test'], "{sample}.fastq.gz"), sample=config['SRA_names'])
-        expand(os.path.join(config['out_dir_test'], config['SRA_names'][sample] + ".fastq.gz"), sample=config['SRA_samples'])
+    input:
+        expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs'].values())
