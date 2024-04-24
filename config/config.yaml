@@ -8,6 +8,8 @@ SRAs: { # from project number PRJNA256231
   } 
 
 SRA_info: '../resources/SRA_samples_info.csv'
-#SRA_names: 
-# SRR1525696: 'dlSC10'
-# SRR1525695: 'dlGA10'
+
+ref_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
+ref_index_path: [ref_path + ".pac"] # index de referencia
+raw_fqs_path: "/dados/time_clines/data/seqs/raw/" # local dos arquivos fastq.gz
+meta_path: "/dados/time_clines/data/meta/seq_metadata.tsv" # metadados
