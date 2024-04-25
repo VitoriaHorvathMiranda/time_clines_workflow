@@ -1,1 +1,3 @@
 workflow/.snakemake/*
+workflow/logs
+workflow/logs/*

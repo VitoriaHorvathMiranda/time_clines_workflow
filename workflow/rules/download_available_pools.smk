@@ -6,7 +6,7 @@ rule download_files: #download ncbi sequences based on SRA access number (see co
     output: temp(os.path.join(config['out_dir_test'], "{SRAs}.sra"))
     #params: out_path = os.path.join(config['out_dir_test'], "{SRAs}")
     wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values()))
-    #threads: 10
+    log: "logs/prefetch_{SRAs}.log"
     shell: "prefetch -p -o {output} {wildcards.SRAs}"
 #-----------------------------------------------------------------------------------------------------------------
 rule transform_files: #download ncbi sequences based on SRA access number (see config file)
@@ -14,6 +14,7 @@ rule transform_files: #download ncbi sequences based on SRA access number (see c
     output: r1=os.path.join(config['out_dir_test'], "{SRAs}_1.fastq.gz"), r2=os.path.join(config['out_dir_test'], "{SRAs}_2.fastq.gz")
     params: out_path = config['out_dir_test']
     wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values())), r=["1","2"]
+    log: "logs/fasterq_dump_{SRAs}.log"
     threads: 10
     shell: "fasterq-dump --skip-technical --split-files --threads {threads} --gzip {input} --outdir {params.out_path}"
 #-----------------------------------------------------------------------------------------------------------------
