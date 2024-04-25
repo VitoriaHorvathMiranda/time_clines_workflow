@@ -6,22 +6,22 @@ rule download_files: #download ncbi sequences based on SRA access number (see co
     output: temp(os.path.join(config['out_dir_test'], "{SRAs}.sra"))
     #params: out_path = os.path.join(config['out_dir_test'], "{SRAs}")
     wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values()))
-    threads: 10
+    #threads: 10
     shell: "prefetch -p -o {output} {wildcards.SRAs}"
 #-----------------------------------------------------------------------------------------------------------------
 rule transform_files: #download ncbi sequences based on SRA access number (see config file)
     input: os.path.join(config['out_dir_test'], "{SRAs}.sra")
-    output: os.path.join(config['out_dir_test'], "{SRAs}.fastq.gz")
+    output: r1=os.path.join(config['out_dir_test'], "{SRAs}_1.fastq.gz"), r2=os.path.join(config['out_dir_test'], "{SRAs}_2.fastq.gz")
     params: out_path = config['out_dir_test']
-    wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values()))
+    wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values())), r=["1","2"]
     threads: 10
-    shell: "fasterq-dump --skip-technical --split-files ----threads {threads} --gzip {input} --outdir {params.out_path}"
+    shell: "fasterq-dump --skip-technical --split-files --threads {threads} --gzip {input} --outdir {params.out_path}"
 #-----------------------------------------------------------------------------------------------------------------
 rule rename_files:
-    wildcard_constraints: sample='|'.join([re.escape(x) for x in config['SRAs_dict'].keys()])
-    input: lambda wcs: os.path.join(config['out_dir_test'], "%s.fastq.gz") % config['SRAs_dict'][wcs.sample]
+    wildcard_constraints: sample='|'.join([re.escape(x) for x in config['SRAs_dict'].keys()]), r=["1","2"]
+    input: lambda wcs: os.path.join(config['out_dir_test'], "%s_{r}.fastq.gz") % config['SRAs_dict'][wcs.sample]
     output:
-        os.path.join(config['out_dir_test'], "{sample}.fastq.gz")
+        os.path.join(config['raw_fqs_path'], "{sample}_L001_R{r}.fastq.gz")
     shell:
         "mv {input} {output}"
 

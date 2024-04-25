@@ -9,9 +9,7 @@ include: 'rules/download_available_pools.smk'
 #ALL_SAMPLES = list(config['SRAs'].values()) + fqs_pref
 
 rule all:
-    input: expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs_dict'].keys())
-
-
+    input:expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]) 
 
 #+
         #expand(os.path.join(config['processed_path'], "{samples}_merged.fastq.gz.html"), samples=config['SRAs'].values()) +
