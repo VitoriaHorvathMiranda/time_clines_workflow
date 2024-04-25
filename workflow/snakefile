@@ -1,13 +1,18 @@
 configfile: '../config/config.yaml'
 include: 'rules/download_available_pools.smk'
-include: 'rules/organize_pools.smk'
+#include: 'rules/organize_pools.smk'
+#include: 'rules/map_all.smk'
 
-downloaded_SRAs = [os.path.join(config['out_dir_test'], SRAs + ".fastq.gz") for SRAs in config['SRAs'].keys()]
-names_SRAs = [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for samples in config['SRAs'].values()]
-out_merged = ['/dados/time_clines/data/seqs/processed/' + prefix + '_merged.fastq.gz' for prefix in fqs_pref]
+#downloaded_SRAs = [os.path.join(config['out_dir_test'], SRAs + ".fastq.gz") for SRAs in config['SRAs'].keys()]
+#names_SRAs = [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for samples in config['SRAs'].values()]
+#out_merged = ['/dados/time_clines/data/seqs/processed/' + prefix + '_merged.fastq.gz' for prefix in fqs_pref]
+#ALL_SAMPLES = list(config['SRAs'].values()) + fqs_pref
 
 rule all:
-    input:
-        expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs'].values()) +
-        expand(os.path.join(config['processed_path'], "{samples}_merged.fastq.gz.html"),samples=config['SRAs'].values()) +
-        out_merged
+    input: expand(os.path.join(config['out_dir_test'], "{samples}.fastq.gz"), samples=config['SRAs_dict'].keys())
+
+
+
+#+
+        #expand(os.path.join(config['processed_path'], "{samples}_merged.fastq.gz.html"), samples=config['SRAs'].values()) +
+        #expand(os.path.join(config['processed_path'], "{all_samples}_merged.fastq"), all_samples=ALL_SAMPLES)
