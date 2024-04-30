@@ -15,8 +15,8 @@ rule transform_files: #download ncbi sequences based on SRA access number (see c
     params: out_path = config['out_dir_test']
     wildcard_constraints: SRAs="|".join(list(config['SRAs_dict'].values())), r=["1","2"]
     log: "logs/fasterq_dump_{SRAs}.log"
-    threads: 10
-    shell: "fasterq-dump --skip-technical --split-files --threads {threads} --gzip {input} --outdir {params.out_path}"
+    #threads: 10
+    shell: "fastq-dump --skip-technical --gzip --split-files {input} --outdir {params.out_path}"
 #-----------------------------------------------------------------------------------------------------------------
 rule rename_files:
     wildcard_constraints: sample='|'.join([re.escape(x) for x in config['SRAs_dict'].keys()]), r=["1","2"]

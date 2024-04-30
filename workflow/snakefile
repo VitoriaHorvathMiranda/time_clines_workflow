@@ -1,16 +1,14 @@
 configfile: '../config/config.yaml'
 include: 'rules/download_available_pools.smk'
-#include: 'rules/organize_pools.smk'
-#include: 'rules/map_all.smk'
+include: 'rules/organize_pools.smk'
+include: 'rules/map_all.smk'
 
-#downloaded_SRAs = [os.path.join(config['out_dir_test'], SRAs + ".fastq.gz") for SRAs in config['SRAs'].keys()]
-#names_SRAs = [os.path.join(config['out_dir_test'], samples + ".fastq.gz") for samples in config['SRAs'].values()]
-#out_merged = ['/dados/time_clines/data/seqs/processed/' + prefix + '_merged.fastq.gz' for prefix in fqs_pref]
-#ALL_SAMPLES = list(config['SRAs'].values()) + fqs_pref
+IDs = list(grouped_fqs.keys())
+#list(config['SRAs_dict'].keys()) +
+#out_mdsrt_bams = ['/dados/time_clines/data/seqs/align/' + prefix + '.md.srt.bam' for prefix in ids]
 
 rule all:
-    input:expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]) 
-
-#+
-        #expand(os.path.join(config['processed_path'], "{samples}_merged.fastq.gz.html"), samples=config['SRAs'].values()) +
-        #expand(os.path.join(config['processed_path'], "{all_samples}_merged.fastq"), all_samples=ALL_SAMPLES)
+    input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]) + expand(os.path.join(config['align_path'], "{ids}.md.srt.bam"), ids = IDs)
+#vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
+# o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
+#vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())

@@ -44,12 +44,12 @@ for fq in fqs_pref:
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 1 - Trim/Elimina reads de baixa qualidade, e junta os paired-end read (R1.fastq.gz e R2.fastq.gz) em um arquivo soh merged.fastq.gz
 rule fastp:
-    input: r1=os.path.join(config['raw_fqs_path'], "{id}_R1.fastq.gz"), r2=os.path.join(config['raw_fqs_path'], "{id}_R1.fastq.gz")
-    output: merged_fq=temp(os.path.join(config['processed_path'], "{id}_merged.fastq.gz")), html=os.path.join(config['processed_path'], "{id}_merged.fastq.gz.html")
-    #wildcard_constraints: lane="\d"
+    input: r1=os.path.join(config['raw_fqs_path'], "{ids}_R1.fastq.gz"), r2=os.path.join(config['raw_fqs_path'], "{ids}_R2.fastq.gz")
+    output: merged_fq=temp(os.path.join(config['processed_path'], "{ids}_merged.fastq.gz")), html=os.path.join(config['processed_path'], "{ids}_merged.fastq.gz.html")
+    wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + fqs_pref)
     threads: 4
     shell:
-        "fastp --thread {threads} -i {input.r1} -I {input.r2} -m --include_unmerged --merged_out {output.merged_fq} -h {output.html} -R \"{wildcards.id}\""
+        "fastp --thread {threads} -i {input.r1} -I {input.r2} -m --include_unmerged --merged_out {output.merged_fq} -h {output.html} -R \"{wildcards.ids}\""
         # fastp is a FASTQ data pre-processing tool. The algorithm has functions for quality control, trimming of adapters, filtering by quality, and read pruning. It also supports multi-threading.
             # -i = for single-end data, you only have to specify read1 input by -i or --in1, and specify read1 output by -o or --out1.
             # -I = for paired-end data, you should also specify read2 input by -I or --in2, and specify read2 output by -O or --out2.
