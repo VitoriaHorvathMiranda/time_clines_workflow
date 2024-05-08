@@ -1,0 +1,178 @@
+library(tidyverse)
+library(data.table)
+library(patchwork)
+library(argparse)
+
+#parse arguments
+parser <- ArgumentParser(description= "Makes depth plot per coverage and per position")
+parser$add_argument('--meta', '-m', help= 'metadados table')
+parser$add_argument('--PreCovPath', '-precp', help= 'Pre downsample samtools coverage path')
+parser$add_argument('--PosCovPath', '-poscp', help= 'Pos downsample samtools coverage path')
+parser$add_argument('--DepthperPOS', '-dpos', help= 'path to folde with script_depth_per_pos output')
+parser$add_argument('--output', '-o', help= 'Single Jpeg with all plots')
+xargs<- parser$parse_args()
+
+
+
+#Coverage vs Mean Depth Plots ---------------------------------------------------
+## Read data -------------------------------------------------------------------
+meta <- fread(xargs$meta, fill = TRUE)
+meta[, population := ifelse(population == "HFL97_new", "ESC97_n", population)]
+
+files_cov_pre_down <- list.files(path = xargs$PreCovPath,
+                                 pattern = "coverage.tsv", full.names = TRUE)
+files_cov_pos_down <- list.files(path = xargs$PosCovPath,
+                                 pattern = "coverage.tsv",  full.names = TRUE)
+
+#gets the samples ids because files are out of order
+sample_ids <- lapply(files_cov_pre_down, str_split_i, pattern = "/", i = 10) |>
+  lapply(str_split_i, pattern = "_", i = 1)
+
+
+cov_pre_down <- lapply(files_cov_pre_down, fread) # reads all tables and stores them in a list
+lapply(cov_pre_down, setnames, "#rname", "chrom") # change the first collunm name of every list
+chrom_pre_down <- lapply(cov_pre_down, # filters only relevant chrom arms
+                         filter, chrom %in% c("2L", "2R", "3L", "3R", "X"))
+
+cov_pos_down <- lapply(files_cov_pos_down, fread)
+lapply(cov_pos_down, setnames, "#rname", "chrom")
+chrom_pos_down <- lapply(cov_pos_down,
+                         filter, chrom %in% c("2L", "2R", "3L", "3R", "X"))
+
+## adds pops names and merge files ----------------------------------------------
+
+names_pre_down <- vector("list", length(chrom_pre_down))
+for (i in seq_along(names_pre_down)) {
+  names_pre_down[[i]] <- chrom_pre_down[[i]] %>%
+    mutate(seq_label = sample_ids[[i]])
+}
+
+all_cov_pre_down <- rbindlist(names_pre_down)
+
+names_pos_down <- vector("list", length(chrom_pos_down))
+for (i in seq_along(names_pos_down)) {
+  names_pos_down[[i]] <- chrom_pos_down[[i]] %>%
+    mutate(seq_label = sample_ids[[i]])
+}
+
+all_cov_pos_down <- rbindlist(names_pos_down)
+
+## plots -----------------------------------------------------------------------
+plot_table_pre <- all_cov_pre_down %>%
+  group_by(seq_label) %>%
+  summarise(total_pos = sum(endpos),
+            total_covbases = sum(covbases),
+            total_coverage = sum(covbases)/sum(endpos),
+            total_meandepth = weighted.mean(meandepth, endpos))  %>%
+  mutate(seq_label = if_else(seq_label == "09", "9", seq_label)) |>
+  left_join(meta, by = "seq_label") |>
+  mutate(year = case_when(population %like% "97" ~ "1997",
+                          population %like% "09" | population %like% "10" ~ "2009/2010",
+                          population %like% "17" ~ "2017",
+                          population %like% "22" | population %like% "23" ~ "2022/2023"))
+
+plot_table_pos <- all_cov_pos_down %>%
+  group_by(seq_label) %>%
+  summarise(total_pos = sum(endpos),
+            total_covbases = sum(covbases),
+            total_coverage = sum(covbases)/sum(endpos),
+            total_meandepth = weighted.mean(meandepth, endpos)) %>%
+  mutate(seq_label = if_else(seq_label == "09", "9", seq_label)) |>
+  left_join(meta, by = "seq_label") |>
+  mutate(year = case_when(population %like% "97" ~ "1997",
+                          population %like% "09" | population %like% "10" ~ "2009/2010",
+                          population %like% "17" ~ "2017",
+                          population %like% "22" | population %like% "23" ~ "2022/2023"))
+A <- plot_table_pre %>%
+  ggplot(aes(x = total_meandepth, y = total_coverage)) +
+  geom_point(aes(color = year), size = 2, show.legend = FALSE) +
+  geom_text(aes(label = population), size = 1.5, nudge_y = 0.003) +
+  labs(x = "Mean Read Depth", y = "Coverage",
+       title = "Before downsample") +
+  #theme(legend.position = "none") +
+  theme_light()
+
+B <- plot_table_pos %>%
+  ggplot(aes(x = total_meandepth, y = total_coverage)) +
+  geom_point(aes(color = year), size = 2) +
+  geom_text(aes(label = population), size = 1.5, nudge_y = 0.003) +
+  labs(x = "Mean Read Depth", y = "Coverage",
+       title = "After downsample") +
+  theme_light()
+
+
+
+# Depths per Pos PLot ----------------------------------------------------------
+## read window depth -----------------------------------------------------------
+
+depth_per_win_paths <- 
+  list.files(path = xargs$DepthperPOS,
+           pattern = '_80kb_window_(2L|2R|3R|3L|X).tsv',  full.names = TRUE)
+
+depths_per_window <- lapply(depth_per_win_paths, fread)
+
+depths_per_window <- rbindlist(depths_per_window)
+depths_per_window <- depths_per_window[CHROM %in% c("2L", "2R", "3L", "3R", "X")]
+#depths_per_window[, window := as.factor(window)]
+
+depths_per_window <- 
+depths_per_window[meta[, .(seq_label, population)], on = "seq_label"]
+depths_per_window <- depths_per_window[CHROM %in% c("2L", "2R", "3L", "3R", "X")]
+
+
+#extracts smallest position of each window
+depths_per_window[,min_pos := tstrsplit(window, ",", keep = 1)][
+  , min_pos := sub(pattern = "\\(",
+                   replacement = "",
+                   x = min_pos)]
+
+#computes mid position of each window
+depths_per_window[, min_pos := as.double(min_pos)][
+  , mid_pos := (min_pos+40000)
+]
+
+##plots
+C <- depths_per_window %>%
+  ggplot() +
+  geom_line(aes(x = mid_pos, y = mean_depth_pre,
+                color = population, group = population),
+            #show.legend = FALSE,
+            linewidth = 0.3) +
+  facet_wrap(vars(CHROM), scales = "free_x") +
+  theme_light() + 
+  theme(axis.text.x = element_text(angle = 90,
+                                   vjust = 0.5,
+                                   hjust=1,
+                                   size = 5),
+        legend.position = "none") +
+  labs(y = "Mean Depth", x = "Position",
+       title = "Mean Depth Before Downsample")
+
+D <- depths_per_window %>%
+  ggplot() +
+  geom_line(aes(x = mid_pos, y = mean_depth_pos,
+                color = population, group = population),
+            #show.legend = FALSE,
+            linewidth = 0.3) +
+  facet_wrap(vars(CHROM), scales = "free_x") +
+  theme_light() + 
+  theme(axis.text.x = element_text(angle = 90,
+                                   vjust = 0.5,
+                                   hjust=1,
+                                   size = 5)) +
+  labs(y = "Mean Depth", x = "Position",
+       title = "Mean Depth After Downsample")
+
+## Join Plots
+plot_all <- (A + B) / (C + D) +
+  plot_annotation(tag_levels = "A")# + 
+
+jpeg(xargs$output,
+     width = 25,
+     height = 15,
+     units = "cm",
+     res = 1200)
+plot_all
+
+dev.off()
+
