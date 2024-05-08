@@ -1,3 +1,5 @@
 workflow/.snakemake/*
 workflow/logs
 workflow/logs/*
+workflow/dag*
+workflow/fastp.json
