@@ -17,12 +17,14 @@ xargs<- parser$parse_args()
 #Coverage vs Mean Depth Plots ---------------------------------------------------
 ## Read data -------------------------------------------------------------------
 meta <- fread(xargs$meta, fill = TRUE)
+
 meta[, population := ifelse(population == "HFL97_new", "ESC97_n", population)]
 
 files_cov_pre_down <- list.files(path = xargs$PreCovPath,
                                  pattern = "coverage.tsv", full.names = TRUE)
 files_cov_pos_down <- list.files(path = xargs$PosCovPath,
                                  pattern = "coverage.tsv",  full.names = TRUE)
+
 
 #gets the samples ids because files are out of order
 sample_ids <- lapply(files_cov_pre_down, str_split_i, pattern = "/", i = 10) |>
@@ -39,6 +41,13 @@ lapply(cov_pos_down, setnames, "#rname", "chrom")
 chrom_pos_down <- lapply(cov_pos_down,
                          filter, chrom %in% c("2L", "2R", "3L", "3R", "X"))
 
+print("coverage files:")
+files_cov_pre_down
+files_cov_pos_down
+print("sample_ids:")
+sample_ids
+print("meta file:")
+meta
 ## adds pops names and merge files ----------------------------------------------
 
 names_pre_down <- vector("list", length(chrom_pre_down))
@@ -101,7 +110,6 @@ B <- plot_table_pos %>%
   theme_light()
 
 
-
 # Depths per Pos PLot ----------------------------------------------------------
 ## read window depth -----------------------------------------------------------
 
@@ -126,10 +134,12 @@ depths_per_window[,min_pos := tstrsplit(window, ",", keep = 1)][
                    replacement = "",
                    x = min_pos)]
 
+
 #computes mid position of each window
 depths_per_window[, min_pos := as.double(min_pos)][
   , mid_pos := (min_pos+40000)
 ]
+
 
 ##plots
 C <- depths_per_window %>%
@@ -148,6 +158,7 @@ C <- depths_per_window %>%
   labs(y = "Mean Depth", x = "Position",
        title = "Mean Depth Before Downsample")
 
+
 D <- depths_per_window %>%
   ggplot() +
   geom_line(aes(x = mid_pos, y = mean_depth_pos,
@@ -163,11 +174,16 @@ D <- depths_per_window %>%
   labs(y = "Mean Depth", x = "Position",
        title = "Mean Depth After Downsample")
 
+
 ## Join Plots
 plot_all <- (A + B) / (C + D) +
   plot_annotation(tag_levels = "A")# + 
 
-jpeg(xargs$output,
+
+
+xargs$output
+
+jpeg(filename = xargs$output,
      width = 25,
      height = 15,
      units = "cm",
@@ -175,4 +191,5 @@ jpeg(xargs$output,
 plot_all
 
 dev.off()
+
 

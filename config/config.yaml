@@ -13,6 +13,8 @@ chrom: ["2L", "2R", "3L", "3R", "X"]
 
 ref_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
 ref_index_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta.pac" # index de referencia
+repeat_regios: "/dados/time_clines/data/reference/dm6.fa.out"
+ref_folder: "/dados/time_clines/data/reference/"
 raw_fqs_path: "/dados/time_clines/data/seqs/raw/" # local dos arquivos fastq.gz
 meta_path: "/dados/time_clines/data/meta/seq_metadata.tsv" # metadados
 processed_path: "/dados/time_clines/data/seqs/processed/"

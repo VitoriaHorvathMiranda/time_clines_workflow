@@ -127,7 +127,7 @@ rule plot_depth:
         depths = expand(os.path.join(config['qltctrl_path'], "depth_per_80kb_window_{chrom}.tsv"), chrom = config['chrom'])
     output: "../results/depths_coverage_pre_pos_downsample.jpeg"
     params:
-        precp = os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage/"),
-        poscp = os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/"),
+        precp = os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage"),
+        poscp = os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage"),
         dpos = config['qltctrl_path']
     shell: "Rscript scripts/R/script_downsample_plot.R -m {input.meta} -precp {params.precp} -poscp {params.poscp} -dpos {params.dpos} -o {output}"

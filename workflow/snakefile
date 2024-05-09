@@ -9,16 +9,9 @@ IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]
 #expand(os.path.join(config['align_path'], "{ids}.md.srt.bam.bai"), ids = IDs)
 rule all:
-    input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),  
-        os.path.join(config['qltctrl_path'], "pre_downsample/samtools_depth_stats_include_unmerged_flag.tsv"),
-        os.path.join(config['qltctrl_path'], "downsample_info.tsv"),
-        os.path.join(config['align_path'], "bam_list_downsampled.txt"),
-        os.path.join(config['qltctrl_path'], "pos_downsample/samtools_depth_stats_include_unmerged_flag.tsv" ),
-        expand(os.path.join(config['align_path'], '{ids_del}_downsample.md.srt.bam.bai'), ids_del = IDs_deleted_samples),
-        expand(os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/{ids_del}_total_coverage.tsv"), ids_del = IDs_deleted_samples),
-        expand(os.path.join(config['qltctrl_path'], "depth_per_80kb_window_{chrom}.tsv"), chrom = config['chrom']),
+    input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),
         "../results/depths_coverage_pre_pos_downsample.jpeg",
-        os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz")
+        os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
 #vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())
