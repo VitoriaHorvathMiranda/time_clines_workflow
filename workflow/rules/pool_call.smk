@@ -68,17 +68,11 @@ rule call:
     output={params.outdir}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-# 13 - vcf unzip
-rule unzip_vcf:
-    input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz")
-    output: temp(os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf"))
-    shell: "gunzip -c {input} > {output}"
-#-------------------------------------------------------------------------------------------------------------------------------------------------
 # 14 - get chrom
 rule vcf_filter_chrom:
-    input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf")
+    input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz")
     output: temp(os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_chrom_filtered.vcf"))
-    shell: "grep -e $'^2L\t' -e $'^2R\t' -e $'^3L\t' -e $'^3R\t' -e $'^X\t' -e '^#' {input} > {output}"
+    shell: "zcat {input} | grep -e $'^2L\t' -e $'^2R\t' -e $'^3L\t' -e $'^3R\t' -e $'^X\t' -e '^#' > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 14 -  #### MARTIN KAPUN SCRIPT (drosEU pipeline - https://github.com/capoony/DrosEU_pipeline)
@@ -91,3 +85,45 @@ rule Indel_ident:
 --minimum-count 20 \
 --mask 5 \
 | gzip > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# 15 -  #### MARTIN KAPUN SCRIPT (drosEU pipeline - https://github.com/capoony/DrosEU_pipeline)
+# filter SNPs around InDels from the original VCF produced with PoolSNP
+rule filter_indel:
+    input: 
+        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
+        vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_chrom_filtered.vcf")
+    output: temp(os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_indels_filtered.vcf.gz"))
+    shell:"python2.7 scripts/python/FilterPosFromVCF.py \
+--indel {input.indels} \
+--vcf {input.vcf} \
+| gzip > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# 16 - transform repeat regions in .bed
+#repeat regions came from : http://www.repeatmasker.org/species/dm.html
+rule fix_reapeat:
+    input: config['repeat_regios']
+    output: os.path.join(config['ref_folder'],"repeat_6.bed")
+    shell: "sed '1,3d' {input} | tr -s ' ' | sed 's/^ //g' | cut -d' ' -f5,6,7 | tr '[:blank:]' \\t | sed 's/chr//g' | bedtools sort > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# 17 - filter repeat regions from vcf
+rule filter_repeat:
+    input: 
+        vcf = os.path.join(config['call_path'],"PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_indels_filtered.vcf.gz"),
+        bed_file = os.path.join(config['ref_folder'],"repeat_6.bed")
+    output: temp(os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.vcf"))
+    shell: "bedtools subtract -a {input.vcf} -b {input.bed_file} | sed 's/\s/\t/g' > {output}"
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# 18 - get header #o snakemake falha nessa regra, mas se executar direto no terminal funciona
+rule get_header:
+    input:
+        raw_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz"),
+        clean_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.vcf")
+    output:os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
+    shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output}"
+
+
