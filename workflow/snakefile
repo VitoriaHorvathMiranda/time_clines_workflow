@@ -13,7 +13,9 @@ rule all:
     input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),
         "../results/depths_coverage_pre_pos_downsample.jpeg",
         os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf"),
-        expand(os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv"), year=config['CLINAL_YEAR'], chrom = config['chrom'])
+        "../results/manhattan_97.jpeg",
+        "../results/manhattan_0910.jpeg",
+        "../results/P-values_hist.jpeg"
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
 #vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())

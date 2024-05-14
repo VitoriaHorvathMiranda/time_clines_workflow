@@ -47,3 +47,11 @@ rule glm:
         mem_mb= 20000
     shell: "Rscript scripts/R/glm_script.R --timePops {input} --output {output}"
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+rule make_glm_plots:
+    input: expand(os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv"), year=config['CLINAL_YEAR'], chrom = config['chrom'])
+    output: m97 = "../results/manhattan_97.jpeg", m0910 = "../results/manhattan_0910.jpeg", hist = "../results/P-values_hist.jpeg"
+    params: p_97= os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97"), p_0910 = os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910")
+    wildcard_constraints: chrom = "([2-3][LR])|X", year= "|".join(config['CLINAL_YEAR'])
+    shell: "Rscript scripts/R/p_value_hist_manhattan.R -p97 {params.p_97} -p0910 {params.p_0910} -m97 {output.m97} -m0910 {output.m0910} -ht {output.hist}"
