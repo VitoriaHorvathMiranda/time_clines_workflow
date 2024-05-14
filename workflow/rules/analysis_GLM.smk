@@ -1,11 +1,5 @@
 
 
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-# 16 - freq extraction
-rule snp_freqs:
-    input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
-    output: freqs = temp(os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")), snps = os.path.join(config['call_path'], "called_snps_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
-    shell: "Rscript scripts/R/freq_extraction_pop_ind.R -vcf {input} -snps {output.snps} -o {output.freqs}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 18 - gets metadata and computes NE
