@@ -127,3 +127,9 @@ rule get_header:
     shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output}"
 
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#make .sync file based on vcf - #### MARTIN KAPUN SCRIPT (drosEU pipeline - https://github.com/capoony/DrosEU_pipeline)
+rule make_sync:
+    input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
+    output: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync")
+    shell: "python scripts/python/VCF2sync.py --vcf {input} > {output}"
