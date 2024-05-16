@@ -21,7 +21,10 @@ rule all:
         "../results/PCA_all_pops.jpeg",
         "../results/PCA_per_time.jpeg",
         "../results/PCA_per_chrom_97.jpeg",
-        "../results/PCA_per_chrom_0910.jpeg"
+        "../results/PCA_per_chrom_0910.jpeg",
+        "../resources/pool_sizes.csv",
+        os.path.join(config['thetaPI_path'], "TajimaD_thetaW_thetaPi_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
+
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
 #vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())
