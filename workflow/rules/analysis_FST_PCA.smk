@@ -22,20 +22,20 @@ rule pool_sizes:
     shell: "Rscript scripts/R/make_pool_sizes_file.R -meta {input.meta} -vcf {input.vcf} -o {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule theta_Pi:
+rule thetaPI:
     input:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         pool_sizes = "../resources/pool_sizes.csv"
-    output: os.path.join(config['thetaPI_path'], "TajimaD_thetaW_thetaPi_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
-    params:  outdir=config['thetaPI_path'], prefix="TajimaD_thetaW_thetaPi_with_dlGA10_dlSC10_noSNC10_noESC97"
+    output: os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
+    params:  outdir=config['thetaPI_path'], prefix="thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97"
+    threads: 40
     shell: "/home/vitoria/bin/grenedalf/bin/grenedalf diversity \
     --sync-path {input.sync} \
     --filter-sample-min-count 1 \
     --filter-sample-min-coverage 15 \
-    --window-type sliding \
-    --window-sliding-width 1000 \
-    --window-sliding-stride 500 \
+    --window-type single \
     --measure theta-pi \
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
-    --file-prefix {params.prefix}"
+    --file-prefix {params.prefix} \
+    --threads {threads}"
