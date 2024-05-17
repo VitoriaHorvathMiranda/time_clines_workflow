@@ -124,8 +124,7 @@ rule get_header:
         raw_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz"),
         clean_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.vcf")
     output:os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
-    shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output}"
-
+    shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output} ; sed -i 's/Alternative Counts/Allelic depths for the ref and alt alleles in the order listed/' {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #make .sync file based on vcf - #### MARTIN KAPUN SCRIPT (drosEU pipeline - https://github.com/capoony/DrosEU_pipeline)

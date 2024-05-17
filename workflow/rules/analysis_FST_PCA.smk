@@ -26,7 +26,7 @@ rule thetaPI:
     input:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         pool_sizes = "../resources/pool_sizes.csv"
-    output: os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
+    output: temp(os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv"))
     params:  outdir=config['thetaPI_path'], prefix="thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97"
     threads: 40
     shell: "/home/vitoria/bin/grenedalf/bin/grenedalf diversity \
@@ -39,3 +39,34 @@ rule thetaPI:
     --out-dir {params.outdir} \
     --file-prefix {params.prefix} \
     --threads {threads}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule filter_thetaPI:
+    input: os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
+    output: os.path.join(config['thetaPI_path'], "thetaPi_filtered.csv")
+    shell: "grep -v '0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0' {input} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule plot_thetaPI:
+    input:
+        pi = os.path.join(config['thetaPI_path'], "thetaPi_filtered.csv"),
+        vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
+    output: "../results/thetapi_plot.jpeg"
+    shell: "Rscript scripts/R/thetaPI_stat.R -pi {input.pi} -vcf {input.vcf} -plot {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule global_FST:
+    input:
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        pool_sizes = "../resources/pool_sizes.csv"
+    output:
+    params: 
+    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta-file {input.ref} \
+    --filter-region-bed {input.regions} \
+    --window-type genome \
+    --method unbiased-unbiased-hudson \
+    --pool-sizes {input.pool_sizes} \
+    --out-dir "
+
