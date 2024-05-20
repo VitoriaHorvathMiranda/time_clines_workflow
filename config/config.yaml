@@ -24,6 +24,7 @@ qltctrl_path: "/dados/time_clines/data/seqs/processed/qltctrl/"
 call_path: "/dados/time_clines/data/seqs/calls/"
 analysis_path: "/dados/time_clines/analysis"
 thetaPI_path: "/dados/time_clines/analysis/thetaPI"
+FST_genome_path: "/dados/time_clines/analysis/fst/genome"
 PoolSNP.sh: "/home/vitoria/bin/PoolSNP/PoolSNP.sh"
 bin: "/home/vitoria/bin/"
 

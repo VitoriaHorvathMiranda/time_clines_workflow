@@ -23,7 +23,9 @@ rule all:
         "../results/PCA_per_chrom_97.jpeg",
         "../results/PCA_per_chrom_0910.jpeg",
         "../resources/pool_sizes.csv",
-        "../results/thetapi_plot.jpeg"
+        "../results/thetapi_plot.jpeg",
+        os.path.join(config['FST_genome_path'],"Genome_FST_autosome_fst.csv"),
+        os.path.join(config['FST_genome_path'],"Genome_FST_X_fst.csv")
 
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.

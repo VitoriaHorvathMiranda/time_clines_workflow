@@ -18,14 +18,14 @@ rule PCA:
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule pool_sizes:
     input: meta = config['meta_path'], vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
-    output: "../resources/pool_sizes.csv"
-    shell: "Rscript scripts/R/make_pool_sizes_file.R -meta {input.meta} -vcf {input.vcf} -o {output}"
+    output: auto = "../resources/pool_sizes_autosome.csv", X = "../resources/pool_sizes_X.csv"
+    shell: "Rscript scripts/R/make_pool_sizes_file.R -meta {input.meta} -vcf {input.vcf} -oa {output.auto} -ox {output.X}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule thetaPI:
     input:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
-        pool_sizes = "../resources/pool_sizes.csv"
+        pool_sizes = "../resources/pool_sizes_autosome.csv"
     output: temp(os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv"))
     params:  outdir=config['thetaPI_path'], prefix="thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97"
     threads: 40
@@ -55,18 +55,37 @@ rule plot_thetaPI:
     shell: "Rscript scripts/R/thetaPI_stat.R -pi {input.pi} -vcf {input.vcf} -plot {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule global_FST:
+rule global_FST_autosome:
     input:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
-        pool_sizes = "../resources/pool_sizes.csv"
-    output:
-    params: 
+        pool_sizes = "../resources/pool_sizes_autosome.csv",
+        ref = config['ref_path']
+    output: os.path.join(config['FST_genome_path'],"Genome_FST_autosome_fst.csv")
+    params: outdir=config['FST_genome_path'], prefix="Genome_FST_autosome_"
     shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
     --sync-path {input.sync} \
     --reference-genome-fasta-file {input.ref} \
-    --filter-region-bed {input.regions} \
+    --filter-region 2L,2R,3L,3R \
     --window-type genome \
     --method unbiased-unbiased-hudson \
     --pool-sizes {input.pool_sizes} \
-    --out-dir "
+    --out-dir {params.outdir} "
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule X_FST:
+    input:
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        pool_sizes = "../resources/pool_sizes_X.csv",
+        ref = config['ref_path']
+    output: os.path.join(config['FST_genome_path'],"Genome_FST_X_fst.csv")
+    params: outdir=config['FST_genome_path'], prefix="Genome_FST_X_"
+    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta-file {input.ref} \
+    --filter-region X \
+    --window-type genome \
+    --method unbiased-unbiased-hudson \
+    --pool-sizes {input.pool_sizes} \
+    --out-dir {params.outdir} "
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
