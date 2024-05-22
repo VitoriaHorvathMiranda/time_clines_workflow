@@ -9,6 +9,7 @@ include: 'rules/analysis_FST_PCA.smk'
 
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]
+
 #expand(os.path.join(config['align_path'], "{ids}.md.srt.bam.bai"), ids = IDs)
 rule all:
     input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),
@@ -24,9 +25,10 @@ rule all:
         "../results/PCA_per_chrom_0910.jpeg",
         "../resources/pool_sizes.csv",
         "../results/thetapi_plot.jpeg",
-        os.path.join(config['FST_genome_path'],"Genome_FST_autosome_fst.csv"),
-        os.path.join(config['FST_genome_path'],"Genome_FST_X_fst.csv")
-
+        "../results/ALL_pops_genome_FST.jpeg",
+        "../results/Time_pops_genome_FST.jpeg",
+        expand(os.path.join(config['analysis_path'], "fst/window/{local}_{window_size}_fst.csv"), local = config['pair_fst'], window_size=config['window_size_SNP']),
+        expand(os.path.join(config['analysis_path'], "fst/SNPs/{local}_SNPs_fst.csv"), local = config['pair_fst'])
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
 #vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())
