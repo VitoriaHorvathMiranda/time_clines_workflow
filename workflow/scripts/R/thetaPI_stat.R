@@ -9,32 +9,23 @@ library(RColorBrewer)
 #parse arguments 
 parser <- ArgumentParser(description= "Makes pca plots, all outputs are .jpeg")
 parser$add_argument('--thetaPi', '-pi', help = "thetaPI from grenegalf single")
-parser$add_argument('--vcf', '-vcf', help= 'The vcf')
+#parser$add_argument('--vcf', '-vcf', help= 'The vcf')
 parser$add_argument('--plot', '-plot', help= 'Plot of theta pi per 30kb windows')
 xargs<- parser$parse_args()
 
 stats <- fread(xargs$thetaPi)
 
-small_vcf <- fread(xargs$vcf,
-                   skip = "#CHROM",
-                   nrows = 1)
-
-pop_order <- colnames(small_vcf)[10:28]
-
-
-test_names <- colnames(stats)[4:length(stats)] |> str_split_i(pattern = "\\.", 
-                                                i = 5)
-sample_number <- colnames(stats)[4:length(stats)] |> str_split_i(pattern = "\\.", 
-                                                              i = 4)
-new_col_names <- paste(sample_number, test_names, sep = ".")
-
-setnames(stats, colnames(stats)[4:length(stats)], new_col_names)
+# small_vcf <- fread(xargs$vcf,
+#                    skip = "#CHROM",
+#                    nrows = 1)
 
 stats <- stats[, !(colnames(stats) %like% "snp_count"), with = FALSE]
 stats <- stats[, !(colnames(stats) %like% "theta_pi_rel"), with = FALSE]
 stats <- stats[, !(colnames(stats) %like% "coverage_fraction"), with = FALSE]
 
-setnames(stats, colnames(stats)[4:length(stats)], pop_order)
+sample_name <- colnames(stats)[4:length(stats)] |> str_split_i(pattern = "\\.", 
+                                                               i = 1)
+setnames(stats, colnames(stats)[4:length(stats)], sample_name)
 stats <- stats[, !"end", with = FALSE]
 
 #creat windowns

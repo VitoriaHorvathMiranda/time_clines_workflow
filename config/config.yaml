@@ -12,6 +12,8 @@ SRA_info: '../resources/SRA_samples_info.csv'
 chrom: ["2L", "2R", "3L", "3R", "X"]
 YEAR: ["97", "0910", "17", "2223"]
 CLINAL_YEAR: ["97", "0910"]
+pair_fst: ["MA","CT","VT","MD"] #precisa adicionar o MFL quando as amostras novas chegarem
+window_size_SNP: ["100","250"]
 ref_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
 ref_index_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta.pac" # index de referencia
 repeat_regios: "/dados/time_clines/data/reference/dm6.fa.out"
@@ -22,7 +24,7 @@ processed_path: "/dados/time_clines/data/seqs/processed/"
 align_path: "/dados/time_clines/data/seqs/align/"
 qltctrl_path: "/dados/time_clines/data/seqs/processed/qltctrl/"
 call_path: "/dados/time_clines/data/seqs/calls/"
-analysis_path: "/dados/time_clines/analysis"
+analysis_path: "/dados/time_clines/analysis/"
 thetaPI_path: "/dados/time_clines/analysis/thetaPI"
 FST_genome_path: "/dados/time_clines/analysis/fst/genome"
 PoolSNP.sh: "/home/vitoria/bin/PoolSNP/PoolSNP.sh"

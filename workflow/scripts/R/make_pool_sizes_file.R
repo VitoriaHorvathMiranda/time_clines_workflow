@@ -8,8 +8,10 @@ library(tidyverse)
 parser <- ArgumentParser(description= "gets latitude and effective Nº of chrom")
 parser$add_argument('--metadata', '-meta', help = 'metadata table')
 parser$add_argument('--vcf', '-vcf', help = 'vcf file')
+parser$add_argument('--syncString', '-string', help = 'name of the sync file')
 parser$add_argument('--outputAuto', '-oa', help= 'csv with population and mean number of chromosomes (for autosomes)')
 parser$add_argument('--outputX', '-ox', help= 'csv with population and mean number of chromosomes (for X chrom)')
+parser$add_argument('--outputName', '-on', help= 'tsv with current name given by grenedalf and corresponding sample name')
 xargs<- parser$parse_args()
 
 #precisa colocar a ordem certa porque o arquivo sync não tem nome das colunas
@@ -17,7 +19,7 @@ small_vcf <- fread(xargs$vcf,
                    skip = "#CHROM",
                    nrows = 1)
 
-pop_order <- colnames(small_vcf)[10:28]
+pop_order <- colnames(small_vcf)[10:length(small_vcf)]
 
 meta <- fread(xargs$metadata)
 
@@ -42,11 +44,11 @@ setorder(pool_sizes_X, population)
 pool_sizes_auto <- na.omit(pool_sizes_auto)
 pool_sizes_X <- na.omit(pool_sizes_X)
 
-pool_sizes_auto[, sample_name := paste0("PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.", c(1:19))]
-pool_sizes_X[, sample_name := paste0("PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.", c(1:19))]
-
-pool_sizes_auto <- data.table(pool_sizes_auto$sample_name, pool_sizes_auto$n_chrom_auto)
-pool_sizes_X <- data.table(pool_sizes_X$sample_name, pool_sizes_X$n_chrom_X)
+rename_samples <- 
+data.table(sync_name = paste(xargs$syncString,
+                             c(1:length(colnames(small_vcf)[10:length(small_vcf)])),
+                             sep = "."),
+           names = colnames(small_vcf)[10:length(small_vcf)])
 
 
 fwrite(pool_sizes_auto, file = xargs$outputAuto,
@@ -54,3 +56,8 @@ fwrite(pool_sizes_auto, file = xargs$outputAuto,
 
 fwrite(pool_sizes_X, file = xargs$outputX,
        col.names = FALSE, sep = ",")
+
+fwrite(rename_samples, file = xargs$outputName,
+       col.names = FALSE, sep = "\t")
+
+
