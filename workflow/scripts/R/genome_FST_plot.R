@@ -98,7 +98,7 @@ ALL_GLOBAL_FST
 
 dev.off()
 
-jpeg(filename = xargs$timeFST,
+jpeg(filename = xargs$outputTime,
      width = 23,
      height = 19,
      units = "cm",

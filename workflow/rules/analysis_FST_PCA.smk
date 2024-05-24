@@ -14,7 +14,6 @@ rule PCA:
         PCAchrom0910="../results/PCA_per_chrom_0910.jpeg"
     shell: "Rscript scripts/R/PCA_script.R -m {input.meta} -f {input.freqs} -pAll {output.PCAall} -pTimes {output.PCAtime} -PC97 {output.PCAchrom97} -PC0910 {output.PCAchrom0910}"
 
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule pool_sizes:
     input: 
@@ -113,10 +112,8 @@ rule plot_genome_FST:
         time_pops = "../results/Time_pops_genome_FST.jpeg"
     shell: "Rscript scripts/R/genome_FST_plot.R -meta {input.meta} -x {input.fst_x} -auto {input.fst_auto} -oall {output.all_pops} -otime {output.time_pops}"
 
-
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule window_fst:
+rule window_fst: #não precisa fazer uma regra separada para o cromossomo X porque todas as populações que eu uso aqui são só de fêmeas e foram coletadas da mesma maneira
     input: 
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         ref = config['ref_path'],
@@ -144,7 +141,17 @@ rule window_fst:
     --file-prefix {wildcards.local}_{wildcards.window_size}_"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule SNP_fst:
+rule w_fst_cutoffs:
+    input: os.path.join(config['analysis_path'], "fst/window/{local}_{window_size}_fst.csv"),
+    output:
+        manh_wfst = "../results/manh_wfst_{local}_{window_size}.jpeg",
+        w_size = os.path.join(config['analysis_path'], "fst/window/BP_windown_size_{local}_{window_size}.tsv"),
+        w_fst_cutoff = os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}.tsv")
+    wildcard_constraints: local = "(MA|CT|VT|MD|MFL)", window_size = "(100|250)"
+    shell: "Rscript scripts/R/outliers_window_FST_all_comp.R -wfst {input} -tfst {output.w_fst_cutoff} -wsize {output.w_size} -fig {output.manh_wfst}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule SNP_fst: #não precisa fazer uma regra separada para o cromossomo X porque todas as populações que eu uso aqui são só de fêmeas e foram coletadas da mesma maneira
     input: 
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         ref = config['ref_path'],
@@ -168,6 +175,15 @@ rule SNP_fst:
     --verbose \
     --out-dir {params.out_dir} \
     --file-prefix {wildcards.local}_SNPs_"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule snp_fst_cutoffs:
+    input: os.path.join(config['analysis_path'], "fst/SNPs/{local}_SNPs_fst.csv")
+    output: 
+        manh_wfst = "../results/manh_snp_{local}.jpeg",
+        snp_fst_cutoff = os.path.join(config['analysis_path'], "fst/SNP/cutoff_{local}_snp.tsv")
+    shell: "Rscript scripts/R/outliers_snp_FST_all_comp.R -sfst {input} -tfst {output.snp_fst_cutoff} -fig {output.manh_wfst}"
+
 
 
 
