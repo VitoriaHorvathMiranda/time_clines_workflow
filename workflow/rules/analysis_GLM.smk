@@ -49,3 +49,16 @@ rule make_glm_plots:
     params: p_97= os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97"), p_0910 = os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910")
     wildcard_constraints: chrom = "([2-3][LR])|X", year= "|".join(config['CLINAL_YEAR'])
     shell: "Rscript scripts/R/p_value_hist_manhattan.R -p97 {params.p_97} -p0910 {params.p_0910} -m97 {output.m97} -m0910 {output.m0910} -ht {output.hist}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+rule get_qvalues:
+    input: expand(os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv"), year=config['CLINAL_YEAR'], chrom = config['chrom'])
+    output:
+        q97 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv"),
+        q0910 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910.tsv"),
+        hists = "../results/hist_p-values_withPi.jpeg",
+        qPlot97 = "../results/q_Plot97.jpeg",
+        qPlot0910 = "../results/q_Plot0910.jpeg"
+    params: path_results = os.path.join(config['analysis_path'], "time_GLM_lat")
+    shell: "Rscript scripts/R/q_values_script.R -snps {params.path_results} -o97 {output.q97} -o0910 {output.q0910} -hp {output.hists} -qp97 {output.qPlot97} -qp0910 {output.qPlot0910}"

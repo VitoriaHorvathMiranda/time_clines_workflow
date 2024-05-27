@@ -28,7 +28,10 @@ rule all:
         "../results/ALL_pops_genome_FST.jpeg",
         "../results/Time_pops_genome_FST.jpeg",
         expand("../results/manh_wfst_{local}_{window_size}.jpeg", local = config['pair_fst'], window_size=config['window_size_SNP']),
-        expand("../results/manh_snp_{local}.jpeg", local = config['pair_fst'])
+        expand("../results/manh_snp_{local}.jpeg", local = config['pair_fst']),
+        "../results/hist_p-values_withPi.jpeg",
+        "../results/q_Plot97.jpeg",
+        "../results/q_Plot0910.jpeg"
 #vou rodar primeiro até a tranferencia dos fastq de diretório. Isso porque, uma vez no diretório certo,
 # o script do Roldan vai incluir as amostras baixadas na lista e no dicionario que ele cria.
 #vai precisar mudar os wildcards_constrains no modulo map_all e organize para remover list(config['SRAs_dict'].keys())
