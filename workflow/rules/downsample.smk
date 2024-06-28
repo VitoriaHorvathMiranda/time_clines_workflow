@@ -1,5 +1,5 @@
 IDs = list(grouped_fqs.keys())
-IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")] #deletes samples with low quality from the following analysis
+IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 11 - rule bam.txt
 rule bam_txt:

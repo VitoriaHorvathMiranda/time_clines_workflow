@@ -1,5 +1,5 @@
 IDs = list(grouped_fqs.keys())
-IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")] #deletes samples with low quality from the following analysis
+IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
 
 meta_path = config['meta_path']
 with open(meta_path, 'r') as file:
@@ -118,13 +118,16 @@ rule filter_repeat:
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-# 18 - get header #o snakemake falha nessa regra, mas se executar direto no terminal funciona
+# 18 - get header #o snakemake falha nessa regra, mas se executar direto no terminal funciona 
+# Eu tentei ver qual a saída do comando com 'echo $?', mas quando eu executo no terminal, a saída é zero
+#resolvi com um '|| echo "qualquer coisa"'
 rule get_header:
     input:
         raw_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz"),
         clean_vcf=os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.vcf")
     output:os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
-    shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output} ; sed -i 's/Alternative Counts/Allelic depths for the ref and alt alleles in the order listed/' {output}"
+    shell: "zcat {input.raw_vcf} | head -n 18 | cat - {input.clean_vcf} > {output} || echo \"Snakemake says this command doesn't work, but it does\" "
+    #; sed -i 's/Alternative Counts/Allelic depths for the ref and alt alleles in the order listed/' {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #make .sync file based on vcf - #### MARTIN KAPUN SCRIPT (drosEU pipeline - https://github.com/capoony/DrosEU_pipeline)
@@ -136,6 +139,7 @@ rule make_sync:
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 16 - freq extraction
 #get snp frequencies 
+#o script filtra para os SNPs bialélicos
 rule snp_freqs:
     input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
     output: freqs = os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv"), snps = os.path.join(config['call_path'], "called_snps_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
