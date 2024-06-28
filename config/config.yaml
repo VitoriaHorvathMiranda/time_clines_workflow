@@ -4,16 +4,18 @@
 out_dir_test: '/dados/vitoria/time_clines_workflow_test/SRA_files'
 SRAs_dict: { # from project number PRJNA256231
   'dlSC10': 'SRR1525696', #SC 48 males descended (<5 generations) from wild females collected in 7/2008 and 7/2010
-  'dlGA10': 'SRR1525695' #GA 51 male flies descended (<5 generations) from wild females collected in 7/2008 and 7/2010
+  'dlGA10': 'SRR1525695', #GA 51 male flies descended (<5 generations) from wild females collected in 7/2008 and 7/2010
+  'dlFL10': 'SRR1525694' #FL sample from december 2010, 48 males
   } 
 
 SRA_info: '../resources/SRA_samples_info.csv'
 
 chrom: ["2L", "2R", "3L", "3R", "X"]
 YEAR: ["97", "0910", "17", "2223"]
-CLINAL_YEAR: ["97", "0910"]
+CLINAL_YEAR: ["97", "0910", "0910FL2"]
 pair_fst: ["MA","CT","VT","MD"] #precisa adicionar o MFL quando as amostras novas chegarem
 window_size_SNP: ["100","250"]
+FDR_cutoffs: ["0.1", "0.05"]
 ref_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
 ref_index_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta.pac" # index de referencia
 repeat_regios: "/dados/time_clines/data/reference/dm6.fa.out"
@@ -29,6 +31,9 @@ thetaPI_path: "/dados/time_clines/analysis/thetaPI"
 FST_genome_path: "/dados/time_clines/analysis/fst/genome"
 PoolSNP.sh: "/home/vitoria/bin/PoolSNP/PoolSNP.sh"
 bin: "/home/vitoria/bin/"
+ancestral_vcf: "/dados/vitoria/haploid_seqs/call/all_chrom_painel/painel_chrom2_3.vcf"
+
+
 
 #qltctrl_pre_downsample_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/"
 #qltctrl_pre_downsample_coverage_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_coverage/"

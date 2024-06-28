@@ -49,11 +49,11 @@ fdr_cutoffs <- function(data) {
   
 }
 
-fwrite(results97, file = xargs$output97,sep = "\t")
-fwrite(results0910, file = xargs$output0910,sep = "\t")
-
 qobj97 <- fdr_cutoffs(results97)
 qobj0910 <- fdr_cutoffs(results0910)
+
+fwrite(results97, file = xargs$output97,sep = "\t")
+fwrite(results0910, file = xargs$output0910,sep = "\t")
 
 jpeg(filename = xargs$histPlot,
      width = 23,

@@ -35,7 +35,7 @@ stats[, window := cut(start, windows)]
 
 #samples(pops) to row
 stats_tidy <- melt.data.table(data = stats,
-                                   measure = 3:21,
+                                   measure = 3:(length(stats)-1),
                                    value.name = "thetaPI",
                                    variable.name = "pop")
 
@@ -71,7 +71,7 @@ mean_thetaPI_window[year == "1997"] |>
   geom_line(aes(x = mid_pos, y = mean_pi,
                 color = pop, group = pop),
             #show.legend = FALSE,
-            linewidth = 0.3) +
+            linewidth = 0.1) +
   facet_wrap(vars(chrom), scales = "free_x") +
   scale_color_brewer(palette = "Set1") +
   theme_light() + 
@@ -93,7 +93,7 @@ THETA_PI_0910 <-
   geom_line(aes(x = mid_pos, y = mean_pi,
                 color = pop, group = pop),
             #show.legend = FALSE,
-            linewidth = 0.3) +
+            linewidth = 0.1) +
   facet_wrap(vars(chrom), scales = "free_x") +
   scale_color_brewer(palette = "Set1") +
   theme_light() + 
