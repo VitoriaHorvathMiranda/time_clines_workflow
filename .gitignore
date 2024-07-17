@@ -1,4 +1,5 @@
 workflow/.snakemake/*
+.snakemake/
 workflow/logs
 workflow/logs/*
 workflow/dag*

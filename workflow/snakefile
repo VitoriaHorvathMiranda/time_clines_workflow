@@ -8,6 +8,7 @@ include: 'rules/analysis_GLM.smk'
 include: 'rules/analysis_FST_PCA.smk'
 include: 'rules/Inv_stats.smk'
 include: 'rules/ancestry.smk'
+include: 'rules/WorldClim_data.smk'
 
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]
@@ -26,7 +27,7 @@ rule all:
         "../results/PCA_per_chrom_97.jpeg",
         "../results/PCA_per_chrom_0910.jpeg",
         "../resources/pool_sizes.csv",
-        "../results/thetapi_plot.jpeg",
+        #"../results/thetapi_plot.jpeg",
         "../results/ALL_pops_genome_FST.jpeg",
         "../results/Time_pops_genome_FST.jpeg",
         expand("../results/manh_wfst_{local}_{window_size}.jpeg", local = config['pair_fst'], window_size=config['window_size_SNP']),
@@ -42,6 +43,8 @@ rule all:
         "../results/global_ancestry_per_lat.jpeg",
         "../results/all_global_ancestry_models_violin.jpeg",
         expand("../results/odds_ratio_to_integenic_{clinal_year}.jpeg",clinal_year = config['CLINAL_YEAR']),
+        "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg",
+        expand(os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"), chrom_lenght_step = config['chrom_lenght_step'])
         #expand(os.path.join(config['analysis_path'], "time_GLM_lat/GO_analysis/GO_enrichment_mode_{mode}_gendef_{gen_def}_only_clinal_{year}_at_{fdr}_fdr.tsv"), mode = ["gene","snp"], gen_def = ["updownstream1000"], year = config['CLINAL_YEAR'], fdr = config['FDR_cutoffs'])
         
 

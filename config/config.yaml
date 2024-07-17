@@ -32,7 +32,7 @@ FST_genome_path: "/dados/time_clines/analysis/fst/genome"
 PoolSNP.sh: "/home/vitoria/bin/PoolSNP/PoolSNP.sh"
 bin: "/home/vitoria/bin/"
 ancestral_vcf: "/dados/vitoria/haploid_seqs/call/all_chrom_painel/painel_chrom2_3.vcf"
-
+chrom_lenght_step: ["2L-23513712-23513712","2R-25286936-25286936","3L-28110227-28110227","3R-32079331-32079331","X-23542271-23542271"]
 
 
 #qltctrl_pre_downsample_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/"

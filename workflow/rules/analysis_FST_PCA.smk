@@ -27,41 +27,157 @@ rule pool_sizes:
     shell: "Rscript scripts/R/make_pool_sizes_file.R -meta {input.meta} -vcf {input.vcf} -string {params.sync_name} -oa {output.auto} -ox {output.X} -on {output.rename}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule thetaPI:
+# filter problematic regions out of windowns to get true window size;
+# martin Kapun Script from https://github.com/capoony/DrosEU_pipeline/tree/master #small uptate to accept .bed file instead of .gff 
+rule true_windowns:
+    input:
+        bad_pos = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz"),
+        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
+        te = os.path.join(config['ref_folder'], "repeat_6_with_spaces.bed")
+    output: os.path.join(config['analysis_path'], "pop_stats/truewindows-200000-200000.txt"), 
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/truewindows-200000-200000")
+    shell: "python2 scripts/python/TrueWindows.py \
+    --badcov {input.bad_pos} \
+    --indel {input.indels} \
+    --te {input.te} \
+    --window 200000 \
+    --step 200000 \
+    --chromosomes 2L:23513712,2R:25286936,3L:28110227,3R:32079331  \
+    --output {params.out_path}" #,X:23542271
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#computes thetaPi, thetaW and tajima's D 
+# martin Kapun Script from https://github.com/capoony/DrosEU_pipeline/tree/master
+rule pop_stats:
+    input: 
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows-200000-200000.txt"),
+        pool_sizes = "../resources/pool_sizes_autosome.csv"
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.th")
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000")
+    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+    python2 scripts/python/PoolGen-var.py \
+    --input {input.sync} \
+    --pool-size $pool_sizes \
+    --window 200000 \
+    --step 200000 \
+    --sitecount {input.sitecount} \
+    --output {params.out_path}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# filter problematic regions out of windowns to get true window size;
+# martin Kapun Script from https://github.com/capoony/DrosEU_pipeline/tree/master #small uptate to accept .bed file instead of .gff 
+rule true_windowns_X:
+    input:
+        bad_pos = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz"),
+        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
+        te = os.path.join(config['ref_folder'], "repeat_6_with_spaces.bed")
+    output: os.path.join(config['analysis_path'], "pop_stats/truewindows_X-200000-200000.txt"), 
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/truewindows_X-200000-200000")
+    shell: "python2 scripts/python/TrueWindows.py \
+    --badcov {input.bad_pos} \
+    --indel {input.indels} \
+    --te {input.te} \
+    --window 200000 \
+    --step 200000 \
+    --chromosomes X:23542271  \
+    --output {params.out_path}" #,
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#computes thetaPi, thetaW and tajima's D 
+# martin Kapun Script from https://github.com/capoony/DrosEU_pipeline/tree/master
+rule pop_stats_X:
+    input: 
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_X-200000-200000.txt"),
+        pool_sizes = "../resources/pool_sizes_X.csv"
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.th")
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000")
+    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+    python2 scripts/python/PoolGen-var.py \
+    --input {input.sync} \
+    --pool-size $pool_sizes \
+    --window 200000 \
+    --step 200000 \
+    --sitecount {input.sitecount} \
+    --output {params.out_path}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# 
+rule plot_stats:
+    input:
+        vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf"),
+        meta = config['meta_path'],
+        a = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.pi"), b = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.D"), c = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.th"),
+        e = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.pi"), f = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.D"), g = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.th")
+    output: "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg"
+    params: stats_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000") , plot_path = "../results/pop_stats_"
+    shell: "Rscript scripts/R/pop_stats_kapun.R --vcf {input.vcf} --meta {input.meta} --stats {params.stats_path} --plots {params.plot_path}"
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+rule true_windowns_chrom_arm:
+    input:
+        bad_pos = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz"),
+        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
+        te = os.path.join(config['ref_folder'], "repeat_6_with_spaces.bed")
+    output: os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+    params: 
+        out_path = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}"),
+        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1],
+        chrom_value = lambda wildcards: f"{wildcards.chrom_lenght_step.split('-')[0]}:{wildcards.chrom_lenght_step.split('-')[1]}"
+    shell: "python2 scripts/python/TrueWindows.py \
+    --badcov {input.bad_pos} \
+    --indel {input.indels} \
+    --te {input.te} \
+    --window {params.window_size} \
+    --step {params.window_size} \
+    --chromosomes {params.chrom_value} \
+    --output {params.out_path}" 
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule pop_stats_global:
     input:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
-        pool_sizes = "../resources/pool_sizes_autosome.csv",
-        rename="../resources/rename_samples.tsv"
-    output: temp(os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv"))
-    params:  outdir=config['thetaPI_path'], prefix="thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97"
-    threads: 40
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf diversity \
-    --sync-path {input.sync} \
-    --filter-sample-min-count 1 \
-    --filter-sample-min-coverage 15 \
-    --window-type single \
-    --measure theta-pi \
-    --rename-samples-file {input.rename} \
-    --pool-sizes {input.pool_sizes} \
-    --out-dir {params.outdir} \
-    --file-prefix {params.prefix} \
-    --threads {threads}"
-
+        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+        pool_sizes = "../resources/pool_sizes_autosome.csv"
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.th")
+    wildcard_constraints: chrom_lenght_step = "|".join([v for v in config['chrom_lenght_step'] if v != "X-23542271-23542271"])
+    params: 
+        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
+        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
+    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+    python2 scripts/python/PoolGen-var.py \
+    --input {input.sync} \
+    --min-count 1 \
+    --min-sites-frac 0.5 \
+    --pool-size $pool_sizes \
+    --window {params.window_size} \
+    --step {params.window_size} \
+    --sitecount {input.sitecount} \
+    --output {params.out_path}"
+        
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-#prestar atenção no número de pops e no número de grupos '0,0.000,0,0'
-rule filter_thetaPI:
-    input: os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
-    output: os.path.join(config['thetaPI_path'], "thetaPi_filtered.csv")
-    shell: "grep -v '0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0' {input} > {output}"
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-# plota a média do thetaPI em janelas de 30Kb
-rule plot_thetaPI:
+rule pop_stats_global_X:
     input:
-        pi = os.path.join(config['thetaPI_path'], "thetaPi_filtered.csv"),
-        #vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
-    output: "../results/thetapi_plot.jpeg"
-    shell: "Rscript scripts/R/thetaPI_stat.R -pi {input.pi} -plot {output}"
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+        pool_sizes = "../resources/pool_sizes_X.csv"
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.th")
+    wildcard_constraints: chrom_lenght_step = ("X-23542271-23542271")
+    params: 
+        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
+        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
+    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+    python2 scripts/python/PoolGen-var.py \
+    --input {input.sync} \
+    --min-count 1 \
+    --min-sites-frac 0.5 \
+    --pool-size $pool_sizes \
+    --window {params.window_size} \
+    --step {params.window_size} \
+    --sitecount {input.sitecount} \
+    --output {params.out_path}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_FST_autosome:
@@ -186,6 +302,34 @@ rule snp_fst_cutoffs:
         snp_fst_cutoff = os.path.join(config['analysis_path'], "fst/SNP/cutoff_{local}_snp.tsv")
     shell: "Rscript scripts/R/outliers_snp_FST_all_comp.R -sfst {input} -tfst {output.snp_fst_cutoff} -fig {output.manh_wfst}"
 
+
+
+#rule thetaPI:
+#    input:
+#        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+#        pool_sizes = "../resources/pool_sizes_autosome.csv",
+#        rename="../resources/rename_samples.tsv"
+#    output: temp(os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv"))
+#    params:  outdir=config['thetaPI_path'], prefix="thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97"
+#    threads: 40
+#    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf diversity \
+#    --sync-path {input.sync} \
+#    --filter-sample-min-count 1 \
+#    --filter-sample-min-coverage 15 \
+#    --window-type single \
+#    --measure theta-pi \
+#    --rename-samples-file {input.rename} \
+#    --pool-sizes {input.pool_sizes} \
+#    --out-dir {params.outdir} \
+#    --file-prefix {params.prefix} \
+#    --threads {threads}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#prestar atenção no número de pops e no número de grupos '0,0.000,0,0'
+#rule filter_thetaPI:
+#    input: os.path.join(config['thetaPI_path'], "thetaPi_single_with_dlGA10_dlSC10_noSNC10_noESC97diversity.csv")
+#    output: os.path.join(config['thetaPI_path'], "thetaPi_filtered.csv")
+#    shell: "grep -v '0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0' {input} > {output}"
 
 
 
