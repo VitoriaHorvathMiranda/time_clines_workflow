@@ -1,6 +1,15 @@
 
-
-
+##PRECISA MUDAR ESSA FUNÇÃO PARA UM CHECKPOINT NO FUTURO
+def get_pairs_from_file(file):
+    pairs = set()
+    with open(file, 'r') as f:
+        for line in f:
+            columns = line.strip().split('\t')
+            if len(columns) >= 5:  # Ensure there are at least 5 columns
+                pairs.add(columns[4])
+    pairs = list(pairs)
+    pairs.sort()  # Sort the pairs if needed
+    return pairs
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 
 rule PCA:
@@ -302,6 +311,21 @@ rule snp_fst_cutoffs:
         snp_fst_cutoff = os.path.join(config['analysis_path'], "fst/SNP/cutoff_{local}_snp.tsv")
     shell: "Rscript scripts/R/outliers_snp_FST_all_comp.R -sfst {input} -tfst {output.snp_fst_cutoff} -fig {output.manh_wfst}"
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#tem que ver se a função do começo desse .smk e o uso dela na rule all vai funcionar
+rule separate_fst_pairs:
+    input: os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}.tsv")
+    output: os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}_{pair}.tsv")
+    shell:"awk '$5 == \"{wildcards.pair}\" {{print $0}}' {input} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule merge_outliers_windows:
+    input: os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}_{pair}.tsv")
+    output: os.path.join(config['analysis_path'], "fst/window/top_0.001_{local}_{window_size}_{pair}.bed")
+    shell: "awk '$8 == 0.001 {{print $0}}' {input} | cut -f 1,2,3,6 | sort -k 1,1 -k2,2n | bedtools merge -d 1000 -c 1,4 -o count,max -i - > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule
 
 
 #rule thetaPI:

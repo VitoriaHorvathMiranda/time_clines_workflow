@@ -44,7 +44,11 @@ rule all:
         "../results/all_global_ancestry_models_violin.jpeg",
         expand("../results/odds_ratio_to_integenic_{clinal_year}.jpeg",clinal_year = config['CLINAL_YEAR']),
         "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg",
-        expand(os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"), chrom_lenght_step = config['chrom_lenght_step'])
+        expand(os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"), chrom_lenght_step = config['chrom_lenght_step']),
+        expand(os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}_{pair}.tsv"),
+               local=["MA","CT","VT","MD","MFL"], window_size=["100", "250"],
+               pair=lambda wildcards: get_pairs_from_file(os.path.join(config['analysis_path'], f"fst/window/cutoff_{wildcards.local}_{wildcards.window_size}.tsv"))
+               ) ##PRECISA MUDAR PARA UM CHECKPOINT NO FUTURO
         #expand(os.path.join(config['analysis_path'], "time_GLM_lat/GO_analysis/GO_enrichment_mode_{mode}_gendef_{gen_def}_only_clinal_{year}_at_{fdr}_fdr.tsv"), mode = ["gene","snp"], gen_def = ["updownstream1000"], year = config['CLINAL_YEAR'], fdr = config['FDR_cutoffs'])
         
 
