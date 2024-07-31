@@ -319,12 +319,14 @@ rule separate_fst_pairs:
     shell:"awk '$5 == \"{wildcards.pair}\" {{print $0}}' {input} > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule merge_outliers_windows:
+# filtra par aos top 0.1% das janelas e funde as janelas com sobreposição; fica com o número de janelas fusionadas e o máximo fst da maior janela
+rule merge_outliers_windows: 
     input: os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}_{pair}.tsv")
     output: os.path.join(config['analysis_path'], "fst/window/top_0.001_{local}_{window_size}_{pair}.bed")
     shell: "awk '$8 == 0.001 {{print $0}}' {input} | cut -f 1,2,3,6 | sort -k 1,1 -k2,2n | bedtools merge -d 1000 -c 1,4 -o count,max -i - > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+
 #rule
 
 

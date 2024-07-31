@@ -5,3 +5,6 @@ workflow/logs/*
 workflow/dag*
 workflow/fastp.json
 ./snakemake
+workflow/.RData
+workflow/.Rhistory
+resources/climate_data*

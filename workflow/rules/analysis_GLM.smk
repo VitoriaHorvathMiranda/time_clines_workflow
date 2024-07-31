@@ -1,6 +1,6 @@
 
 
-
+PERM_N = [str(i) for i in range(1, 5041)] #a primeira permutação são os latutudes certas
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 18 - gets metadata and computes NE
 rule n_chrom:
@@ -27,7 +27,7 @@ rule separate_time_pops:
 # separates files per chrom becase glm script uses too much memory
 rule separete_chrom:
     input: os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv")
-    output: os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv")
+    output: temp(os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv"))
     wildcard_constraints: chrom = "([2-3][LR])|X", year= "|".join(config['CLINAL_YEAR'])
     shell:"awk '($4==\"{wildcards.chrom}\")' {input} > {output}"
 
@@ -98,6 +98,24 @@ rule get_effects: #get the strongest effect of each snp (the first from SNPeff)
     output: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
     shell: "Rscript scripts/R/get_effects.R -vcf {input.annvcf} -ef {input.effects} -qv {input.q} -o {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule make_perm_pvalue:
+    input: 
+        metadata = config['meta_path'], 
+        freqs = os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv"),
+        effects = os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv")
+    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/chance_perm_n_{perm_n}_{year}.tsv")
+    #group: "permutation"
+    wildcard_constraints: perm_n="|".join(PERM_N), year = "(97|0910)"
+    shell: "Rscript scripts/R/permuted_lats_glm.R -meta {input.metadata} -freqs {input.freqs} -cyear {wildcards.year} -permN {wildcards.perm_n} -e {input.effects} -out {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule join_chances:
+    input: [config['analysis_path'] + "time_GLM_lat/Perm/chance_perm_n_" + n + "_{year}.tsv" for n in PERM_N]
+    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/joined_perm_chances_{year}.tsv")
+    params: path = os.path.join(config['analysis_path'], "time_GLM_lat/Perm")
+    shell: "Rscript scripts/R/join_perm_chances.R -cyear {wildcards.year} -pc {params.path}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule enrichment_odds_ratio:

@@ -144,3 +144,10 @@ rule snp_freqs:
     input: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
     output: freqs = os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv"), snps = os.path.join(config['call_path'], "called_snps_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
     shell: "Rscript scripts/R/freq_extraction_pop_ind.R -vcf {input} -snps {output.snps} -o {output.freqs}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#Ti/Tv table
+rule Ti_Tv:
+    input: os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
+    output: os.path.join(config['analysis_path'], "quality/Ti_Tv.tsv")
+    shell: "Rscript scripts/R/Ti_Tv_ratio.R -freqs {input} -o {output}"
