@@ -22,6 +22,7 @@ rule ungz:
     output: temp(os.path.join(config['processed_path'], "{ids}_merged.fastq"))
     wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + fqs_pref)
     threads: 4
+    group: "big_files"
     shell:
         "pigz -f -p {threads} -d {input} > {output}"
         # Compress or expand files
@@ -50,6 +51,7 @@ rule bwa:
     output: temp(os.path.join(config['align_path'], "{ids}.sam"))
     wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + fqs_pref)
     threads: 5
+    group: "big_files"
     shell:
         "bwa-mem2 mem -M -t {threads} -R {params.rg} {input.ref} {input.r} > {output}"
             # -M = mark short split hits as secondary (for Picard compatibility)
@@ -65,6 +67,7 @@ rule view:
         output: temp(os.path.join(config['align_path'], "{ids}.bam"))
         wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + fqs_pref)
         threads: 5
+        group: "big_files"
         shell: "samtools view -b -@{threads} {input} > {output}"
         # Views and converts SAM/BAM/CRAM files.
             # -b (--bam) = Output in the BAM format.
@@ -108,7 +111,7 @@ rule join_bams:
     output: temp(os.path.join(config['align_path'], "{ids}_joined.bam"))
     wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + list(grouped_fqs.keys()))
     shell:
-        "samtools merge {output} {input}"
+        "samtools merge {output} {input} || mv {input} {output}"
         # Merge sorted alignment files, producing a single sorted output file that contains all the input records and maintains the existig sort order.
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -136,7 +139,7 @@ rule sortbam:
 #     -m option. This program relies on the MC and ms tags that fixmate provides.
 rule markdup:
     input: os.path.join(config['align_path'], "{ids}.srt.bam")
-    output: os.path.join(config['align_path'], "{ids}.md.srt.bam")
+    output: temp(os.path.join(config['align_path'], "{ids}.md.srt.bam"))
     wildcard_constraints: ids = "|".join(list(config['SRAs_dict'].keys()) + list(grouped_fqs.keys()))
     threads: 5
     shell:
@@ -148,7 +151,7 @@ rule markdup:
 # 10 - Index a coordinate-sorted BGZIP-compressed SAM, BAM or CRAM file for fast random access.
 rule index_markdup:
     input: os.path.join(config['align_path'], "{ids}.md.srt.bam")
-    output: os.path.join(config['align_path'], "{ids}.md.srt.bam.bai")
+    output: temp(os.path.join(config['align_path'], "{ids}.md.srt.bam.bai"))
     wildcard_constraints: ids = "|".join(list(grouped_fqs.keys()))
     threads: 4
     shell:

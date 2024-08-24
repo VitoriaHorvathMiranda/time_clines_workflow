@@ -43,6 +43,27 @@ rule join_syncs:
     shell: "Rscript scripts/R/merge_sync.R -painel {input.painel_sync} -sync {input.sample_sync} -o {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule get_all_snp_id:
+    input: os.path.join(config['analysis_path'], "ancestry/all_samples.sync")
+    output: os.path.join(config['analysis_path'], "ancestry/all_snp_ids.tsv")
+    shell: "cut -f 1,2 {input} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule filter_bs:
+    input: 
+        ids = os.path.join(config['analysis_path'], "ancestry/all_snp_ids.tsv"),
+        bed_sites = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz")
+    output: os.path.join(config['analysis_path'], "ancestry/all_snp_ids_BS.tsv")
+    shell: "zcat {input.bed_sites} | grep -Ff {input.ids} - > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule fix_sample_na:
+    input:
+        small_bed = os.path.join(config['analysis_path'], "ancestry/all_snp_ids_BS.tsv"),
+        all_sync = os.path.join(config['analysis_path'], "ancestry/all_samples.sync")
+    output: os.path.join(config['analysis_path'], "ancestry/all_samples_sample_fixed.sync")
+    shell: "Rscript scripts/R/fix_sync_sample_na.R -sync {input.all_sync} -bs {input.small_bed} -o {output}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_ancetral_pops_FST_autosome:
     input:
         sync = os.path.join(config['analysis_path'], "ancestry/all_samples.sync"),

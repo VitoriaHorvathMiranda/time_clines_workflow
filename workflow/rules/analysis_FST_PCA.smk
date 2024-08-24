@@ -17,11 +17,13 @@ rule PCA:
         meta=config['meta_path'],
         freqs=os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
     output:
-        PCAall= "../results/PCA_all_pops.jpeg",
+        PC1x2all= "../results/PC1x2_all_pops.jpeg",
+        PC3x4all= "../results/PC3x4_all_pops.jpeg",
         PCAtime= "../results/PCA_per_time.jpeg",
-        PCAchrom97="../results/PCA_per_chrom_97.jpeg",
-        PCAchrom0910="../results/PCA_per_chrom_0910.jpeg"
-    shell: "Rscript scripts/R/PCA_script.R -m {input.meta} -f {input.freqs} -pAll {output.PCAall} -pTimes {output.PCAtime} -PC97 {output.PCAchrom97} -PC0910 {output.PCAchrom0910}"
+        PCAchrom="../results/PCA_per_chrom.jpeg",
+        lmALL = os.path.join(config['analysis_path'], "PCA/lm_PC1-4_all_variables.tsv"),
+        Rsq = os.path.join(config['analysis_path'], "PCA/Rsq_PC1-4_all_variables.tsv")
+    shell: "Rscript scripts/R/PCA_script.R -m {input.meta} -f {input.freqs} -p12All {output.PC1x2all} -p34All {output.PC3x4all} -pTimes {output.PCAtime} -PCAchrom {output.PCAchrom} -lm {output.lmALL} -Rsq {output.Rsq}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule pool_sizes:
@@ -62,12 +64,13 @@ rule pop_stats:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows-200000-200000.txt"),
         pool_sizes = "../resources/pool_sizes_autosome.csv"
-    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.th")
-    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000")
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.th")
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000")
     shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
     python2 scripts/python/PoolGen-var.py \
     --input {input.sync} \
     --pool-size $pool_sizes \
+    --min-sites-frac 0.6 \
     --window 200000 \
     --step 200000 \
     --sitecount {input.sitecount} \
@@ -99,12 +102,13 @@ rule pop_stats_X:
         sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_X-200000-200000.txt"),
         pool_sizes = "../resources/pool_sizes_X.csv"
-    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.th")
-    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000")
+    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.th")
+    params: out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000")
     shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
     python2 scripts/python/PoolGen-var.py \
     --input {input.sync} \
     --pool-size $pool_sizes \
+    --min-sites-frac 0.6 \
     --window 200000 \
     --step 200000 \
     --sitecount {input.sitecount} \
@@ -116,10 +120,10 @@ rule plot_stats:
     input:
         vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf"),
         meta = config['meta_path'],
-        a = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.pi"), b = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.D"), c = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_200000_200000.th"),
-        e = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.pi"), f = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.D"), g = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000.th")
+        a = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.pi"), b = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.D"), c = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.th"),
+        e = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.pi"), f = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.D"), g = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.th")
     output: "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg"
-    params: stats_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_200000_200000") , plot_path = "../results/pop_stats_"
+    params: stats_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000") , plot_path = "../results/pop_stats_"
     shell: "Rscript scripts/R/pop_stats_kapun.R --vcf {input.vcf} --meta {input.meta} --stats {params.stats_path} --plots {params.plot_path}"
 
 

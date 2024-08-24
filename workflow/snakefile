@@ -12,7 +12,7 @@ include: 'rules/WorldClim_data.smk'
 
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]
-PERM_N = [str(i) for i in range(1, 5040)] #5040 e não 5041 porque a primeira permutação são os latutudes certas
+#PERM_N = [str(i) for i in range(1, 5040)] #5040 e não 5041 porque a primeira permutação são os latutudes certas
 #expand(os.path.join(config['align_path'], "{ids}.md.srt.bam.bai"), ids = IDs)
 rule all:
     input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),

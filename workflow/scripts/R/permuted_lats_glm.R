@@ -30,7 +30,7 @@ I_info <-  fread(xargs$meta,
 freqs_filt <- fread(xargs$freqs,
                     drop = c(3,6,7,8))
 
-# freqs_filt <- fread("/dados/time_clines/data/seqs/calls/TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv",
+# freqs_filt <- fread("/dados/time_clines/data/seqs/calls/TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910.tsv",
 #                     drop = c(3,6,7,8))
 
 setnames(freqs_filt, colnames(freqs_filt), c("population", "latitude",

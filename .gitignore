@@ -8,4 +8,4 @@ workflow/fastp.json
 workflow/.RData
 workflow/.Rhistory
 resources/climate_data*
-results/figures*
+results/*

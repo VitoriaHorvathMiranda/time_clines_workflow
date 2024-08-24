@@ -19,6 +19,9 @@ sync_samples <- fread(xargs$sync)
 
 setnames(sync_samples, paste0("V", 1:3), colnames(sync_anc)[1:3])
 
-all_sync <- merge.data.table(sync_samples, sync_anc, by = colnames(sync_anc)[1:3])
+all_sync <- merge.data.table(sync_samples, sync_anc,
+                             by = colnames(sync_anc)[1:3],
+                             all = TRUE)
 
-fwrite(all_sync, xargs$output, sep = "\t", col.names = FALSE)
+fwrite(all_sync, xargs$output, sep = "\t", 
+       col.names = TRUE, na = "NA", quote = FALSE)

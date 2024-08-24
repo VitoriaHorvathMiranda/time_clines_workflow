@@ -100,22 +100,27 @@ rule get_effects: #get the strongest effect of each snp (the first from SNPeff)
     shell: "Rscript scripts/R/get_effects.R -vcf {input.annvcf} -ef {input.effects} -qv {input.q} -o {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule make_perm_pvalue:
+rule genomic_region_odr:
     input: 
-        metadata = config['meta_path'], 
-        freqs = os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv"),
-        effects = os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv")
-    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/chance_perm_n_{perm_n}_{year}.tsv")
-    #group: "permutation"
-    wildcard_constraints: perm_n="|".join(PERM_N), year = "(97|0910)"
-    shell: "Rscript scripts/R/permuted_lats_glm.R -meta {input.metadata} -freqs {input.freqs} -cyear {wildcards.year} -permN {wildcards.perm_n} -e {input.effects} -out {output}"
+        qvalues = os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv"),
+    output: os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_{clinal_year}_clinal_at_{fdr}.tsv")
+    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), fdr = "|".join(config['FDR_cutoffs'])
+    shell: "Rscript scripts/R/odds_ratio_to_random_sampling.R  -qv {input.qvalues} -cut {wildcards.fdr} -out {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule join_chances:
-    input: [config['analysis_path'] + "time_GLM_lat/Perm/chance_perm_n_" + n + "_{year}.tsv" for n in PERM_N]
-    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/joined_perm_chances_{year}.tsv")
-    params: path = os.path.join(config['analysis_path'], "time_GLM_lat/Perm")
-    shell: "Rscript scripts/R/join_perm_chances.R -cyear {wildcards.year} -pc {params.path}"
+rule plot_genomic_region_odr:
+    input: 
+        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_97_clinal_at_0.1.tsv"),
+        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910_clinal_at_0.1.tsv"),
+    output: "../results/odr_genomic_region_random_sampling.jpeg"
+    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), 
+    shell: "Rscript scripts/R/plot_odd_ratio_sampling.R  -odr97 {input.odr97} -odr0910 {input.odr0910} -out {output}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule join_chances:
+#    input: [config['analysis_path'] + "time_GLM_lat/Perm/chance_perm_n_" + n + "_{year}.tsv" for n in PERM_N]
+#    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/joined_perm_chances_{year}.tsv")
+#    params: path = os.path.join(config['analysis_path'], "time_GLM_lat/Perm")
+#    shell: "Rscript scripts/R/join_perm_chances.R -cyear {wildcards.year} -pc {params.path}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule enrichment_odds_ratio:
@@ -134,6 +139,41 @@ rule enrichment_to_integenic:
         table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_to_intergenic_{clinal_year}.tsv")
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
     shell: "Rscript scripts/R/enrichment_to_intergenic.R -eff {input} -pen {output.ench} -out {output.table_odds}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule make_perm_pvalue:
+#    input: 
+#        metadata = config['meta_path'], 
+#        freqs = os.path.join(config['call_path'], "TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv"),
+#        effects = os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}.tsv")
+#    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/chance_perm_n_{perm_n}_{year}.tsv")
+#    #group: "permutation"
+#    wildcard_constraints: perm_n="|".join(PERM_N), year = "(97|0910)"
+#    shell: "Rscript scripts/R/permuted_lats_glm.R -meta {input.metadata} -freqs {input.freqs} -cyear {wildcards.year} -permN {wildcards.perm_n} -e {input.effects} -out {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule join_chances:
+#    input: [config['analysis_path'] + "time_GLM_lat/Perm/chance_perm_n_" + n + "_{year}.tsv" for n in PERM_N]
+#    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/joined_perm_chances_{year}.tsv")
+#    params: path = os.path.join(config['analysis_path'], "time_GLM_lat/Perm")
+#    shell: "Rscript scripts/R/join_perm_chances.R -cyear {wildcards.year} -pc {params.path}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule enrichment_odds_ratio:
+#    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+#    output:
+#        ench= "../results/odds_ratio_{clinal_year}.jpeg",
+#        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_{clinal_year}.tsv"),
+#        bar_plot = "../results/effect_summary_{clinal_year}.jpeg"
+#    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
+#    shell: "Rscript scripts/R/enrichment_effects.R -eff {input} -pen {output.ench} -out {output.table_odds} -cp {output.bar_plot}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule enrichment_to_integenic:
+#    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+#    output:
+#        ench= "../results/odds_ratio_to_integenic_{clinal_year}.jpeg",
+#        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_to_intergenic_{clinal_year}.tsv")
+#    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
+#    shell: "Rscript scripts/R/enrichment_to_intergenic.R -eff {input} -pen {output.ench} -out {output.table_odds}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #rule get_clinal_candidate_snps:
 #    input: 

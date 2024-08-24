@@ -4,6 +4,7 @@ library(argparse)
 library(data.table)
 library(tidyverse)
 library(RColorBrewer)
+library(ggrepel)
 
 
 #parse arguments 
@@ -14,11 +15,11 @@ parser$add_argument('--output', '-out',
                     help= 'plot: inversion frequency x latitude, jpeg')
 xargs<- parser$parse_args()
 
-
+#meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
 meta <- fread(xargs$meta)
 pop_info <- meta[, .(population, collection_year, collection_month, latitude)]
 
-
+#inv_freq <- fread("/dados/time_clines/analysis/inversions/inversion_freq.tsv")
 inv_freq <- fread(xargs$InvFreq)
 
 inv_freq <- 
@@ -61,3 +62,28 @@ INV_FREQ_PLOT
 
 dev.off()
 
+### ONLY 3R - for seged ---------------------------------------------------------
+# INV_3RPayne <- 
+#   inv_freq[Inv == "In(3R)Payne"] |>
+#   ggplot(aes(x = latitude, y = freq, color = test_year)) +
+#   geom_point(size = 5) +
+#   geom_text_repel(aes(label = population), size = 3) +
+#   geom_smooth(method = "lm", level=0.9) +
+#   facet_wrap(vars(Inv), scales = "free_y") + 
+#   scale_color_brewer(palette = "Dark2") +
+#   theme_minimal() +
+#   labs(y = "Frequency", x = "Latitude", color = "") +
+#   theme(strip.text = element_text(face = "italic", size = 16),
+#         axis.title = element_text(size = 16))
+# 
+# 
+# 
+# jpeg(filename = "in3RPayne_freq.jpeg",
+#      width = 25,
+#      height = 10,
+#      units = "cm",
+#      res = 1200)
+# 
+# INV_3RPayne
+
+#dev.off()

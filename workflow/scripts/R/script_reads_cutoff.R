@@ -13,11 +13,18 @@ parser$add_argument('--output', '-o', help= 'tsv with fraq of reads to be remove
 xargs<- parser$parse_args()
 
 #get metadata
+# meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
+# 
+# Stat_path <- "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_idxstats"
+# Cov_path <- "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_coverage"
+
+
 meta <- fread(file = xargs$MetaData,
               sep = "\t")
 
 Stat_path <- xargs$StatsPath
 Cov_path <- xargs$CoveragePath
+
 
 # get total reads --------------------------------------------------------------
 files_stats <- list.files(path = Stat_path,
@@ -51,10 +58,16 @@ all_stats <- all_stats %>%
 # get mean depth ---------------------------------------------------------------
 
 coverage_files <- list.files(path = Cov_path,
-                             pattern = "_coverage.tsv", full.names = TRUE)
+                             pattern = "(1|2)_total_coverage.tsv", full.names = TRUE)
+
+
+#gets the samples ids because files are out of order
+sample_ids <- lapply(coverage_files, str_split_i, pattern = "/", i = 10) |>
+  lapply(str_split_i, pattern = "_", i = 1)
 
 raw_coverages <- lapply(coverage_files, fread)
 lapply(raw_coverages, setnames, "#rname", "chrom")
+
 
 #sample_names <- meta$population
 coverages_pop_names <- vector("list", length(raw_coverages))

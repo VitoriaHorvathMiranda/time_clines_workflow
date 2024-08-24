@@ -13,7 +13,7 @@ parser$add_argument('--wsize', '-wsize', help= 'output: table with summary windo
 parser$add_argument('--FSTfig', '-fig', help= 'output: jpeg manhattan plot of fst')
 xargs<- parser$parse_args()
 
-
+#w_fst <- fread("/dados/time_clines/analysis/fst/window/CT_100_fst.csv")
 w_fst <- fread(xargs$wfst)
 file_name <- xargs$wfst
 

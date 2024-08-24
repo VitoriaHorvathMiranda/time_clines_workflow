@@ -1,5 +1,7 @@
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
+male_labels = [id + "_L001" for id in config['male_ids']]
+IDs_female_pools = [e for e in IDs_deleted_samples if e not in male_labels]
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # 11 - rule bam.txt
 rule bam_txt:
@@ -80,12 +82,13 @@ rule index_downsampled:
 # 11 - rule bam.txt
 rule bam_txt_downsampled:
     input: 
-        dbams = expand(os.path.join(config['align_path'], '{ids_del}_downsample.md.srt.bam'), ids_del = IDs_deleted_samples),
+        dbams = expand(os.path.join(config['align_path'], '{ids_fe}_downsample.md.srt.bam'), ids_fe = IDs_female_pools),
+        dbams_males = expand(os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam'), ids_male = config['male_ids']),
         dbais = expand(os.path.join(config['align_path'], '{ids_del}_downsample.md.srt.bam.bai'), ids_del = IDs_deleted_samples)
     output: os.path.join(config['align_path'], "bam_list_downsampled.txt")
-    wildcard_constraints: ids_del = "|".join(IDs_deleted_samples)
+    wildcard_constraints: ids_fe = "|".join(IDs_female_pools), ids_male = "|".join(config['male_ids'])
     shell:
-        "echo {input.dbams} | sed 's/ /\\n/g' > {output}"
+        "echo {input.dbams} {input.dbams_males} | sed 's/ /\\n/g' > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 # - computes depth per position pos downsampling
@@ -106,6 +109,71 @@ rule total_coverage_downsampled:
     output: os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/{ids_del}_total_coverage.tsv")
     wildcard_constraints: ids_del = "|".join(IDs_deleted_samples)
     shell:"samtools coverage -q 20 -Q 20 -d 200 -o {output} {input.dbams}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule get_male_X_bam:
+    input: 
+        bams = os.path.join(config['align_path'], '{ids_male}_L001.md.srt.bam'), 
+        bais = os.path.join(config['align_path'], '{ids_male}_L001.md.srt.bam.bai')
+    output: os.path.join(config['align_path'], '{ids_male}_only_chrom_X.md.srt.bam'), 
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    shell: "samtools view -b {input.bams} X > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule down_fraq_male_X_bam:
+    input: cov = expand(os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage/{male_ids}_L001_total_coverage.tsv"), male_ids = config['male_ids'])
+    output:  os.path.join(config['qltctrl_path'], "downsample_info_chromX.tsv")
+    params: 
+        cov_path = os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage"),
+        pops= "_".join(config['male_ids'])
+    shell: "Rscript scripts/R/downsample_fraq_male_pools.R -cov {params.cov_path} -mpools {params.pops} -o {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule downsample_X_chrom:
+    input: 
+        xbam = os.path.join(config['align_path'], '{ids_male}_only_chrom_X.md.srt.bam'),
+        frac = os.path.join(config['qltctrl_path'], "downsample_info_chromX.tsv")
+    output: os.path.join(config['align_path'], '{ids_male}_only_chrom_X_downsampled.md.srt.bam')
+    params: pops = "|".join(config['male_ids'])
+    threads: 4
+    shell: "frac_reads=$(cat {input.frac} | awk '$10 == \"{wildcards.ids_male}\" {{print ($11 >= 1) ? 1 : $11}}') && \
+    samtools view -@{threads} -bs $frac_reads {input.xbam} > {output} || cp {input.xbam} {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule delete_X_male_down:
+    input: 
+        dbams = os.path.join(config['align_path'], '{ids_male}_L001_downsample.md.srt.bam'),
+        X_filter = "../resources/CHORM_X.bed",
+    output: 
+        noX = os.path.join(config['align_path'], '{ids_male}_noX_downsample.md.srt.bam')
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    threads: 4
+    shell: "samtools view -@{threads} -b {input.dbams} -L {input.X_filter} -U {output.noX}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule merge_male_bams:
+    input: 
+        xbam = os.path.join(config['align_path'], '{ids_male}_only_chrom_X_downsampled.md.srt.bam'),
+        noXbam = os.path.join(config['align_path'], '{ids_male}_noX_downsample.md.srt.bam')
+    output: os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam')
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    threads: 4
+    shell: "samtools cat {input.noXbam} {input.xbam} -o {output}"
+    #"java -jar /home/vitoria/bin/picard.jar MergeSamFiles I={input.noXbam} I={input.xbam} O={output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule male_sort:
+    input: os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam')
+    output: os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam')
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    shell: "samtools sort -o {output} {input}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule male_covstats:
+    input: os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam')
+    output: os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/{ids_male}_all_chrom_total_coverage.tsv")
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    shell: "samtools coverage -q 20 -Q 20 -d 200 -o {output} {input}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #compute depth per 80kb windows

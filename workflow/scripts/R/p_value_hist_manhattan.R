@@ -4,6 +4,7 @@ library(argparse)
 library(data.table)
 library(qvalue)
 library(tidyverse)
+library(patchwork)
 
 
 #parse arguments 
@@ -20,11 +21,11 @@ parser$add_argument('--qPlot0910', '-qp0910', help = 'p-plot output 0910, .jpeg'
 parser$add_argument('--qPlot0910FL2', '-qp0910FL2', help = 'p-plot output 0910, .jpeg')
 xargs<- parser$parse_args()
 
-
+#input_general <- "/dados/time_clines/analysis/time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_"
 input_general <- xargs$path
-input97 <- paste0(input_general, "97")
-input0910 <- paste0(input_general, "0910")
-input0910FL2 <- paste0(input_general, "0910FL2")
+input97 <- paste0(input_general, "97_")
+input0910 <- paste0(input_general, "0910_")
+input0910FL2 <- paste0(input_general, "0910FL2_")
 
 pattern_97 <- str_split_i(input97, "/", i=6)
 pattern_0910 <- str_split_i(input0910, "/", i=6)

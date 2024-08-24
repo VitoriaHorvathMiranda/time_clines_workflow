@@ -4,6 +4,7 @@ import re
 import gzip
 import pandas as pd
 
+
 ref_path = "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
 ref_index_path = ref_path + ".pac" # index de referencia
 raw_fqs_path = "/dados/time_clines/data/seqs/raw/" # local dos arquivos fastq.gz
@@ -32,7 +33,21 @@ for fq in fqs_pref:
             grouped_fqs[joined_name].append(fq) # se grupo existe, adiciona prefixo ao grupo
 
 test=",".join(list(grouped_fqs.keys()))
-print(test)
+#print(test)
+
+male_ids = ["dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi"]
+
+IDs = list(grouped_fqs.keys())
+IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
+male_labels = [id + "_L001" for id in male_ids]
+IDs_female_pools = [e for e in IDs_deleted_samples if e not in male_labels]
+
+
+print("IDs_deleted_samples:")
+print(IDs_deleted_samples)
+
+#print("IDs_female_pools:")
+#print(IDs_female_pools)
 # Ao final desse bloco, teremos os seguintes grupos + prefixos:
 # {'09_L001':    ['09_L1A1_EKDL190133983-2a-5-AK3819_HWKNMDSXX_L001'], 
 #  '10_L001':    ['10_L1A1_EKDL190133983-2a-AK2939-AK10154_HWKNMDSXX_L001'], 
