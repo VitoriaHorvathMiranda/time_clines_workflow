@@ -83,8 +83,9 @@ rule index_downsampled:
 rule bam_txt_downsampled:
     input: 
         dbams = expand(os.path.join(config['align_path'], '{ids_fe}_downsample.md.srt.bam'), ids_fe = IDs_female_pools),
-        dbams_males = expand(os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam'), ids_male = config['male_ids']),
-        dbais = expand(os.path.join(config['align_path'], '{ids_del}_downsample.md.srt.bam.bai'), ids_del = IDs_deleted_samples)
+        dbams_males = expand(os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam'), ids_male = config['male_ids']),
+        dbais = expand(os.path.join(config['align_path'], '{ids_del}_downsample.md.srt.bam.bai'), ids_del = IDs_deleted_samples),
+        dbais_males = expand(os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam.bai'), ids_male = config['male_ids'])
     output: os.path.join(config['align_path'], "bam_list_downsampled.txt")
     wildcard_constraints: ids_fe = "|".join(IDs_female_pools), ids_male = "|".join(config['male_ids'])
     shell:
@@ -115,7 +116,7 @@ rule get_male_X_bam:
     input: 
         bams = os.path.join(config['align_path'], '{ids_male}_L001.md.srt.bam'), 
         bais = os.path.join(config['align_path'], '{ids_male}_L001.md.srt.bam.bai')
-    output: os.path.join(config['align_path'], '{ids_male}_only_chrom_X.md.srt.bam'), 
+    output: temp(os.path.join(config['align_path'], '{ids_male}_only_chrom_X.md.srt.bam')), 
     wildcard_constraints: ids_male = "|".join(config['male_ids'])
     shell: "samtools view -b {input.bams} X > {output}"
 
@@ -133,7 +134,7 @@ rule downsample_X_chrom:
     input: 
         xbam = os.path.join(config['align_path'], '{ids_male}_only_chrom_X.md.srt.bam'),
         frac = os.path.join(config['qltctrl_path'], "downsample_info_chromX.tsv")
-    output: os.path.join(config['align_path'], '{ids_male}_only_chrom_X_downsampled.md.srt.bam')
+    output: temp(os.path.join(config['align_path'], '{ids_male}_only_chrom_X_downsampled.md.srt.bam'))
     params: pops = "|".join(config['male_ids'])
     threads: 4
     shell: "frac_reads=$(cat {input.frac} | awk '$10 == \"{wildcards.ids_male}\" {{print ($11 >= 1) ? 1 : $11}}') && \
@@ -145,7 +146,7 @@ rule delete_X_male_down:
         dbams = os.path.join(config['align_path'], '{ids_male}_L001_downsample.md.srt.bam'),
         X_filter = "../resources/CHORM_X.bed",
     output: 
-        noX = os.path.join(config['align_path'], '{ids_male}_noX_downsample.md.srt.bam')
+        noX = temp(os.path.join(config['align_path'], '{ids_male}_noX_downsample.md.srt.bam'))
     wildcard_constraints: ids_male = "|".join(config['male_ids'])
     threads: 4
     shell: "samtools view -@{threads} -b {input.dbams} -L {input.X_filter} -U {output.noX}"
@@ -155,7 +156,7 @@ rule merge_male_bams:
     input: 
         xbam = os.path.join(config['align_path'], '{ids_male}_only_chrom_X_downsampled.md.srt.bam'),
         noXbam = os.path.join(config['align_path'], '{ids_male}_noX_downsample.md.srt.bam')
-    output: os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam')
+    output: temp(os.path.join(config['align_path'], '{ids_male}_all_male_chrom.md.srt.bam'))
     wildcard_constraints: ids_male = "|".join(config['male_ids'])
     threads: 4
     shell: "samtools cat {input.noXbam} {input.xbam} -o {output}"
@@ -167,6 +168,15 @@ rule male_sort:
     output: os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam')
     wildcard_constraints: ids_male = "|".join(config['male_ids'])
     shell: "samtools sort -o {output} {input}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule male_index:
+    input: os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam')
+    output: os.path.join(config['align_path'], '{ids_male}_all_male_chrom_sorted.md.srt.bam.bai')
+    threads: 5
+    wildcard_constraints: ids_male = "|".join(config['male_ids'])
+    shell: "samtools index -@{threads} {input}"
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule male_covstats:
@@ -193,9 +203,12 @@ rule plot_depth:
         pre = expand(os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage/{ids_del}_total_coverage.tsv"), ids_del = IDs_deleted_samples),
         pos = expand(os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/{ids_del}_total_coverage.tsv"), ids_del = IDs_deleted_samples),
         depths = expand(os.path.join(config['qltctrl_path'], "depth_per_80kb_window_{chrom}.tsv"), chrom = config['chrom'])
-    output: "../results/depths_coverage_pre_pos_downsample.jpeg"
+    output: 
+        big_plot = "../results/depths_coverage_pre_pos_downsample.jpeg",
+        boxplots = "../results/mean_depths_boxplot.jpeg"
     params:
         precp = os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage"),
         poscp = os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage"),
-        dpos = config['qltctrl_path']
-    shell: "Rscript scripts/R/script_downsample_plot.R -m {input.meta} -precp {params.precp} -poscp {params.poscp} -dpos {params.dpos} -o {output}"
+        dpos = config['qltctrl_path'],
+        pops= "_".join(config['male_ids'])
+    shell: "Rscript scripts/R/script_downsample_plot.R -m {input.meta} -precp {params.precp} -poscp {params.poscp} -mIDs {params.pops} -dpos {params.dpos} -o {output.big_plot} -box {output.boxplots}"

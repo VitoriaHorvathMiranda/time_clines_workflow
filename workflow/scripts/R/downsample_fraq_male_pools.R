@@ -7,7 +7,7 @@ library(tidyverse)
 #parse arguments
 parser <- ArgumentParser(description= "")
 parser$add_argument('--CoveragePath', '-cov', help= 'path to -samtools coverage- outputs')
-parser$add_argument('--male_pools', '-mpools', help = 'name of the male pools "|" separated')
+parser$add_argument('--male_pools', '-mpools', help = 'name of the male pools "_" separated')
 parser$add_argument('--output', '-o', help= 'tsv with fraq of reads to be removed')
 xargs<- parser$parse_args()
 

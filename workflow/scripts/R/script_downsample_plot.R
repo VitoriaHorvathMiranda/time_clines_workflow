@@ -8,6 +8,7 @@ parser <- ArgumentParser(description= "Makes depth plot per coverage and per pos
 parser$add_argument('--meta', '-m', help= 'metadados table')
 parser$add_argument('--PreCovPath', '-precp', help= 'Pre downsample samtools coverage path')
 parser$add_argument('--PosCovPath', '-poscp', help= 'Pos downsample samtools coverage path')
+parser$add_argument('--maleIDs', '-mIDs', help= 'pop names of pools with male flies "_" separated')
 parser$add_argument('--DepthperPOS', '-dpos', help= 'path to folder with script_depth_per_pos output')
 parser$add_argument('--output', '-o', help= 'Single Jpeg with all plots')
 parser$add_argument('--boxplot', '-box', help = 'boxplot of mean depth per chrom per year')
@@ -22,27 +23,35 @@ meta <- fread(xargs$meta, fill = TRUE)
 
 meta[, population := ifelse(population == "HFL97_new", "ESC97_n", population)]
 
-files_cov_pre_down <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_coverage",
+# files_cov_pre_down <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_coverage",
+#                                  pattern = "coverage.tsv", full.names = TRUE)
+# 
+# files_cov_pos_down1 <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pos_downsample/samtools_coverage",
+#                                  pattern = "(1|2)_total_coverage.tsv", full.names = TRUE)
+# 
+# files_cov_pos_down2 <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pos_downsample/samtools_coverage",
+#                                  pattern = "_all_chrom_total_coverage.tsv", full.names = TRUE)
+
+
+files_cov_pre_down <- list.files(path = xargs$PreCovPath,
                                  pattern = "coverage.tsv", full.names = TRUE)
 
-files_cov_pos_down1 <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pos_downsample/samtools_coverage",
-                                 pattern = "(1|2)_total_coverage.tsv", full.names = TRUE)
+files_cov_pos_down1 <- list.files(path = xargs$PosCovPath,
+                                  pattern = "(1|2)_total_coverage.tsv", full.names = TRUE)
 
-files_cov_pos_down2 <- list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl/pos_downsample/samtools_coverage",
-                                 pattern = "_all_chrom_total_coverage.tsv", full.names = TRUE)
+files_cov_pos_down2 <- list.files(path = xargs$PosCovPath,
+                                  pattern = "_all_chrom_total_coverage.tsv", full.names = TRUE)
 
-male_ids <- c("dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi")
 
-files_cov_pos_down_all <- files_cov_pos_down1[!str_detect(files_cov_pos_down1, paste(male_ids, collapse = "|"))]
+#male_ids <- c("dlSC10_dlGA10_dlFL10_HFL97downto60mi")
+
+male_ids <- xargs$maleIDs
+
+male_ids <- str_replace_all(male_ids, "_", "|")
+
+files_cov_pos_down_all <- files_cov_pos_down1[!str_detect(files_cov_pos_down1, male_ids)]
 
 files_cov_pos_down_all <- c(files_cov_pos_down_all, files_cov_pos_down2)
-
-
-
-# files_cov_pre_down <- list.files(path = xargs$PreCovPath,
-#                                  pattern = "coverage.tsv", full.names = TRUE)
-# files_cov_pos_down <- list.files(path = xargs$PosCovPath,
-#                                  pattern = "coverage.tsv",  full.names = TRUE)
 
 
 #gets the samples ids because files are out of order
@@ -65,11 +74,11 @@ chrom_pos_down1 <- lapply(cov_pos_down_all,
 
 print("coverage files:")
 files_cov_pre_down
-files_cov_pos_down
-print("sample_ids:")
-sample_ids
-print("meta file:")
-meta
+files_cov_pos_down_all
+# print("sample_ids:")
+# sample_ids
+# print("meta file:")
+# meta
 ## adds pops names and merge files ----------------------------------------------
 
 get_names <- 
