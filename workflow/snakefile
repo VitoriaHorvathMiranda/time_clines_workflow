@@ -9,6 +9,7 @@ include: 'rules/analysis_FST_PCA.smk'
 include: 'rules/Inv_stats.smk'
 include: 'rules/ancestry.smk'
 include: 'rules/WorldClim_data.smk'
+include: 'rules/get_ancestral_data.smk'
 
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]

@@ -10,13 +10,13 @@ SRAs_dict: { # from project number PRJNA256231
 
 male_ids: ["dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi"]
 
-anc_folder: "/disco1/vitoria"
+anc_folder: "/dados/time_clines/data/database_seqs"
 haploid_SRAs_dict: { # from project number 
   'SU02n':'SRR2347216',
   'SU05n':'SRR2347265',
   'SU07n':'SRR2347336',
   'SU08':'SRR2347337',
-  'SU21n':'SRR2347338',
+  'SU21n':'SRR2347338', #problema no view de sam para bam
   'SU25n':'SRR2347339',
   'SU26n':'SRR2347340',
   'SU29':'SRR2347341',
