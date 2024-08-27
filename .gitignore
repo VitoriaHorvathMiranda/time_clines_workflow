@@ -9,3 +9,4 @@ workflow/.RData
 workflow/.Rhistory
 resources/climate_data*
 results/*
+#workflow/snakemake_dry_run.txt

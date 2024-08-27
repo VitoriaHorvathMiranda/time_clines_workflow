@@ -11,7 +11,9 @@ parser$add_argument('--output', '-o', help= 'tsv with depth, latitude and n of c
 xargs<- parser$parse_args()
 
 #get data
+#metadata <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
 metadata <- fread(file = xargs$metadata)
+#depths <- fread("/dados/time_clines/data/seqs/calls/freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
 depths <- fread(file = xargs$DepthFreq)
 
 depths <- depths[depth != ".", ]
