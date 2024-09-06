@@ -18,6 +18,11 @@ parser$add_argument('--output', '-o',
                     and it's annotation")
 xargs<- parser$parse_args()
 
+# effects <- fread("~/time_clines_workflow/resources/effects.tsv")
+# VCF <- fread("/dados/time_clines/data/seqs/calls/PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.ann.vcf",
+#              select = c(1,2,5,8))
+
+#q_values <- fread("/dados/time_clines/analysis/time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910all.tsv")
 
 effects <- fread(xargs$effects)
 VCF <- fread(xargs$vcf,
@@ -26,6 +31,7 @@ VCF <- fread(xargs$vcf,
 q_values <- fread(xargs$qValue)
 
 setnames(VCF, "#CHROM", "chrom")
+setnames(q_values, "CHROM", "chrom")
 
 # filter for biallelic snps
 VCF <- VCF[!(ALT %like% ","),]

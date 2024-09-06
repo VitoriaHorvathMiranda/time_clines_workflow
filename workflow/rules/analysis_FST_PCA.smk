@@ -128,69 +128,23 @@ rule plot_stats:
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-
-rule true_windowns_chrom_arm:
+rule pop_stats_chrom_arms:
     input:
-        bad_pos = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz"),
-        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
-        te = os.path.join(config['ref_folder'], "repeat_6_with_spaces.bed")
-    output: os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
-    params: 
-        out_path = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}"),
-        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1],
-        chrom_value = lambda wildcards: f"{wildcards.chrom_lenght_step.split('-')[0]}:{wildcards.chrom_lenght_step.split('-')[1]}"
-    shell: "python2 scripts/python/TrueWindows.py \
-    --badcov {input.bad_pos} \
-    --indel {input.indels} \
-    --te {input.te} \
-    --window {params.window_size} \
-    --step {params.window_size} \
-    --chromosomes {params.chrom_value} \
-    --output {params.out_path}" 
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-rule pop_stats_global:
-    input:
-        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
-        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
-        pool_sizes = "../resources/pool_sizes_autosome.csv"
-    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.th")
-    wildcard_constraints: chrom_lenght_step = "|".join([v for v in config['chrom_lenght_step'] if v != "X-23542271-23542271"])
-    params: 
-        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
-        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
-    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
-    python2 scripts/python/PoolGen-var.py \
-    --input {input.sync} \
-    --min-count 1 \
-    --min-sites-frac 0.5 \
-    --pool-size $pool_sizes \
-    --window {params.window_size} \
-    --step {params.window_size} \
-    --sitecount {input.sitecount} \
-    --output {params.out_path}"
-        
-#-------------------------------------------------------------------------------------------------------------------------------------------------
-rule pop_stats_global_X:
-    input:
-        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
-        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
-        pool_sizes = "../resources/pool_sizes_X.csv"
-    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.th")
-    wildcard_constraints: chrom_lenght_step = ("X-23542271-23542271")
-    params: 
-        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
-        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
-    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
-    python2 scripts/python/PoolGen-var.py \
-    --input {input.sync} \
-    --min-count 1 \
-    --min-sites-frac 0.5 \
-    --pool-size $pool_sizes \
-    --window {params.window_size} \
-    --step {params.window_size} \
-    --sitecount {input.sitecount} \
-    --output {params.out_path}"
+        statA = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000.{stat}"),
+        statX = os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_X_miss_fraq0.60_200000_200000.{stat}"),
+        windowA = os.path.join(config['analysis_path'], "pop_stats/truewindows-200000-200000.txt"),
+        windowX = os.path.join(config['analysis_path'], "pop_stats/truewindows_X-200000-200000.txt"),
+        meta = config['meta_path'],
+        vcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf")
+    output:
+        per_pop = os.path.join(config['analysis_path'], "pop_stats/Global_stat_{stat}_per_pop.tsv"),
+        per_year = os.path.join(config['analysis_path'], "pop_stats/Global_stat_{stat}_per_year.tsv"),
+        barplot = "../results/barplot_stat_{stat}.jpeg"
+    wildcard_constraints: stat = "(pi|th)"
+    shell: "Rscript scripts/R/global_pop_stat.R -statA {input.statA} -statX {input.statX} \
+    -wA {input.windowA} -wX {input.windowX} \
+    -meta {input.meta} -vcf {input.vcf} \
+    -out {output.per_pop} -y {output.per_year} -bar {output.barplot}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_FST_autosome:
@@ -219,7 +173,7 @@ rule X_FST:
         pool_sizes = "../resources/pool_sizes_X.csv",
         ref = config['ref_path'],
         rename = "../resources/rename_samples.tsv"
-    output: os.path.join(config['FST_genome_path'],"Genome_FST_X_fst-matrix.csv")
+    output: os.path.join(config['FST_genome_path'],"Genome_FST_X_fst-matrix.csv"), os.path.join(config['FST_genome_path'],"Genome_FST_X_fst-list.csv")
     params: outdir=config['FST_genome_path'], prefix="Genome_FST_X_"
     shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
     --sync-path {input.sync} \
@@ -242,6 +196,19 @@ rule plot_genome_FST:
         all_pops = "../results/ALL_pops_genome_FST.jpeg",
         time_pops = "../results/Time_pops_genome_FST.jpeg"
     shell: "Rscript scripts/R/genome_FST_plot.R -meta {input.meta} -x {input.fst_x} -auto {input.fst_auto} -oall {output.all_pops} -otime {output.time_pops}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule fst_per_year:
+    input: 
+        fst = os.path.join(config['FST_genome_path'],"Genome_FST_{chrom_type}_fst-list.csv"),
+        meta = config['meta_path']
+    output:
+        boxplot = "../results/fst_year_boxplot_{chrom_type}.jpeg",
+        lm = "../results/fst_year_lm_{chrom_type}.txt",
+        distLM = "../results/fst_year_dist_lm_{chrom_type}.txt",
+        distfig = "../results/fst_year_dist_{chrom_type}.jpeg",
+    wildcard_constraints: chrom_type = "(autosome|X)"
+    shell: "Rscript scripts/R/mean_fst_per_year.R -fst {input.fst} -meta {input.meta} -lm {output.lm} -box {output.boxplot} -distLM {output.distLM} -dist {output.distfig}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule window_fst: #não precisa fazer uma regra separada para o cromossomo X porque todas as populações que eu uso aqui são só de fêmeas e foram coletadas da mesma maneira
@@ -362,4 +329,66 @@ rule merge_outliers_windows:
 #    shell: "grep -v '0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0,0,0.000,0,0' {input} > {output}"
 
 
+#rule true_windowns_chrom_arm:
+#    input:
+#        bad_pos = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_BS.txt.gz"),
+#        indels = os.path.join(config['align_path'], "InDel-positions_20.txt.gz"),
+#        te = os.path.join(config['ref_folder'], "repeat_6_with_spaces.bed")
+#    output: os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+#    params: 
+#        out_path = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}"),
+#        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1],
+#        chrom_value = lambda wildcards: f"{wildcards.chrom_lenght_step.split('-')[0]}:{wildcards.chrom_lenght_step.split('-')[1]}"
+#    shell: "python2 scripts/python/TrueWindows.py \
+#    --badcov {input.bad_pos} \
+#    --indel {input.indels} \
+#    --te {input.te} \
+#    --window {params.window_size} \
+#    --step {params.window_size} \
+#    --chromosomes {params.chrom_value} \
+#    --output {params.out_path}" 
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule pop_stats_global:
+#    input:
+#        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+#        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+#        pool_sizes = "../resources/pool_sizes_autosome.csv"
+#    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.th")
+#    wildcard_constraints: chrom_lenght_step = "|".join([v for v in config['chrom_lenght_step'] if v != "X-23542271-23542271"])
+#    params: 
+#        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
+#        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
+#    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+#    python2 scripts/python/PoolGen-var.py \
+#    --input {input.sync} \
+#    --min-count 1 \
+#    --min-sites-frac 0.5 \
+#    --pool-size $pool_sizes \
+#    --window {params.window_size} \
+#    --step {params.window_size} \
+#    --sitecount {input.sitecount} \
+#    --output {params.out_path}"
+        
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule pop_stats_global_X:
+#    input:
+#        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+#        sitecount = os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"),
+#        pool_sizes = "../resources/pool_sizes_X.csv"
+#    output: os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}.pi"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.D"), os.path.join(config['analysis_path'], "pop_stats/pop_stats_kapun_global_{chrom_lenght_step}.th")
+#    wildcard_constraints: chrom_lenght_step = ("X-23542271-23542271")
+#    params: 
+#        out_path = os.path.join(config['analysis_path'], "pop_stats/pop_stats_global_{chrom_lenght_step}"),
+#        window_size = lambda wildcards: wildcards.chrom_lenght_step.split('-')[1]
+#    shell: "pool_sizes=$(cut -d ',' -f 2 {input.pool_sizes} | paste -sd,) && \
+#    python2 scripts/python/PoolGen-var.py \
+#    --input {input.sync} \
+#    --min-count 1 \
+#    --min-sites-frac 0.5 \
+#    --pool-size $pool_sizes \
+#    --window {params.window_size} \
+#    --step {params.window_size} \
+#    --sitecount {input.sitecount} \
+#    --output {params.out_path}"
 

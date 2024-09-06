@@ -14,7 +14,7 @@ parser$add_argument('--painel', '-painel', help= 'ancestry painel from raw_ances
 parser$add_argument('--output', '-o', help= 'sync file with ancetral pops')
 xargs<- parser$parse_args()
 
-#anc_painel <- fread("/dados/time_clines/analysis/ancestry/raw_ancestry_painel.tsv")
+#anc_painel <- fread("/dados/time_clines/analysis/ancestry/raw_ancestry_painel_chrom_2L.tsv")
 anc_painel <- fread(xargs$painel)
 
 bases <- c("A", "T", "C", "G")

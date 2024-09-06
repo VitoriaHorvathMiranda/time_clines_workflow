@@ -25,7 +25,7 @@ POP_09_10dlFL <- ALL_POP[(population %like% "09" | population %like% "10") & pop
 POP_09_10dlFL_nodls <- ALL_POP[(population %like% "09" | population %like% "10") & 
                                  !(population %in% c("JFL10", "dlGA10", "dlSC10"))]
 
-POP_97_noMFL <- ALL_POP[population %like% "97" | population != "MFL97"]
+POP_97_noMFL <- ALL_POP[population %like% "97" & population != "MFL97"]
 
 POP_09_10_all <- ALL_POP[(population %like% "09" | population %like% "10")]
 

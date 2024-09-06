@@ -42,9 +42,37 @@ IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L0
 male_labels = [id + "_L001" for id in male_ids]
 IDs_female_pools = [e for e in IDs_deleted_samples if e not in male_labels]
 
+#meta_path = "/dados/time_clines/data/meta/seq_metadata.tsv"
+with open('/dados/time_clines/data/meta/seq_metadata.tsv', 'r') as file:
+    meta = [line.strip().split('\t') for line in file]
+        
+# Initialize an empty list to store the results
+IDs_bams = []
+# Open the BAM list file in read mode
+with open('/dados/time_clines/data/seqs/align/bam_list_downsampled.txt', 'r') as file:
+    # Loop through each line in the file
+    for line in file:
+        # Strip any leading/trailing whitespace (like newlines)
+        line = line.strip()
+        # Split the line at the first underscore and take the first part
+        first_part = line.split('_')[1]
+        id_name = first_part.split('/')[4]
+        # Append the first part to the result list
+        IDs_bams.append(id_name)
 
-print("IDs_deleted_samples:")
-print(IDs_deleted_samples)
+        # Initialize an empty list for sample names
+sample_names = []
+# Map IDs to sample names using the metadata
+for string in IDs_bams:
+    for row in meta:
+        if string == row[0]:  # Find the row with the id
+            sample_names.append(row[1])  # Get the pop name
+            break  # Stop searching once a match is found
+
+
+print(IDs_bams)
+
+
 
 #print("IDs_female_pools:")
 #print(IDs_female_pools)

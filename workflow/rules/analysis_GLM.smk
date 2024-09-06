@@ -66,7 +66,8 @@ rule make_glm_plots:
     -man {output.man} \
     -hist {output.ht}\
     -qhist {output.qhists}\
-    -qp {output.qPlot}"
+    -qp {output.qPlot} \
+    -out {output.qvalues}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule annotate:

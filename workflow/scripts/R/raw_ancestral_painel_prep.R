@@ -16,43 +16,46 @@ parser$add_argument('--vcf', '-vcf', help = "vcf with ref ancestral haploid geno
 parser$add_argument('--output', '-out', help= 'raw ancestry painel')
 xargs<- parser$parse_args()
 
-vcf_painel <- fread(xargs$vcf)
-
-setnames(vcf_painel, "#CHROM", "CHROM")
-
-# os cromosomos estavam com esses nomes porque originalmente eu pretendia usar o \n
-#plick para calcular a ancestralidade global dos meus genomas haploides
-vcf_painel[, CHROM := fcase(CHROM == "1", "2L",
-                            CHROM == "2", "2R",
-                            CHROM == "3", "3L",
-                            CHROM == "4", "3R",
-                            rep(TRUE, .N), as.character(CHROM))]
 
 
-vcf_painel_tidy <- melt.data.table(vcf_painel, id.vars = 1:5,
+#format- GT:AD:DP:GQ:PL
+
+# vcf <- fread("/dados/time_clines/data/database_seqs/call/AFR_EU_chrom_2L.biallelic.clean.vcf",
+#              skip = "#CHROM",
+#              drop = c("ID", "QUAL", "FILTER", "INFO", "FORMAT"))
+
+vcf <- fread(xargs$vcf,
+             skip = "#CHROM",
+             drop = c("ID", "QUAL", "FILTER", "INFO", "FORMAT"))
+
+
+setnames(vcf, "#CHROM", "CHROM")
+
+
+vcf_tidy <- melt.data.table(vcf, id.vars = 1:4,
                                    variable.name = "sample",
                                    value.name = "genotype")
 
 #dt[, c("PX", "PY") := tstrsplit(PREFIX, "_", fixed=TRUE)]
-vcf_painel_tidy[, c("GT","AD","DP","GQ","PL") := 
+vcf_tidy[, c("GT","AD","DP","GQ","PL") := 
                   tstrsplit(genotype, ":", fixed = TRUE)]
 
 #GT = genotype
 #DP = Depth
-vcf_painel_tidy[, c("GT", "DP") := lapply(.SD, as.integer), .SDcols = c("GT","DP")]
+vcf_tidy[, c("GT", "DP") := lapply(.SD, as.integer), .SDcols = c("GT","DP")]
 
-vcf_painel_tidy <- vcf_painel_tidy[DP > 1]
+vcf_tidy <- vcf_tidy[DP > 2]
 
-vcf_painel_tidy[, ancestry := fcase(sample %like% "FR" | sample %like% "SU", "EU",
+vcf_tidy[, ancestry := fcase(sample %like% "FR" | sample %like% "SU", "EU",
                                     default = "AFR")]
 
-vcf_painel_tidy[, ref_gt := fcase(GT == 0, 1,
-                                  GT == 1, 0)]
+vcf_tidy[, ref_gt := fcase(GT == 0, 1,
+                           GT == 1, 0)]
 
 painel_count <- 
-  vcf_painel_tidy[, .(alt_allele_count = sum(GT),
-                      ref_allele_count = sum(ref_gt)),
-                  by = c("CHROM", "POS", "REF", "ALT", "ancestry")]
+  vcf_tidy[, .(alt_allele_count = sum(GT),
+               ref_allele_count = sum(ref_gt)),
+           by = c("CHROM", "POS", "REF", "ALT", "ancestry")]
 
 painel_count_wide <- 
   dcast.data.table(painel_count,

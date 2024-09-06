@@ -1,22 +1,6 @@
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
 
-meta_path = config['meta_path']
-with open(meta_path, 'r') as file:
-    meta = [line.strip().split('\t') for line in file]
-
-list_of_ids = []
-for string in IDs_deleted_samples:
-    ids = string.split("_")[0]  # Get the part before the first "_"
-    list_of_ids.append(ids)
-
-sample_names = []
-for string in list_of_ids:
-    for row in meta:
-        if string == row[0]: #find the row with the id
-            sample_names.append(row[1]) #get the pop name
-            break  # Stop searching once a match is found
-    
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------
 # 12 -  - rule mpileup
@@ -41,16 +25,61 @@ rule gzip_mpileup:
     shell: "gzip {input}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule name_order:
+    input: 
+        meta = config['meta_path'],
+        bam_list = os.path.join(config['align_path'], "bam_list_downsampled.txt")
+    output:
+        sample_names = "../resources/sample_names.txt"
+    run:
+        # Check the paths
+        print(f"bam_list path: {input.bam_list}")
+        print(f"meta path: {input.meta}")
+        
+        # Load the metadata
+        with open(input.meta, 'r') as file:
+            meta = [line.strip().split('\t') for line in file]
+        
+        # Initialize an empty list to store the results
+        IDs_bams = []
+
+        # Open the BAM list file in read mode
+        with open(input.bam_list, 'r') as file:
+            # Loop through each line in the file
+            for line in file:
+                line = line.strip()
+                #first_part = line.split('_')[0]
+                path_parts = line.split('/')[6]
+                print(path_parts)
+                id_names = path_parts.split('_')[0]
+                print(id_names)
+                IDs_bams.append(id_names)
+                
+        # Process the IDs with the metadata
+        sample_names = []
+        for string in IDs_bams:
+            for row in meta:
+                if string == row[0]:  # Find the row with the id
+                    sample_names.append(row[1])  # Get the pop name
+                    break
+         
+        # Write the sample names to the output file
+        with open(output.sample_names, 'w') as out_file:
+            out_file.write("\n".join(sample_names))
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
 # 11 - Variant calling
 rule call:
     input: 
         mpileup = os.path.join(config['align_path'], 'noSNC10_noESC97_with_dlGA10_dlSC10.mpileup.gz'),
-        ref = config['ref_path']
+        ref = config['ref_path'],
+        names = "../resources/sample_names.txt"
     output: os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.vcf.gz")
     params:
         outdir= os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15"),
         poolSNP = config['PoolSNP.sh'],
-        samples =  ",".join(sample_names)
+        samples =  lambda wildcards, input: ",".join([line.strip() for line in open(input.names)])
     threads: 40
     shell: "bash /home/vitoria/bin/PoolSNP/PoolSNP.sh\
     mpileup={input.mpileup}\

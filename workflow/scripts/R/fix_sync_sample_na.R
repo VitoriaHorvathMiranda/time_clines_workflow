@@ -13,7 +13,7 @@ xargs<- parser$parse_args()
 
 #all_sync <- fread("/dados/time_clines/analysis/ancestry/all_samples.sync")
 all_sync <- fread(xargs$sync)
-setnames(all_sync, colnames(all_sync)[1:3], c("CHROM", "POS", "REF"))
+#setnames(all_sync, colnames(all_sync)[1:3], c("CHROM", "POS", "REF"))
 
 # BS <- fread("importand_bed_sites.tsv",
 #             col.names = c("CHROM", "POS", "bs"),
@@ -57,10 +57,14 @@ for (i in seq_along(V_cols)) {
   
 }
 
+
 par_fixed <- par_fixed[, !c(Vbs_cols, "bs"), with = FALSE]
 
+#df[df[, Reduce(`|`, lapply(.SD, `%like%`, "test")), .SDcols = cols]]
+par_fixed <- par_fixed[!(par_fixed[, Reduce(`&`, lapply(.SD, `==`, "0:0:0:0:0:0")), .SDcols = V_cols])]
 
 
 fwrite(par_fixed,
        file = xargs$output,
-       sep = "\t", col.names = TRUE)
+       sep = "\t", col.names = TRUE,
+       na = "NA")
