@@ -28,5 +28,5 @@ rule plot_invFreq:
     input: 
         meta = config['meta_path'],
         inv_freq = os.path.join(config['analysis_path'], "inversions/inversion_freq.tsv")
-    output: "../results/Inv_freq_per_lat.jpeg"
-    shell: "Rscript scripts/R/Inv_freq_plot.R -meta {input.meta} -invf {input.inv_freq} -out {output}"
+    output: plot = "../results/Inv_freq_per_lat.jpeg", glms = "../results/Inv_freq_per_lat.txt"
+    shell: "Rscript scripts/R/Inv_freq_plot.R -meta {input.meta} -invf {input.inv_freq} -out {output.plot} -glm {output.glms}"

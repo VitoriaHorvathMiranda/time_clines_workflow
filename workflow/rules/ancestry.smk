@@ -24,19 +24,22 @@ rule global_ancestry:
     input: 
         freq = os.path.join(config['call_path'], "NE_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv"),
         meta = config['meta_path'],
-        painel = os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel.tsv")
+        painel = expand(os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel_chrom_{chrom}.tsv"), chrom = config['chrom'])
     output:
         allmod = os.path.join(config['analysis_path'], "ancestry/global/all_models_coeff.tsv"),
         figAll = "../results/all_global_ancestry_models_violin.jpeg",
         summary = os.path.join(config['analysis_path'], "ancestry/global/summary_models.tsv"),
-        figLat = "../results/global_ancestry_per_lat.jpeg"
+        figLat = "../results/global_ancestry_per_lat.jpeg",
+        lm = "../results/global_ancestry_lm_summary.txt"
+    params: painel_path = os.path.join(config['analysis_path'], "ancestry")
     shell: "Rscript scripts/R/ancestry_lm.R -ne {input.freq} \
-    -anc {input.painel} \
+    -anc {params.painel_path} \
     -meta {input.meta} \
     -allmod {output.allmod} \
     -figAll {output.figAll} \
     -s {output.summary} \
-    -figLat {output.figLat}"
+    -figLat {output.figLat} \
+    -lm {output.lm}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule join_syncs:
@@ -98,9 +101,9 @@ rule fix_painel_na:
     input:
         gresync = os.path.join(config['anc_folder'], "call/all_variants_including_pool_samples_sync.sync"),
         allsync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_fixed.sync"),
-        popnames = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv")
+        #popnames = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv")
     output: allsync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync")
-    shell:"Rscript scripts/R/find_non_var_sites_in_painel.R -gre {input.gresync} -all {input.allsync} -pop {input.popnames} -o {output}"
+    shell:"Rscript scripts/R/find_non_var_sites_in_painel.R -gre {input.gresync} -all {input.allsync} -o {output}" #-pop {input.popnames}
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_ancetral_pops_FST_autosome:
     input:
@@ -108,7 +111,7 @@ rule global_ancetral_pops_FST_autosome:
         pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
         ref = config['ref_path'],
         rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
-    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_fst-matrix.csv")
+    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_fst-list.csv")
     params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_autosome_"
     shell: "/home/vitoria/bin/grenedalf/grenedalf/bin/grenedalf fst \
     --sync-path {input.sync} \
@@ -122,9 +125,56 @@ rule global_ancetral_pops_FST_autosome:
     --window-average-policy valid-loci \
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
-    --file-prefix {params.prefix}" # \
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" # \
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule global_ancetral_pops_FST_X:
+    input:
+        sync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync"),
+        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_X_with_anc_painel.csv"),
+        ref = config['ref_path'],
+        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
+    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_X_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_X_fst-list.csv")
+    params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_X_"
+    shell: "/home/vitoria/bin/grenedalf/grenedalf/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta {input.ref} \
+    --filter-sample-min-count 1 \
+    --filter-sample-min-read-depth 10 \
+    --rename-samples-list {input.rename} \
+    --filter-region X \
+    --window-type genome \
+    --method unbiased-hudson \
+    --window-average-policy valid-loci \
+    --pool-sizes {input.pool_sizes} \
+    --out-dir {params.outdir} \
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" # \
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule lm_plot_global_anc_fst:
+    input:
+        meta = config['meta_path'],
+        fst = os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_{chrom_type}_fst-list.csv")
+    output:
+        plot = "../results/fst_vs_eu_afr_per_lat_{chrom_type}.jpeg",
+        lm = "../results/fst_vs_eu_afr_per_lat_lm_{chrom_type}.txt"
+    wildcard_constraints: chrom_type = "(autosome|X)"
+    shell: "Rscript scripts/R/fst_vs_anc_pop.R -fst {input.fst} -meta {input.meta} -lm {output.lm} -plot {output.plot}"
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 rule SNP_fst_EU_AFR: #para pegar os snps mais diferenciados entre europa e africa 
     input: 
         sync = os.path.join(config['analysis_path'], "ancestry/ancestral_EU_AFR.sync"),

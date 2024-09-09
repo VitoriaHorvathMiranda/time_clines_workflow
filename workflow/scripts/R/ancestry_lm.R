@@ -4,19 +4,33 @@ library(argparse)
 library(data.table)
 library(tidyverse)
 library(patchwork)
+library(ggrepel)
 
 #parse arguments 
 parser <- ArgumentParser(description= "computes global ancestry based on Bargland et al 2016 and plots it")
 parser$add_argument('--freqNE', '-ne', help = "table with SNP freqs and NEs")
-parser$add_argument('--rawAnc', '-anc', help= 'raw ancestry painel')
+parser$add_argument('--rawAnc', '-anc', help= 'path to raw ancestry painel files')
 parser$add_argument('--meta', '-meta', help= 'metadata table')
 parser$add_argument('--allModels', '-allmod', help= 'table with all models coefficients')
 parser$add_argument('--FIGallModels', '-figAll', help= 'violoin plots with all models, jpeg')
 parser$add_argument('--summary', '-s', help= 'table with summary (mean, mim, max) of all models per pop')
 parser$add_argument('--FIGlatModels', '-figLat', help= 'plot 1997 pops and 2009/2010 pops per lat, jpeg')
+parser$add_argument('--outputLM', '-lm', help= 'lm summaries of mean ancestry ~ latitude + year')
 xargs<- parser$parse_args()
 
-painel <- fread(xargs$rawAnc)
+# painel_files <- list.files(path = "/dados/time_clines/analysis/ancestry",
+#                            pattern = "raw_ancestry_painel_chrom_*",
+#                            full.names = TRUE)
+
+painel_files <- list.files(path = xargs$rawAnc,
+                           pattern = "raw_ancestry_painel_chrom_*",
+                           full.names = TRUE)
+
+painels <- lapply(painel_files, fread)
+
+painel <- rbindlist(painels)
+
+#painel <- fread()
 freqs <- fread(xargs$freqNE)
 meta <- fread(xargs$meta)
 
@@ -161,34 +175,91 @@ summary_models[, collection_year :=
 
 summary_models[, SE := sd/sqrt(100)] #n = 100 testes
 
-summary_models_97_0910 <- summary_models[collection_year %in% c("2009/2010", "1997")]
+#summary_models_97_0910 <- summary_models[collection_year %in% c("2009/2010", "1997")]
 
-global_ancestry_poolseq_97_0910_bergland_method <- 
-summary_models_97_0910 |>
-  ggplot(aes(x = latitude, y = mean, color = ancestry)) +
+
+mean_african_ancestry <- 
+  summary_models[ancestry == "AFR"] |>
+  ggplot(aes(x = latitude, y = mean, color = collection_year)) +
   geom_smooth(method = "lm") +
   geom_errorbar(aes(ymax = max, ymin = min), 
                 linewidth = 0.5,
                 width = 0.2,
                 color = "black") +
-  geom_point(aes(), size = 1) +
-  geom_text(data = summary_models_97_0910[pop %like% "MCT"], #fiz isso porque a posição do MCT 
-            aes(x = latitude, y = mean-0.1, label = pop), size = 2) + #dificultava a visualização do texto
-  geom_text(data = summary_models_97_0910[!(pop %like% "MCT")],
-            aes(x = latitude, y = mean-0.05, label = pop), size = 2) +
-  facet_wrap(vars(collection_year)) +
+  geom_point(aes(), size = 3) +
+  geom_text_repel(aes(label = pop), size = 3) + #dificultava a visualização do texto
+  #facet_wrap(vars(collection_year)) +
   scale_color_brewer(palette = "Dark2") +
-  theme_light() +
-  coord_cartesian(ylim = c(0,1)) +
-  labs(y = "mean ancestry") +
+  theme_minimal() +
+  #coord_cartesian(ylim = c(0,1)) +
+  labs(y = "Mean African Ancestry", x = "Latitude", color = "") +
   theme(strip.background = element_rect(fill = "white"),
-        strip.text = element_text(color = "black", size = 12))
+        strip.text = element_text(color = "black", size = 12),
+        #legend.position = "none",
+        axis.title = element_text(size = 16))
+
+mean_european_ancestry <- 
+  summary_models[ancestry == "EU"] |>
+  ggplot(aes(x = latitude, y = mean, color = collection_year)) +
+  geom_smooth(method = "lm") +
+  geom_errorbar(aes(ymax = max, ymin = min), 
+                linewidth = 0.5,
+                width = 0.2,
+                color = "black") +
+  geom_point(aes(), size = 3) +
+  geom_text_repel(aes(label = pop), size = 3) + #dificultava a visualização do texto
+  #facet_wrap(vars(collection_year)) +
+  scale_color_brewer(palette = "Dark2") +
+  theme_minimal() +
+  #coord_cartesian(ylim = c(0,1)) +
+  labs(y = "Mean African Ancestry", x = "Latitude", color = "") +
+  theme(strip.background = element_rect(fill = "white"),
+        strip.text = element_text(color = "black", size = 12),
+        #legend.position = "none",
+        axis.title = element_text(size = 16))
+
+# global_ancestry_poolseq_97_0910_bergland_method <- 
+# summary_models_97_0910 |>
+#   ggplot(aes(x = latitude, y = mean, color = ancestry)) +
+#   geom_smooth(method = "lm") +
+#   geom_errorbar(aes(ymax = max, ymin = min), 
+#                 linewidth = 0.5,
+#                 width = 0.2,
+#                 color = "black") +
+#   geom_point(aes(), size = 1) +
+#   geom_text(data = summary_models_97_0910[pop %like% "MCT"], #fiz isso porque a posição do MCT 
+#             aes(x = latitude, y = mean-0.1, label = pop), size = 2) + #dificultava a visualização do texto
+#   geom_text(data = summary_models_97_0910[!(pop %like% "MCT")],
+#             aes(x = latitude, y = mean-0.05, label = pop), size = 2) +
+#   facet_wrap(vars(collection_year)) +
+#   scale_color_brewer(palette = "Dark2") +
+#   theme_light() +
+#   coord_cartesian(ylim = c(0,1)) +
+#   labs(y = "mean ancestry") +
+#   theme(strip.background = element_rect(fill = "white"),
+#         strip.text = element_text(color = "black", size = 12))
 
 jpeg(xargs$FIGlatModels,
      width = 25,
      height = 13,
      units = "cm",
      res = 1200)
-global_ancestry_poolseq_97_0910_bergland_method
+#global_ancestry_poolseq_97_0910_bergland_method
+mean_african_ancestry / mean_european_ancestry
+
 dev.off()
+
+
+lm_afr <- 
+  lm(data = summary_models[ancestry == "AFR"],
+     formula = mean ~ latitude + collection_year)
+
+lm_eu <- 
+  lm(data = summary_models[ancestry == "EU"],
+     formula = mean ~ latitude + collection_year)
+
+sink(xargs$outputLM)
+summary(lm_afr)
+summary(lm_eu)
+sink()
 

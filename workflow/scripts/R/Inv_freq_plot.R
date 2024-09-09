@@ -13,11 +13,16 @@ parser$add_argument('--meta', '-meta', help = "mateadata table")
 parser$add_argument('--InvFreq', '-invf', help= 'Inversion frequencies (output from InvFreq.py)')
 parser$add_argument('--output', '-out', 
                     help= 'plot: inversion frequency x latitude, jpeg')
+parser$add_argument('--outputGLM', '-glm', 
+                    help= 'summaries of all inversion freq ~ latitude + year glms')
 xargs<- parser$parse_args()
 
 #meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
 meta <- fread(xargs$meta)
-pop_info <- meta[, .(population, collection_year, collection_month, latitude)]
+pop_info <- meta[, .(population, collection_year, collection_month,
+                     latitude, n_females, flies_per_lin)]
+
+pop_info[, chrom_n := ifelse(flies_per_lin == 2, n_females*1.5, n_females*2)]
 
 #inv_freq <- fread("/dados/time_clines/analysis/inversions/inversion_freq.tsv")
 inv_freq <- fread(xargs$InvFreq)
@@ -40,16 +45,18 @@ inv_freq[, test_year :=
 
 INV_FREQ_PLOT <- 
 inv_freq |>
-  ggplot(aes(x = latitude, y = freq, color = test_year)) +
+  ggplot(aes(x = latitude, y = freq, color = test_year, weight=chrom_n)) +
   geom_point() +
   geom_text(aes(label = population, y = freq*1.12), size = 2) +
-  geom_smooth(method = "lm", level=0.9) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+                                 #weights = chrom_n),
+              level=0.9) +
   facet_wrap(vars(Inv), scales = "free_y") + 
   scale_color_brewer(palette = "Dark2") +
   theme_minimal() +
   labs(y = "Frequency", x = "Latitude", color = "") +
   theme(strip.text = element_text(face = "italic"))
-
 
 
 jpeg(filename = xargs$output,
@@ -61,6 +68,26 @@ jpeg(filename = xargs$output,
 INV_FREQ_PLOT
 
 dev.off()
+
+
+##---------------- GLM summaries
+
+inversions <- 
+  unique(inv_freq$Inv)
+
+
+models <- 
+  lapply(inversions, function(x) glm(formula = 
+                                       freq ~ latitude + test_year,
+                                     data = inv_freq[Inv == x],
+                                     family = binomial(),
+                                     weights = chrom_n))
+
+sink(xargs$outputGLM)
+inversions
+lapply(models, summary)
+sink()
+
 
 ### ONLY 3R - for seged ---------------------------------------------------------
 # INV_3RPayne <- 

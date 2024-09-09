@@ -8,7 +8,7 @@ library(tidyverse)
 parser <- ArgumentParser(description= "")
 parser$add_argument('--greSYNC', '-gre', help= 'sync file positions missing in anc vcf')
 parser$add_argument('--allSYNC', '-all', help= 'sync file with North America, europe and africa samples')
-parser$add_argument('--popsize', '-pop', help= 'file with pop sizes (only use it for pop names)')
+#parser$add_argument('--popsize', '-pop', help= 'file with pop sizes (only use it for pop names)')
 parser$add_argument('--output', '-o', help= 'sync file with all pops and corrected snps (no NA)')
 xargs<- parser$parse_args()
 
@@ -130,11 +130,11 @@ merged_sync <- merged_sync[!(is.na(sync_EU))]
 # sample_names <- 
 # fread("/dados/time_clines/analysis/ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv")
 
-sample_names <- 
-  fread(xargs$popsize)
+#sample_names <- 
+#  fread(xargs$popsize)
 
-setnames(merged_sync, colnames(merged_sync)[4:length(merged_sync)],
-         sample_names$V1)
+#setnames(merged_sync, colnames(merged_sync)[4:length(merged_sync)],
+#         sample_names$V1)
 
 
 fwrite(merged_sync,
