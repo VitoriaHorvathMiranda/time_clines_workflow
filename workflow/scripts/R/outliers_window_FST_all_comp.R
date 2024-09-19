@@ -13,13 +13,17 @@ parser$add_argument('--wsize', '-wsize', help= 'output: table with summary windo
 parser$add_argument('--FSTfig', '-fig', help= 'output: jpeg manhattan plot of fst')
 xargs<- parser$parse_args()
 
-#w_fst <- fread("/dados/time_clines/analysis/fst/window/CT_100_fst.csv")
+#w_fst <- fread("/dados/time_clines/analysis/fst/window/CT_100_v5_VS_hudson_fst.csv")
 w_fst <- fread(xargs$wfst)
 file_name <- xargs$wfst
+#w_fst <-w_fst[, !"snps", with = FALSE]
+keep_cols <- 
+c(colnames(w_fst)[1:3],str_subset(colnames(w_fst),"fst"))
+w_fst <- w_fst[, keep_cols, with = FALSE]
 
-fst_cols_index <- c(5:length(w_fst))
+fst_cols_index <- c(4:length(w_fst))
 fst_cols <- colnames(w_fst)[fst_cols_index]
-new_col_names <- fst_cols |> str_replace(":", ".")
+new_col_names <- fst_cols |> str_split_i("\\.", i = 1) |> str_replace(":", ".")
 setnames(w_fst, fst_cols, new_col_names)
 
 w_fst_auto <- w_fst[chrom != "X"]
@@ -30,7 +34,7 @@ fst_cutoffs <- c(0.01, 0.005, 0.001)
 
 get_fst_cutoffs <- 
 function(fst_table, cutoffs){
-  test_names <- colnames(fst_table)[5:length(fst_table)]
+  test_names <- colnames(fst_table)[4:length(fst_table)]
   print(test_names)
   w_fst_filters <- vector("integer", length(cutoffs))
   all_w_fst_cutoffs <- vector("list", length(test_names))
@@ -50,9 +54,9 @@ function(fst_table, cutoffs){
     }
     
     fst_table[, paste0(test_names[[i]], "_cutoff") := 
-            fcase(.SD[[i + 4]] >= all_w_fst_cutoffs[[i]][[3]][[1]], cutoffs[[3]], #0.01%
-                  .SD[[i + 4]] >= all_w_fst_cutoffs[[i]][[2]][[1]], cutoffs[[2]], #0.5%
-                  .SD[[i + 4]] >= all_w_fst_cutoffs[[i]][[1]][[1]], cutoffs[[1]], #1%
+            fcase(.SD[[i + 3]] >= all_w_fst_cutoffs[[i]][[3]][[1]], cutoffs[[3]], #0.01%
+                  .SD[[i + 3]] >= all_w_fst_cutoffs[[i]][[2]][[1]], cutoffs[[2]], #0.5%
+                  .SD[[i + 3]] >= all_w_fst_cutoffs[[i]][[1]][[1]], cutoffs[[1]], #1%
                   default = 100)]
     
   }
@@ -130,5 +134,6 @@ w_fst[, .(window_size_bp = end - start, chrom)][, .(mean = mean(window_size_bp),
                                                     max = max(window_size_bp),
                                                     min = min(window_size_bp),
                                                     sd = sd(window_size_bp)), by = chrom]
+
 
 fwrite(x = window_size, file = xargs$wsize, sep = "\t")
