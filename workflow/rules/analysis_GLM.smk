@@ -36,7 +36,7 @@ rule separete_chrom:
 #gets p-values
 rule glm:
     input: os.path.join(config['call_path'], "TIME_SEP_POPs/TimeSEP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv")
-    output: os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv")
+    output: temp(os.path.join(config['analysis_path'], "time_GLM_lat/p-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{year}_{chrom}.tsv"))
     wildcard_constraints: chrom = "([2-3][LR])|X", year= "|".join(config['CLINAL_YEAR'])
     resources:
         mem_mb= 20000
@@ -94,14 +94,26 @@ rule genomic_region_odr:
     shell: "Rscript scripts/R/odds_ratio_to_random_sampling.R  -qv {input.qvalues} -cut {wildcards.fdr} -out {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule plot_genomic_region_odr:
+rule plot_genomic_region_odr_all:
     input: 
         odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_97_clinal_at_0.1.tsv"),
-        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910_clinal_at_0.1.tsv"),
-    output: "../results/odr_genomic_region_random_sampling.jpeg"
+        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910all_clinal_at_0.1.tsv"),
+    output: "../results/odr_genomic_region_random_sampling_all.jpeg"
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), 
     shell: "Rscript scripts/R/plot_odd_ratio_sampling.R  -odr97 {input.odr97} -odr0910 {input.odr0910} -out {output}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule plot_genomic_region_odr_ms:
+    input: 
+        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_97noMFL_clinal_at_0.1.tsv"),
+        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910FL2noDLnoJ_clinal_at_0.1.tsv"),
+    output: "../results/odr_genomic_region_random_sampling_matching_samples.jpeg"
+    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), 
+    shell: "Rscript scripts/R/plot_odd_ratio_sampling.R  -odr97 {input.odr97} -odr0910 {input.odr0910} -out {output}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 #rule join_chances:
 #    input: [config['analysis_path'] + "time_GLM_lat/Perm/chance_perm_n_" + n + "_{year}.tsv" for n in PERM_N]
 #    output: os.path.join(config['analysis_path'], "time_GLM_lat/Perm/joined_perm_chances_{year}.tsv")

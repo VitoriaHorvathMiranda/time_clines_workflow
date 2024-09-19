@@ -12,7 +12,7 @@ parser$add_argument('--out', '-out', help= 'plot - odds ratio distribution for e
 xargs<- parser$parse_args()
 
 # odds_ratio97 <- fread("/dados/time_clines/analysis/time_GLM_lat/genomic_region_odr/odds_ratio_97_clinal_at_0.1.tsv")
-# odds_ratio0910 <- fread("/dados/time_clines/analysis/time_GLM_lat/genomic_region_odr/odds_ratio_0910_clinal_at_0.1.tsv")
+# odds_ratio0910 <- fread("/dados/time_clines/analysis/time_GLM_lat/genomic_region_odr/odds_ratio_0910all_clinal_at_0.1.tsv")
 odds_ratio97 <- fread(xargs$odr97)
 odds_ratio0910 <- fread(xargs$odr0910)
 odds_ratio97[, clinal_year := "1997"][, i := .I]

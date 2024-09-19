@@ -12,16 +12,16 @@ parser$add_argument('--qvalues', '-qv', help= 'table with snps freqs of the popu
 parser$add_argument('--out', '-out', help= 'table with odds ratio for all 10000 trials')
 xargs<- parser$parse_args()
 
-critical_q <- xargs$cutoff
 #critical_q <- 0.1
+critical_q <- xargs$cutoff
 #read data
-
-qvalues <- fread(xargs$qvalues,
-                 select = c("chrom","POS","qvalue","effect"))
 
 # qvalues <- fread("/dados/time_clines/analysis/time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv",
 #                  select = c("chrom","POS","qvalue","effect"))
 
+
+qvalues <- fread(xargs$qvalues,
+                 select = c("chrom","POS","qvalue","effect"))
 
 
 #calcula a chance de um snp clinal ser daquela determindade classe genômica
