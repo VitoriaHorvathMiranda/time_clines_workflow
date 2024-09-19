@@ -18,7 +18,7 @@ xargs<- parser$parse_args()
 
 # meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv",
 #               select = c("population", "latitude", "longitude"))
-#FST_auto <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_autosome_fst-list.csv")
+# FST_auto <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_2R_fst-list.csv")
 FST_auto <- fread(xargs$FST)
 meta <- fread(xargs$meta)
 
@@ -41,7 +41,7 @@ FST_auto[, matching_year := fcase(year_1 == "2009/2010" & year_2 == "2009/2010",
 FST <- FST_auto[matching_year != "no_match"]
 
 # test differences -------------------------------------------------------
-lm <- lm(FST ~ matching_year,
+lm <- lm(fst ~ matching_year,
          data = FST)
 mary <- summary(lm)
 
@@ -51,7 +51,7 @@ mary <- summary(lm)
 #   rownames_to_column() 
 
 #remove CMD97B just to be sure
-lm_noCMD97B <- lm(FST ~ matching_year,
+lm_noCMD97B <- lm(fst ~ matching_year,
    data = FST[first != "CMD97B" & second != "CMD97B"])
 
 sink(xargs$outputLM)
@@ -82,7 +82,7 @@ sink()
 MEAN_FST_YEAR <- 
 FST_auto[matching_year != "no_match"] |>
   ggplot() +
-  geom_boxplot(aes(x = matching_year, y = FST, fill = matching_year)) +
+  geom_boxplot(aes(x = matching_year, y = fst, fill = matching_year)) +
   labs(x = "Year") +
   scale_fill_manual(values = c("#1B9E77", "#D95F02", "#E7298A")) +
   theme_light() +
@@ -123,7 +123,7 @@ FST[, distance := mapply(calculate_distance,
                          lat2 = latitude.y)]
 FST_DIST <- 
 FST |>
-ggplot(aes(x = distance, y = FST, color = matching_year)) +
+ggplot(aes(x = distance, y = fst, color = matching_year)) +
   geom_point(aes()) +
   geom_smooth(method = 'lm') +
   labs(x = "Distance in km", color = "Collection Year") +
@@ -141,11 +141,12 @@ FST_DIST
 dev.off()
 
 
-distance_lm <- lm(FST~ distance + matching_year,
+distance_lm <- lm(fst~ distance + matching_year,
                   FST[matching_year != "2022/2023"])
 
-distance_lm_int <- lm(FST~ distance * matching_year,
+distance_lm_int <- lm(fst~ distance * matching_year,
                   FST[matching_year != "2022/2023"])
+
 
 
 sink(xargs$distanceLM)
@@ -153,7 +154,4 @@ print(summary(distance_lm))
 print(summary(distance_lm_int))
 print(anova(distance_lm_int, distance_lm))
 sink()
-
-
-
 

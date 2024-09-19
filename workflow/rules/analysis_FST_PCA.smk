@@ -165,6 +165,28 @@ rule global_FST_autosome:
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
     --file-prefix {params.prefix}"
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule FST_per_chrom:
+    input:
+        sync = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
+        pool_sizes = "../resources/pool_sizes_autosome.csv",
+        ref = config['ref_path'],
+        rename = "../resources/rename_samples.tsv"
+    output:fst = os.path.join(config['FST_genome_path'],"Genome_FST_{chrom}_fst-list.csv"),
+    params: outdir=os.path.join(config['analysis_path'], "fst/genome"), prefix="Genome_FST_{chrom}_"
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    shell: "/home/vitoria/bin/grenedalfv6.0/grenedalf-0.6.0/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta {input.ref} \
+    --filter-region {wildcards.chrom}\
+    --window-type genome \
+    --method unbiased-hudson \
+    --rename-samples-list {input.rename} \
+    --filter-sample-min-read-depth 10 \
+    --pool-sizes {input.pool_sizes} \
+    --window-average-policy valid-snps \
+    --out-dir {params.outdir} \
+    --file-prefix {params.prefix}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule X_FST:
@@ -207,7 +229,7 @@ rule fst_per_year:
         lm = "../results/fst_year_lm_{chrom_type}.txt",
         distLM = "../results/fst_year_dist_lm_{chrom_type}.txt",
         distfig = "../results/fst_year_dist_{chrom_type}.jpeg",
-    wildcard_constraints: chrom_type = "(autosome|X)"
+    wildcard_constraints: chrom_type = "(autosome|X|2L|2R|3L|3R)"
     shell: "Rscript scripts/R/mean_fst_per_year.R -fst {input.fst} -meta {input.meta} -lm {output.lm} -box {output.boxplot} -distLM {output.distLM} -dist {output.distfig}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
