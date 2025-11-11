@@ -4,44 +4,82 @@ include: 'rules/organize_pools.smk'
 include: 'rules/map_all.smk'
 include: 'rules/downsample.smk'
 include: 'rules/pool_call.smk'
-include: 'rules/analysis_GLM.smk'
-include: 'rules/analysis_FST_PCA.smk'
+include: 'rules/analysis_GLM.smk' 
+include: 'rules/analysis_FST_PCA.smk' 
 include: 'rules/Inv_stats.smk'
-include: 'rules/ancestry.smk'
+include: 'rules/ancestry.smk' 
 include: 'rules/WorldClim_data.smk'
 include: 'rules/get_ancestral_data.smk'
 include: 'rules/analysis_FST_scan.smk'
+include: 'rules/f4ratio.smk'
 
 IDs = list(grouped_fqs.keys())
 IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001")]
+w_fst_cutoff_merged = []
+for chrom in config["chrom"]:
+    for local in config["local_to_pairs"]:
+        for pair in config["local_to_pairs"][local]:
+            filename = 'fst/window/merged_cutoffs_0.001_' + local + '_100_' + pair + '_' + chrom + '.tsv'
+            full_path = os.path.join(config['analysis_path'], filename)
+            w_fst_cutoff_merged.append(full_path)
 #PERM_N = [str(i) for i in range(1, 5040)] #5040 e não 5041 porque a primeira permutação são os latutudes certas
 #expand(os.path.join(config['align_path'], "{ids}.md.srt.bam.bai"), ids = IDs)
 rule all:
     input: expand(os.path.join(config['raw_fqs_path'], "{samples}_L001_R{r}.fastq.gz"), samples=config['SRAs_dict'].keys(), r=["1","2"]),
-        "../results/depths_coverage_pre_pos_downsample.jpeg",
+        "../results/depths_coverage_pre_pos_downsample.pdf",
         os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf"),
         os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.sync"),
         os.path.join(config['analysis_path'], "quality/Ti_Tv.tsv"),
         expand("../results/manhattan_{clinal_year}.jpeg", clinal_year = config['CLINAL_YEAR']),
         expand("../results/P-values_hist_{clinal_year}.jpeg", clinal_year = config['CLINAL_YEAR']),
         expand("../results/hist_p-values_withPi_{clinal_year}.jpeg", clinal_year = config['CLINAL_YEAR']),
-        "../results/PC1x2_all_pops.jpeg",
+        os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.ann.vcf"),
+        expand("../results/odr_genomic_region_random_sampling_all_{fdr}.jpeg", fdr = config['FDR_cutoffs']),
+        expand("../results/odr_genomic_region_random_sampling_matching_samples_{fdr}.jpeg", fdr = config['FDR_cutoffs']),
+        "../results/concordant_snps_plot_all.pdf",
+        "../results/concordant_snps_table_all.tsv",
+        "../results/q97_summaries_non_concordand_snps_all.tsv",
+        "../results/mean_slope_diff_all.jpeg",
+        "../results/mean_slope_diff_lm_all.tsv",
+        "../results/slope_lm_coeffs_all.tsv",
+        "../results/concordant_snps_plot_matching_samples.pdf",
+        "../results/concordant_snps_table_matching_samples.tsv",
+        "../results/q97_summaries_non_concordand_snps_matching_samples.tsv",
+        "../results/mean_slope_diff_matching_samples.jpeg",
+        "../results/mean_slope_diff_lm_matching_samples.tsv",
+        "../results/slope_lm_coeffs_matching_samples.tsv",
+        "../results/PC1x2_all_pops.pdf",
+        "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg",
         "../resources/pool_sizes.csv",
         expand("../results/barplot_stat_{stat}.jpeg", stat = ["pi","th"]),
+        expand(os.path.join(config['analysis_path'], "pop_stats/Global_stat_{stat}_per_pop.tsv"), stat = ["pi","th"]),
         "../results/ALL_pops_genome_FST.jpeg",
         "../results/Time_pops_genome_FST.jpeg",
+        expand("../results/fst_year_dist_{chrom_type}.jpeg", chrom_type = ["autosome", "X"]),
         expand("../results/fst_year_lm_{chrom_type}.tsv", chrom_type = ["autosome", "X"]),
+        "../results/Inv_freq_per_lat.jpeg",
+        "../results/global_ancestry_per_lat.jpeg",
+        expand("../results/fst_vs_eu_afr_per_lat_{chrom_type}.pdf", chrom_type = ["autosome", "X"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}.tsv"), local = ["MA","CT","VT","MD","MFL","HFL"], window_size = ["100"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/top_0.001_{local}_100.bed"), local = ["MA","CT","VT","MD","MFL","HFL"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/top_0.001_{local}_100_with_gtf.bed"), local = ["MA","CT","VT","MD","MFL","HFL"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/GOwinda/candidate_windows_{pair}.tsv"), pair = ["CMA97.MA22","MCT97.CT22","MFL97.MFL23","CMA97.HMA09","MCT97.MCT09","dlFL10.HFL97","CMD10.CMD97B","SVT09.WVT97"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/GOwinda/candidate_SNPs_{pair}.tsv"), pair = ["CMA97.MA22","MCT97.CT22","MFL97.MFL23","CMA97.HMA09","MCT97.MCT09","dlFL10.HFL97","CMD10.CMD97B","SVT09.WVT97"]),
+        expand(os.path.join(config['analysis_path'], "fst/window/GOwinda/GO_enrichment_mode_gene_gendef_updownstream1000_pair_{pair}_top_0.001_fst_windows.tsv"), pair = ["CMA97.MA22","MCT97.CT22","MFL97.MFL23","CMA97.HMA09","MCT97.MCT09","dlFL10.HFL97","CMD10.CMD97B","SVT09.WVT97"]),
+        w_fst_cutoff_merged 
+            
+
+
+
+        
         #expand("../results/manh_wfst_{local}_{window_size}.jpeg", local = config['pair_fst'], window_size=config['window_size_SNP']),
         #expand("../results/manh_snp_{local}.jpeg", local = config['pair_fst']),
-        os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.ann.vcf"),
         #expand("../results/odds_ratio_{clinal_year}.jpeg", clinal_year = config['CLINAL_YEAR']),
         #expand(os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_{clinal_year}.tsv"), clinal_year = config['CLINAL_YEAR']),
         #expand("../results/effect_summary_{clinal_year}.jpeg", clinal_year = config['CLINAL_YEAR']),
-        "../results/Inv_freq_per_lat.jpeg",
         #"../results/global_ancestry_per_lat.jpeg",
         #"../results/all_global_ancestry_models_violin.jpeg",
         #expand("../results/odds_ratio_to_integenic_{clinal_year}.jpeg",clinal_year = config['CLINAL_YEAR']),
-        "../results/pop_stats_pi.jpeg", "../results/pop_stats_w.jpeg", "../results/pop_stats_D.jpeg",
         #expand(os.path.join(config['analysis_path'], "pop_stats/truewindows_chrom_arm_{chrom_lenght_step}.txt"), chrom_lenght_step = config['chrom_lenght_step']),
         #expand(os.path.join(config['analysis_path'], "fst/window/cutoff_{local}_{window_size}_{pair}.tsv"),
         #       local=["MA","CT","VT","MD","MFL"], window_size=["100", "250"],

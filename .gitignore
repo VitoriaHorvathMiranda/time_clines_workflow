@@ -10,3 +10,8 @@ workflow/.Rhistory
 resources/climate_data*
 results/*
 #workflow/snakemake_dry_run.txt
+resources/DrosEU-SNPs.recomb.gz
+resources/GO*
+resources/Dmel*
+resources/Admix*
+workflow/snakemake_bash.sh

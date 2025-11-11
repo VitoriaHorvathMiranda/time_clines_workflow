@@ -11,6 +11,8 @@ SRAs_dict: { # from project number PRJNA256231
 male_ids: ["dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi"]
 
 anc_folder: "/dados/time_clines/data/database_seqs"
+
+#Egypt samples are inbreed not haploid embryos
 haploid_SRAs_dict: { # from project number 
   'SU02n':'SRR2347216',
   'SU05n':'SRR2347265',
@@ -57,16 +59,73 @@ haploid_SRAs_dict: { # from project number
   'FR229':'SRR189093',
   'FR310':'SRR189094',
   'FR361':'SRR189095',
-  'FR70':'SRR189096'
-  } 
+  'FR70':'SRR189096',
+  'EG12nWGS':'SRR31835368',
+  'EG14nWGS':'SRR31835367',
+  'EG15nWGS':'SRR31835366',
+  'EG16nWGS':'SRR31835365',
+  'EG25nWGS':'SRR31835364',
+  'EG26nWGS':'SRR31835363',
+  'EG28nWGS':'SRR31835361',
+  'EG29nWGS':'SRR31835360',
+  'EG31nWGS':'SRR31835359',
+  'EG33nWGS':'SRR31835358',
+  'EG34nWGS':'SRR31835357',
+  'EG35nWGS':'SRR31835356',
+  'EG36nWGS':'SRR31835355',
+  'EG38nWGS':'SRR31835354',
+  'EG43nWGS':'SRR31835353',
+  'EG44nWGS':'SRR31835352',
+  'EG46nWGS':'SRR31887765',
+  'EG48nWGS':'SRR31835660',
+  'EG49nWGS':'SRR31835659',
+  'EG50nWGS':'SRR31835658',
+  'EG53nWGS':'SRR31835657',
+  'EG54nWGS':'SRR31835656',
+  'EG55nWGS':'SRR31835655',
+  'EG57nWGS':'SRR31835654',
+  'EG58nWGS':'SRR31835653',
+  'EG59nWGS':'SRR31887764',
+  'EG65nWGS':'SRR31835650',
+  'EG70nWGS':'SRR31835649',
+  'EG71nWGS':'SRR31835648',
+  'EG74nWGS':'SRR31835647',
+  'EG75nWGS':'SRR31835646',
+  'EG76nWGS':'SRR31835645'} 
 
 
 SRA_info: '../resources/SRA_samples_info.csv'
 
 chrom: ["2L", "2R", "3L", "3R", "X"]
 YEAR: ["97", "0910", "17", "2223"]
-CLINAL_YEAR: ["97", "0910", "0910FL2", "0910FL2noDL", "97noMFL", "0910all"]
+CLINAL_YEAR: ["97", "97noMFL", "97noCMD97B", "0910all", "0910FL2noDLnoJ", "0910FL2noDL"]
 pair_fst: ["MA","CT","VT","MD"] #precisa adicionar o MFL quando as amostras novas chegarem
+
+local_to_pairs:
+  MA:
+    #- HMA17.CMA97 #
+    #- HMA17.MA22 #
+    #- HMA17.HMA09
+    - CMA97.MA22
+    - CMA97.HMA09
+    #- MA22.HMA09
+  CT:
+    #- MCT97.MCT17 #
+    - MCT97.MCT09
+    - MCT97.CT22
+    #- MCT17.MCT09
+    #- MCT17.CT22 #
+    #- MCT09.CT22 
+  VT:
+    - SVT09.WVT97
+  MD:
+    - CMD10.CMD97B
+  MFL:
+    - MFL97.MFL23
+  HFL:
+    - dlFL10.HFL97
+
+
 window_size_SNP: ["100","250"]
 FDR_cutoffs: ["0.1", "0.05"]
 ref_path: "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" # gene de referencia
@@ -87,8 +146,9 @@ PoolSNP.sh: "/home/vitoria/bin/PoolSNP/PoolSNP.sh"
 bin: "/home/vitoria/bin/"
 ancestral_vcf: "/dados/vitoria/haploid_seqs/call/all_chrom_painel/painel_chrom2_3.vcf"
 chrom_lenght_step: ["2L-23513712-23513712","2R-25286936-25286936","3L-28110227-28110227","3R-32079331-32079331","X-23542271-23542271"]
-
-
+afr_folder: "/disco2/tiago/worldpops"
+ZI_id: ["ZI114N_HE","ZI117_HE","ZI161_HE","ZI181_HE","ZI184_HE","ZI194_HE","ZI210_HE","ZI211_HE","ZI213_HE","ZI214_HE","ZI219_HE","ZI232_HE","ZI233_HE","ZI235_HE","ZI239_HE","ZI250_HE","ZI252_HE","ZI253_HE","ZI254N_HE","ZI255_HE","ZI265_HE","ZI267_HE","ZI268_HE","ZI27_HE","ZI292_HE","ZI296_HE","ZI303_HE","ZI311N_HE","ZI320_HE","ZI321_HE","ZI324_HE","ZI332_HE","ZI333_HE","ZI339_HE","ZI341_HE","ZI344_HE","ZI358_HE","ZI364_HE","ZI365_HE","ZI368_HE","ZI378_HE","ZI379_HE","ZI384_HE","ZI386_HE","ZI388_HE","ZI398_HE","ZI400_HE","ZI402_HE","ZI418N_HE","ZI420_HE","ZI437_HE","ZI443_HE","ZI447_HE","ZI455N_HE","ZI456_HE","ZI457_HE","ZI476_HE","ZI477_HE","ZI486_HE","ZI517_HE","ZI523_HE","ZI527_HE","ZI85_HE","ZI90_HE"]
+KF_id: ["KF10_WGS","KF11_WGS","KF18_WGS","KF1_WGS","KF20_WGS","KF21_WGS","KF22_WGS","KF23_WGS","KF24_WGS","KF2_WGS","KF3_WGS","KF4_WGS","KF5_WGS","KF6_WGS","KF7_WGS","KF8_WGS","KF9_WGS"]
 #qltctrl_pre_downsample_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/"
 #qltctrl_pre_downsample_coverage_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_coverage/"
 #qltctrl_pre_downsample_idxstats_path: "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_idxstats/"
