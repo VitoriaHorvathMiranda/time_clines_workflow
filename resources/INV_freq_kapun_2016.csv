@@ -1,0 +1,29 @@
+City,State,Year,Month,Latitude,Longitude,Source,In(2L)t,In(3L)P,In(3R)Payne
+Homestead,Florida,2008/2010,7,25.47,-80.47,Bergland et al. 2014,0.446,0.092,0.414
+Homestead,Florida,2010,7,25.47,-80.47,Fabian et al. 2012,0.385,0.082,0.469
+Homestead,Florida,2010,10,25.47,-80.47,Bergland et al. 2014,0.212,0.102,0.321
+Hahira,Georgia,2008,7,30.99,-83.37,Bergland et al. 2014,0.286,0.073,0.284
+Eutawville,South Carolina,2008/2010,7,33.40,-80.35,Bergland et al. 2014,0.242,0.009,0.069
+Raleigh,North Carolina,2003,NA,35.78,-78.64,Bergland et al. 2014,0.093,0.024,0.021
+Charlotttesville,Virginia,2012,11,38.03,-78.48,Dros-RTEC,0.136,0,0
+Charlotttesville,Virginia,2012,7,38.03,-78.48,Dros-RTEC,0.115,0,0.021
+Linvilla,Pennsylvania,2009,7,39.53,-75.25,Bergland et al. 2014,0.172,0.01,0.038
+Linvilla,Pennsylvania,2009,11,39.53,-75.25,Bergland et al. 2014,0.163,0,0.077
+Linvilla,Pennsylvania,2010,7,39.53,-75.25,Bergland et al. 2014,0.171,0.036,0.079
+Linvilla,Pennsylvania,2010,11,39.53,-75.25,Bergland et al. 2014,0.202,0.029,0.076
+Linvilla,Pennsylvania,2011,7,39.53,-75.25,Bergland et al. 2014,0.167,0,0
+Linvilla,Pennsylvania,2011,10,39.53,-75.25,Bergland et al. 2014,0.226,0,0.043
+Linvilla,Pennsylvania,2011,11,39.53,-75.25,Bergland et al. 2014,0.098,0,0.061
+Linvilla,Pennsylvania,2012,10,39.53,-75.25,Dros-RTEC,0.139,0.01,0.023
+Linvilla,Pennsylvania,2012,7,39.53,-75.25,Dros-RTEC,0.111,0,0.016
+Linvilla,Pennsylvania,2012,9,39.53,-75.25,Dros-RTEC,0.19,0.032,0.034
+Ithaca,New York,2012,9,42.44,-76.50,Dros-RTEC,0.147,0,0
+Ithaca,New York,2012,7,42.44,-76.50,Dros-RTEC,0.147,0,0
+Lancaster,Massachusetts,2012,11,42.46,-71.67,Dros-RTEC,0.2,0,0.038
+Lancaster,Massachusetts,2012,7,42.46,-71.67,Dros-RTEC,0.22,0 (0),0.031
+Cross Plains,Wisconsin,2012,9,43.10,-89.66,Dros-RTEC,0.103,0 (0),0.073
+Cross Plains,Wisconsin,2012,10,43.10,-89.66,Dros-RTEC,0.137,0 (0),0.019
+Cross Plains,Wisconsin,2012,6,43.10,-89.66,Dros-RTEC,0.059,0 (0),0
+Bowdoinham,Maine,2009,10,44.02,-69.88,Fabian et al. 2012,0.151,0 (0),0
+Bowdoinham,Maine,2010,10,44.02,-69.88,Bergland et al. 2014,0.176,0 (0),0
+Bowdoinham,Maine,2010,10,44.02,-69.88,Bergland et al. 2014,0.179,0 (0),0.03

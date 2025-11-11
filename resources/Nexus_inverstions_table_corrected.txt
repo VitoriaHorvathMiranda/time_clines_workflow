@@ -1,0 +1,809 @@
+Genome		Data_type	Inv_Count	In(1)A	In(1)Be	In(2L)t	In(2R)NS	In(3L)Ok	In(3L)P	In(3R)K	In(3R)Mo	In(3R)P	In(3R)C	In(2L)IC	In(2R)Mal
+CK1	CK1	haploid_embryo	1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+CK2	CK2	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+CO1	CO1	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO10b-3	CO10b-3	homozygous_chromosome_line	1	ND	ND	ND	ND	ST	ST	INV	ST	ST		ST	ST
+CO10N	CO10N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO13N	CO13N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO14	CO14	haploid_embryo	2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+CO15N	CO15N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO16	CO16	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO16-3	CO16-3	homozygous_chromosome_line	1	ND	ND	ND	ND	ST	ST	ST	ST	INV		ST	ST
+CO2	CO2	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO4N	CO4N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO8b-3	CO8b-3	homozygous_chromosome_line	1	ND	ND	ND	ND	ST	ST	INV	ST	ST		ST	ST
+CO8N	CO8N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+CO9N	CO9N	haploid_embryo	1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+ED10N	ED10N	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ED19-1-3	ED19-1-3	homozygous_chromosome_line	0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+ED2	ED2	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ED3	ED3	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ED55-2	ED55-2	homozygous_chromosome_line	0	ND	ND	ST	ST	ND	ND	ND	ND	ND		ST	ST
+ED56-2	ED56-2	homozygous_chromosome_line	0	ND	ND	ST	ST	ND	ND	ND	ND	ND		ST	ST
+ED5N	ED5N	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ED6N	ED6N	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EZ2	EZ2	haploid_embryo	1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+EZ25	EZ25	haploid_embryo	1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+EZ5N	EZ5N	haploid_embryo	0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EZ63-1-3	EZ63-1-3	homozygous_chromosome_line	0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+EZ9N	EZ9N	haploid_embryo	1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+FR14			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR151			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR180			2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+FR207			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR217			2	ST	ST	ST	ST	ST	INV	INV	ST	ST		ST	ST
+FR229			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+FR310			1	ST	ST	ST	ST	ST	ST	ST	INV	ST		ST	ST
+FR361			2	ST	ST	ST	ST	ST	INV	ST	ST	INV		ST	ST
+FR70			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+GA125			2	ST	ST	INV	ST	ST	ST	INV	ST	ST		ST	ST
+GA129			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+GA130			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+GA132			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+GA141			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+GA145			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+GA160			2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+GA185			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+GA187			1	ST	ST	ND	ND	ST	ST	ST	ST	INV		ST	ST
+GA191			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+GU10			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+GU11-3			1	ND	ND	ND	ND	ST	ST	ST	ST	INV		ST	ST
+GU2			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+GU3-3			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+GU6			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+GU7			2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+GU9			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+KN133N			2	ST	INV	INV	ST	ST	ST	ST	ST	ST		ST	ST
+KN20N			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+KN34			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+KN35			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+KN6			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+KN73-1-3			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+KO10-1-3			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+KO2-1-3			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+KO6-1-3			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+KR39			2	ST	INV	INV	ST	ST	ST	ST	ST	ST		ST	ST
+KR42			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+KR4N			2	INV	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+KR54-1-3			1	ST	ST	ND	ND	ST	ST	ST	ST	INV		ST	ST
+KR68-1-3			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+KR7			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+KT1			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+KT6			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+NG10N			3	ST	ST	INV	ST	ST	INV	ST	ST	INV		ST	ST
+NG1N			3	ST	ST	INV	INV	ST	ST	INV	ST	ST		ST	ST
+NG3N			2	ST	ST	INV	ST	ST	INV	ST	ST	ST		ST	ST
+NG6N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+NG7			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+NG9			3	ST	ST	INV	INV	ST	INV	ST	ST	ST		ST	ST
+RC1			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RC5			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG10			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG11N			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG13N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG15			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG18N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+RG19			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG2			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG21N			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG22			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG24			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG25			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+RG28			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG3			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+RG32N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG33			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG34			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG35			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG36			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+RG37N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+RG38N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG39			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG4N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG5			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+RG6N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG7			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG8			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+RG9			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+SP173			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP188			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP221			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+SP235			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP241			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP254			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP80			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+TZ10			2	INV	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+TZ14			3	INV	ST	INV	ST	ST	ST	INV	ST	ST		ST	ST
+TZ8			2	INV	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+UG17-3			0	ND	ND	ND	ND	ST	ST	ST	ST	ST		ST	ST
+UG19			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+UG28N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+UG40-3			0	ND	ND	ND	ND	ST	ST	ST	ST	ST		ST	ST
+UG5N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+UG7			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+UM118			2	ST	INV	INV	ST	ST	ST	ST	ST	ST		ST	ST
+UM37			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+UM526			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+ZL130			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ZO12			1	ST	INV	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ZO65			3	INV	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+ZS11			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+ZS37			2	INV	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+ZS5			2	INV	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+ZS56			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ZK131			2	INV	ST	ND	ND	ST	ST	INV	ST	ST		ND	ND
+ZK186			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ND	ND
+ZK84			0	ST	ST	ND	ND	ND	ND	ND	ND	ND		ND	ND
+ZI10	ZI10	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI103	ZI103	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI104	ZI104	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI114N	ZI114N	haploid_embryo	0	std/?	std/?	inv/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI117	ZI117	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI118N	ZI118N	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI126	ZI126	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI129	ZI129	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI134N	ZI134N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI136	ZI136	haploid_embryo	0	std/?	std/?	inv/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI138	ZI138	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI152	ZI152	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI157	ZI157	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI161	ZI161	haploid_embryo	0	std/?	std/?	inv/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI164	ZI164	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI165	ZI165	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI167	ZI167	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI170	ZI170	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI172	ZI172	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI173	ZI173	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI176	ZI176	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI177	ZI177	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI178	ZI178	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI179	ZI179	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI181	ZI181	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI182	ZI182	haploid_embryo	0	std/?	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI184	ZI184	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI185	ZI185	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI188	ZI188	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI190	ZI190	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI191	ZI191	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI193	ZI193	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI194	ZI194	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI196	ZI196	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI197N	ZI197N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI198	ZI198	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI199	ZI199	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI200	ZI200	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI202	ZI202	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI206	ZI206	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI207	ZI207	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI210	ZI210	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI211	ZI211	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI212	ZI212	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI213	ZI213	haploid_embryo	1	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	INV
+ZI214	ZI214	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI216N	ZI216N	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI218	ZI218	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI219	ZI219	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI220	ZI220	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI221	ZI221	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI225	ZI225	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI226	ZI226	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI227	ZI227	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI228	ZI228	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI230	ZI230	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI231	ZI231	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI232	ZI232	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI233	ZI233	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI235	ZI235	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI237	ZI237	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI239	ZI239	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI240	ZI240	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI241	ZI241	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI250	ZI250	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI251N	ZI251N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI252	ZI252	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI253	ZI253	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI254N	ZI254N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI255	ZI255	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI26	ZI26	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI261	ZI261	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI263	ZI263	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI264	ZI264	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI265	ZI265	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI267	ZI267	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI268	ZI268	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI269	ZI269	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI27	ZI27	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI271	ZI271	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI273N	ZI273N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI276	ZI276	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI279	ZI279	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI28	ZI28	haploid_embryo	0	inv/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI281	ZI281	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI284	ZI284	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI286	ZI286	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI291	ZI291	haploid_embryo	0	inv/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI292	ZI292	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI293	ZI293	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI295	ZI295	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI296	ZI296	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI303	ZI303	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI311N	ZI311N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI313	ZI313	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI314	ZI314	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI316	ZI316	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI317	ZI317	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI319	ZI319	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI31N	ZI31N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI320	ZI320	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI321	ZI321	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI324	ZI324	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI329	ZI329	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI33	ZI33	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI332	ZI332	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI333	ZI333	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI335	ZI335	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI336	ZI336	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI339	ZI339	haploid_embryo	0	std/?	std/?	inv/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI341	ZI341	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI342	ZI342	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI344	ZI344	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI348	ZI348	haploid_embryo	1	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	INV
+ZI351	ZI351	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI352	ZI352	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI353	ZI353	haploid_embryo	1	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	INV
+ZI357N	ZI357N	haploid_embryo	0	std/?	std/?	inv/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI358	ZI358	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI359	ZI359	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI362	ZI362	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI364	ZI364	haploid_embryo	0	std/?	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI365	ZI365	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI368	ZI368	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI370	ZI370	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI373	ZI373	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI374	ZI374	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI377	ZI377	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI378	ZI378	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI379	ZI379	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI380	ZI380	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI381	ZI381	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI382	ZI382	haploid_embryo	0	ND	ND	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI384	ZI384	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI386	ZI386	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI388	ZI388	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI392	ZI392	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI394N	ZI394N	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI395	ZI395	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI396	ZI396	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI397N	ZI397N	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI398	ZI398	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI400	ZI400	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI402	ZI402	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI405	ZI405	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI413	ZI413	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI418N	ZI418N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI420	ZI420	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI421	ZI421	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI429	ZI429	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI431	ZI431	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI433	ZI433	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI437	ZI437	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI443	ZI443	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI444	ZI444	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI445	ZI445	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI446	ZI446	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI447	ZI447	haploid_embryo	0	inv/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI448	ZI448	haploid_embryo	0	std/?	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI453	ZI453	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI455N	ZI455N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI456	ZI456	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI457	ZI457	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI458	ZI458	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI460	ZI460	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI466	ZI466	haploid_embryo	0	std/?	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI467	ZI467	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI468	ZI468	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI471	ZI471	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI472	ZI472	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI476	ZI476	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI477	ZI477	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI486	ZI486	haploid_embryo	0	std/?	std/?	inv/?	std/?	inv/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI488	ZI488	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI490	ZI490	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI491	ZI491	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI504	ZI504	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI505	ZI505	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI508	ZI508	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI50N	ZI50N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI514N	ZI514N	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI517	ZI517	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI523	ZI523	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI524	ZI524	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI527	ZI527	haploid_embryo	0	std/?	std/?	inv/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI530	ZI530	haploid_embryo	0	std/?	std/?	inv/?	inv/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+ZI56	ZI56	haploid_embryo	0	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI59	ZI59	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI61	ZI61	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI68	ZI68	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI76	ZI76	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI81	ZI81	haploid_embryo	0	std/?	std/?	inv/?	std/?	std/?	std/?	std/?	std/?	inv/?		ST	ST
+ZI85	ZI85	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI86	ZI86	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI90	ZI90	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	inv/?	std/?	std/?		ST	ST
+ZI91	ZI91	haploid_embryo	0	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?	std/?		ST	ST
+ZI99	ZI99	haploid_embryo	0	std/?	std/?	std/?	std/?	inv/?	std/?	std/?	std/?	std/?		ST	ST
+EA119			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA3			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA49			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA71			1	ST	ST	ST	ST	ST	ST	ST	ST	ST		INV	ST
+EA87			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EB132			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EB148			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EB18			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EB237			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+EB25			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF120			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF2			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF39			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF65			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF78			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EM239			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EM40			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EM6			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ER11			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ER156			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ER32			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ER63			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+ER85			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SB10			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SB16			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SB26			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SB31			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SB51			1	ST	ST	ST	ST	INV	ST	ST	ST	ST		ST	ST
+SD145			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+SD45			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SD67			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD82			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+SD98			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SE16			1	INV	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SE55			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+SE63			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SF110			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SF332			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+SF428			2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+SF447			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+SF7			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+UK10			1	ST	ST	ST	ST	ST	ST	ST	ST	ST		INV	ST
+UK120			1	ST	ST	ND	ND	ST	ST	ST	ST	INV		ST	ST
+UK2			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+UK57			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+UK73			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EG40N			0	ST	ST	ND	ST	ND	ND	ND	ND	ND		ST	ST
+EG69N			2	ST	ST	INV	ST	ND	ND	ST	INV	ST		ST	ST
+EG73N			2	ST	ST	INV	ST	ST	INV	ST	ST	ST		ST	ST
+KM106			1	ST	INV	ST	ST	ND	ND	ND	ND	ND		ST	ST
+KM36			1	ST	INV	ST	ST	ND	ND	ND	ND	ND		ST	ST
+KM73			0	ST	ST	ST	ST	ST	ST	ND	ND	ND		ST	ST
+KM92			0	ST	ST	ST	ND	ND	ND	ND	ND	ND		ST	ST
+EA103N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA117N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA119			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA124N			1	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST		ST	ST
+EA126N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA13N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA22N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EA2N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA30N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EA31N			2	ST	ST	ST	ST	ST	INV/ST	INV/ST	ST	ST		ST	ST
+EA37N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EA3			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA49			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA50N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA58N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+EA59N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA70N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+EA71			1	ST	ST	ST	ST	ST	ST	ST	ST	ST		INV/ST	ST
+EA84N			1	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA86N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA87N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA90N			1	ST	ST	ST	ST	ST	ST	ST	ST	ST		INV/ST	ST
+EA91N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EA93N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF101N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF102N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF103N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF108N			1	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF10N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF110N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF112N			0	ST	ST	ST	ST	ND	ND	ST	ST	ST		ST	ST
+EF114N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF115N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF116N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF117N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF119N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF11N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+EF120N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF122N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF126N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF12N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF130N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF131N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF132N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF134N			2	ST	ST	ST	ST	ST	INV/ST	INV/ST	ST	ST		ST	ST
+EF135N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF136N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF15N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF16N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF19N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF1N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF24N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF25N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF26N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF27N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF2			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF31N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF32N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF35N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF39			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF3N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF43N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF46N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF48N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF52N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF53N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF54N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF59N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF64N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF65			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF66N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF67N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF69N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF6N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF70N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF73N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF74N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF75N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF78			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF7N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF80N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF81N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF82N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF83N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF86N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF88N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF8N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF93N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF95N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF96N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF98N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EF9N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EG12N			3	ST	ST	INV	INV	ST	ST	ST	INV	ST		ST	ST
+EG15N			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+EG16N			4	ST	ST	INV	ST	ST	INV/ST	INV/ST	ST	INV/ST		ST	ST
+EG25N			1	ST	ST	ST	ST	ST	ST	ST	INV	ST		ST	ST
+EG26N			3	ST	ST	INV/ST	INV/ST	ST	ST	ST	INV	ST		ST	ST
+EG28N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+EG29N			2	ST	ST	ST	INV	ST	ST	ST	ST	INV/ST		ST	ST
+EG31N			4	ST	ST	INV	ST	ST	INV/ST	ST	INV/ST	INV/ST		ST	ST
+EG33N			2	ST	ST	INV/ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EG34N			3	ST	ST	INV	ST	ST	INV/ST	INV/ST	ST	ST		ST	ST
+EG35N			3	ST	ST	INV/ST	INV/ST	ST	ST	ST	INV	ST		ST	ST
+EG36N			2	ST	ST	ST	ST	ST	ST	INV/ST	INV/ST	ST		ST	ST
+EG38N			4	ST	ST	INV/ST	ST	ST	INV/ST	INV/ST	ST	INV/ST		ST	ST
+EG40N			0	ST	ST	ND	ST	ND	ND	ND	ND	ND		ST	ST
+EG44N			2	ST	ST	INV/ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+EG46N			2	ST	ST	ST	INV/ST	ST	INV/ST	ST	ST	ST		ST	ST
+EG48N			2	ST	ST	INV	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EG49N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+EG50N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+EG53N			2	ST	?	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+EG54N			3	ST	?	INV	ST	ST	ST	INV/ST	ST	INV/ST		ST	ST
+EG55N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+EG57N			2	ST	ST	INV	ST	ST	ST	INV	ST	ST		ST	ST
+EG58N			3	ST	ST	INV	ST	ST	INV/ST	ST	INV	ST		ST	ST
+EG59N			3	ST	ST	INV	ST	ST	INV/ST	ST	ST	INV/ST		ST	ST
+EG65N			4	ST	ST	INV	INV/ST	ST	INV/ST	ST	ST	INV/ST		ST	ST
+EG69N			2	ST	ST	INV	ST	ND	ND	ST	INV	ST		ST	ST
+EG70N			2	ST	ST	ST	INV	ST	ST	ST	INV/ST	ST		ST	ST
+EG73N			2	ST	ST	INV	ST	ST	INV	ST	ST	ST		ST	ST
+EG74N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+EG75N			3	ST	ST	INV/ST	ST	ST	INV/ST	ST	INV/ST	ST		ST	ST
+EG76N			2	ST	ST	ST	ST	ST	INV/ST	ST	INV/ST	ST		ST	ST
+FR106N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+FR109N			2	ST	ST	INV	ST	ST	ST	INV/ST	ST	ST		ST	ST
+FR110N			2	ST	ST	INV	ST	ST	ST	INV/ST	ST	ST		ST	ST
+FR112N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR113N			3	ST	ST	INV	ST	ST	ST	INV/ST	ST	INV/ST		ST	ST
+FR115N			2	ST	ST	ST	ST	ST	INV/ST	INV/ST	ST	ST		ST	ST
+FR11N			0	ST	ST	ST	ST	ST	ST	ND	ND	ND		ST	ST
+FR126N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR12N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR135N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+FR147N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR14			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR151			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR152N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR153N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR157N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR158N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR161N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR162N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR164N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR169N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR16N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR173N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR180			2	ST	ST	INV	ST	ST	ST	ST	ST	INV		ST	ST
+FR186N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR188N			2	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST		ST	ST
+FR198N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR19N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR200N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR207			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR208N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR213N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR216N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR217			2	ST	ST	ST	ST	ST	INV	INV	ST	ST		ST	ST
+FR219N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR21N			2	ST	ST	INV/ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR222N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR225N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR229			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+FR230N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV		ST	ST
+FR231N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR232N			2	ST	ST	INV	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR235N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR236N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR238N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR240N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR248N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR252N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR257N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR260N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR261N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR263N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR264N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR269N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR26N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR276N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR279N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR284N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR288N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR28N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR293N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR296N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR299N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR2N			2	ST	ST	INV/ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR302N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR304N			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+FR305N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR310			1	ST	ST	ST	ST	ST	ST	ST	INV	ST		ST	ST
+FR312N			2	ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST		ST	ST
+FR313N			1	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST		ST	ST
+FR319N			2	ST	ST	ST	ST	ST	ST	ST	INV/ST	INV/ST		ST	ST
+FR320N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR323N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR326N			1	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST		ST	ST
+FR32N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR340N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR345N			1	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST		ST	ST
+FR348N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+FR34N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR357N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR360N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR361			2	ST	ST	ST	ST	ST	INV	ST	ST	INV		ST	ST
+FR364N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR370N			1	ST	ST	ST	ST	ST	ST	ST	ST	INV/ST		ST	ST
+FR37N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR48N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR54N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR59N			2	ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST		ST	ST
+FR5N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR60N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR70			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR73N			1	ST	ST	ST	ST	ST	INV	ST	ST	ST		ST	ST
+FR89N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR90N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR91N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+FR94N			1	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	ST
+SD101N			3	ST	INV	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD104N			2	ST	INV/ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD105N			2	ST	ST	INV	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD106N			2	ST	ST	INV	ST	ST	ST	ST	ST	INV/ST		ST	ST
+SD108N			2	ST	INV/ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD109N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD110N			2	ST	INV	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD113N			3	ST	ST	INV/ST	INV/ST	ST	ST	INV	ST	ST		ST	ST
+SD114N			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD115N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD116N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD117N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD120N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD121N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD124N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD127N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD128N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD130N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD131N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD132N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD133N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD135N			2	ST	ST	INV	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD137N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD138N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD140N			2	ST	ST	INV/ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD141N			2	ST	ST	INV	ST	ST	ST	ST	ST	INV/ST		ST	ST
+SD142N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD144N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SD145			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+SD149N			3	ST	ST	INV/ST	INV/ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD14N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD151N			2	ST	ST	ST	INV	ST	ST	INV/ST	ST	ST		ST	ST
+SD17N			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD18N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD1N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD20N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD21N			2	ST	ST	INV/ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD23N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD24N			3	ST	INV	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD25N			2	ST	INV	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SD27N			3	ST	ST	INV	INV/ST	ST	ST	ST	ST	INV		ST	ST
+SD28N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD29N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD32N			2	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD35N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD37N			1	ST	ST	ST	ST	ST	ST	INV	ST	ST		ST	ST
+SD38N			3	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	INV/ST		ST	ST
+SD39N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD3N			3	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	INV		ST	ST
+SD42N			3	ST	ST	INV/ST	INV/ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD43N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD44N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD45			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SD47N			2	ST	INV	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD48N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD49N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD51N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD53N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD54N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD55N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD56N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD59N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD5N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD63N			2	ST	ST	INV	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD64N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD65N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD67			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD68N			3	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	INV/ST		ST	ST
+SD71N			2	ST	ST	INV/ST	INV	ST	ST	ST	ST	ST		ST	ST
+SD72N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD73N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD77N			2	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD78N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD79N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD82			0	ST	ST	ND	ND	ST	ST	ST	ST	ST		ST	ST
+SD88N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SD8N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SD90N			2	ST	ST	ST	INV	ST	ST	ST	INV/ST	ST		ST	ST
+SD92N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SD94N			2	ST	ST	INV	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SD98			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP103N			3	ST	ST	INV/ST	INV/ST	INV/ST	ST	ST	ST	ST		ST	ST
+SP107N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SP115N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SP127N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SP133N			2	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST		ST	INV/ST
+SP159N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP15N			3	ST	ST	INV	INV	ST	ST	INV/ST	ST	ST		ST	ST
+SP173			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP175N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP17N			1	ST	ST	INV	ST	ST	ST	ST	ST	ST		ST	ST
+SP188			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP191N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP19N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SP1N			4	ST	ST	INV/ST	INV/ST	ST	ST	INV/ST	ST	INV/ST		ST	ST
+SP201N			1	ST	ST	ST	INV	ST	ST	ST	ST	ST		ST	ST
+SP213N			3	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	INV/ST		ST	ST
+SP221			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+SP235			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP241			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP249N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP254			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP267N			2	ST	ST	INV	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SP279N			2	ST	ST	INV	INV	ST	ST	ST	ST	ST		ST	ST
+SP287N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP291N			3	ST	ST	INV/ST	INV/ST	ST	ST	INV	ST	ST		ST	ST
+SP315N			1	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SP323N			2	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SP335N			2	ST	ST	INV/ST	INV	ST	ST	ST	ST	ST		ST	ST
+SP347N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP39N			2	ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST		ST	ST
+SP61N			3	ST	ST	INV	INV	ST	ST	INV/ST	ST	ST		ST	ST
+SP69N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP75N			1	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST		ST	ST
+SP80			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP83N			0	ST	ST	ST	ST	ST	ST	ST	ST	ST		ST	ST
+SP87N			2	ST	ST	ST	ST	ST	ST	INV/ST	ST	INV/ST		ST	ST
+SP95N			1	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST		ST	ST
+B04				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+B05				ST	ST	ST	ST	ST	INV	ST	ST	INV/ST	ST	ST	ST
+B10				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+B11				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+B12				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+B14				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+B23				ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST
+B28				ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST
+B38				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+B42				ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST
+B43				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+B51				ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST
+B52				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+B54				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+B59				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I01				ST	ST	INV/ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST	ST
+I02				ST	ST	ST	ST	ST	ST	ST	INV	ST	ST	ST	ST
+I03				ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST
+I04				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I06				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I07				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I13				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I16				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I17				ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST
+I22				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I23				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I24				ST	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST
+I26				ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST
+I29				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I31				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I33				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I34				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I35				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+I38				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N01				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N02				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N03				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N04				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N07				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N10				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N11				ST	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST
+N13				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N14				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N15				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N16				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+N17				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N18				ST	ST	ST	ST	ST	ST	ST	INV	ST	ST	ST	ST
+N19				ST	ST	INV	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N22				ST	ST	INV	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST
+N23				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N25				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N29				ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+N30				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+T01				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+T04				ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST
+T05				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+T07				ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST
+T09				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+T10				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+T14A				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+T22A				ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST	ST
+T23				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+T24				ST	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST
+T25A				ST	ST	INV/ST	INV/ST	ST	ST	ST	ST	INV	ST	ST	ST
+T29A				ST	ST	ST	INV	ST	INV	ST	ST	ST	ST	ST	ST
+T30A				ST	ST	ST	ST	ST	INV/ST	ST	ST	INV/ST	ST	ST	ST
+T35				ST	ST	ST	INV/ST	ST	INV	ST	ST	ST	ST	ST	ST
+T36B				ST	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST
+T39				ST	ST	ST	INV	ST	ST	ST	ST	ST	ST	ST	ST
+T43A				ST	ST	ST	INV/ST	ST	ST	ST	ST	INV/ST	ST	ST	ST
+T45B				ST	ST	ST	ST	ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZH23				ST	INV	INV	ST	ST	ST	ST	INV/ST	ST	ST	ST	ST
+ZH26				ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	INV/ST	ST	ST	ST
+ZH33				ST	ST	ST	ST	INV/ST	ST	INV/ST	ST	ST	ST	ST	ST
+ZH42				ST	ST	INV/ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZS10				INV	ST	INV/ST	INV/ST	ST	ST	INV/ST	ST	ST	ST	ST	ST
+ZW09				ST	ST	INV/ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW139				ST	ST	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW140				ST	ST	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW142				ST	ST	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW144				ST	ST	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW155				ST	ST	ST	ST	INV/ST	ST	ST	ST	ST	ST	ST	ST
+ZW177				ST	ST	ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
+ZW184				ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST	ST
+ZW185				ST	ST	INV/ST	ST	INV/ST	ST	ST	ST	INV/ST	ST	ST	ST
