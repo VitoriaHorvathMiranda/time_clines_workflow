@@ -46,13 +46,14 @@ rule align_stats:
 rule downsample_fraq:
     input:
         meta = config['meta_path'],
-        stats_path = os.path.join(config['qltctrl_path'], 'pre_downsample/samtools_idxstats/'),
-        cov_path = os.path.join(config['qltctrl_path'], 'pre_downsample/samtools_coverage/'),
         stats = expand(os.path.join(config['qltctrl_path'], "pre_downsample/samtools_idxstats/{ids_del}_alignStats.tsv"), ids_del = IDs_deleted_samples), 
         cov = expand(os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage/{ids_del}_total_coverage.tsv"), ids_del = IDs_deleted_samples) 
     wildcard_constraints: ids_del = "|".join(IDs_deleted_samples)
+    params:
+        stats_path = os.path.join(config['qltctrl_path'], 'pre_downsample/samtools_idxstats/'),
+        cov_path = os.path.join(config['qltctrl_path'], 'pre_downsample/samtools_coverage/'),
     output: os.path.join(config['qltctrl_path'], "downsample_info.tsv")
-    shell: "Rscript scripts/R/script_reads_cutoff.R -meta {input.meta} -stats {input.stats_path} -cov {input.cov_path} -o {output}"#
+    shell: "Rscript scripts/R/script_reads_cutoff.R -meta {input.meta} -stats {params.stats_path} -cov {params.cov_path} -o {output}"#
     # the script computs the read fraq we need so that the mean depth of the reads is equal to 25X
     # the script takes all files with specific string in the input folders, so if there are samples that aren't part of the ids_del list, it will also compute the read fraq for them
 
@@ -204,11 +205,12 @@ rule plot_depth:
         pos = expand(os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage/{ids_del}_total_coverage.tsv"), ids_del = IDs_deleted_samples),
         depths = expand(os.path.join(config['qltctrl_path'], "depth_per_80kb_window_{chrom}.tsv"), chrom = config['chrom'])
     output: 
-        big_plot = "../results/depths_coverage_pre_pos_downsample.jpeg",
-        boxplots = "../results/mean_depths_boxplot.jpeg"
+        big_plot = "../results/depths_coverage_pre_pos_downsample.pdf",
+        boxplots = "../results/mean_depths_boxplot.pdf",
+        stats = os.path.join(config['qltctrl_path'], "all_pre_pos_stats.tsv")
     params:
         precp = os.path.join(config['qltctrl_path'], "pre_downsample/samtools_coverage"),
         poscp = os.path.join(config['qltctrl_path'], "pos_downsample/samtools_coverage"),
         dpos = config['qltctrl_path'],
         pops= "_".join(config['male_ids'])
-    shell: "Rscript scripts/R/script_downsample_plot.R -m {input.meta} -precp {params.precp} -poscp {params.poscp} -mIDs {params.pops} -dpos {params.dpos} -o {output.big_plot} -box {output.boxplots}"
+    shell: "Rscript scripts/R/script_downsample_plot.R -m {input.meta} -precp {params.precp} -poscp {params.poscp} -mIDs {params.pops} -dpos {params.dpos} -o {output.big_plot} -box {output.boxplots} -stats {output.stats}"

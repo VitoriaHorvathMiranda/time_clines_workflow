@@ -139,9 +139,10 @@ rule GVCFs:
         bais = os.path.join(config['anc_folder'], "align/{ids}.md.srt.bam.bai"),
         ref = config['ref_path'],
     output:  os.path.join(config['anc_folder'], "call/{ids}_gatk.g.vcf.gz")
+    params: ploidy=lambda wildcards: "2" if wildcards.ids.endswith("WGS") else "1"  # Default to "1" if neither condition is met
     wildcard_constraints: ids = "|".join(list(config['haploid_SRAs_dict'].keys()))
     shell:
-        "gatk --java-options '-Xmx4g' HaplotypeCaller -R {input.ref} -I {input.bams} --min-base-quality-score 20 --minimum-mapping-quality 20 --sample-ploidy 1 -O {output} -ERC GVCF"
+        "gatk --java-options '-Xmx4g' HaplotypeCaller -R {input.ref} -I {input.bams} --min-base-quality-score 20 --minimum-mapping-quality 20 --sample-ploidy {params.ploidy} -O {output} -ERC GVCF"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule make_map_file:
@@ -192,8 +193,77 @@ rule filter_repeat_anc:
     shell: "bedtools subtract -header -a {input.vcf} -b {input.bed_file} > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule zambia_map_file:
+    input: expand(os.path.join(config['afr_folder'], "{ZI_id}_rmdup_gatk.g.vcf.gz"), ZI_id = config['ZI_id'])
+    output: os.path.join(config['anc_folder'], "call/gvcfs_ZI.sample_map")
+    wildcard_constraints: ZI_id = "|".join(config['ZI_id'])
+    shell:
+        "paste <(echo {input} | sed 's/ /\\n/g' | sort | cut -d '/' -f 5 | cut -d '_' -f 1) <(echo {input} | sed 's/ /\\n/g' | sort) > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule join_map_files:
+    input: 
+        zam_kf = os.path.join(config['anc_folder'], "call/gvcfs_ZI.sample_map"),
+        westAfr_eu =  os.path.join(config['anc_folder'], "call/gvcfs.sample_map")
+    output: os.path.join(config['anc_folder'], "call/gvcfs_all.sample_map")
+    shell: "cat {input.zam_kf} {input.westAfr_eu} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule Genomic_DB_all: #não consegui rodar com o snakemake, o gatk reclama do caminho por algum motivo. Rodei direto no terminal
+    input: 
+        map_file = os.path.join(config['anc_folder'], "call/gvcfs_all.sample_map"),
+        #gvcfs = expand(os.path.join(config['anc_folder'], "call/{ids}_gatk.g.vcf.gz"), ids = config['haploid_SRAs_dict'].keys())
+    output: os.path.join(config['anc_folder'], "call/database_all_zi_eg/database/vcfheader.vcf")
+    params: database_path = os.path.join(config['anc_folder'], "call/database_all_zi_eg/database") # --genomicsdb-workspace-path must point to a non-existent or empty directory
+    threads: 10
+    shell: "gatk --java-options '-Xmx4g -Xms4g' GenomicsDBImport --genomicsdb-workspace-path {params.database_path} --sample-name-map {input.map_file} --reader-threads {threads} -L 2L -L 2R -L 3L -L 3R -L X"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule Genotype_call_all: #rodei direto no terminal, mas acho que arrumei o problema por aqui
+    input: 
+        database = os.path.join(config['anc_folder'], "call/database_all_zi_eg/database/vcfheader.vcf"),
+        ref = config['ref_path']
+    output: os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}.vcf.gz")
+    params: database_path = "gendb://" + os.path.join(config['anc_folder'], "call/database_all_zi_eg/database")
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    shell: "gatk --java-options '-Xmx4g' GenotypeGVCFs -R {input.ref} -V {params.database_path} -L {wildcards.chrom} --max-genotype-count 1500 -O {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# Remove os indels e os SNPs multialélicos
+rule remove_indels_zi_eg:
+    input: 
+        ref = config['ref_path'],
+        vcf = os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}.vcf.gz")
+    output: temp(os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic.vcf.gz"))
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    shell: "gatk SelectVariants -R {input.ref} -V {input.vcf} --select-type-to-include SNP --restrict-alleles-to BIALLELIC -O {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+# filter repeat regions from vcf
+rule filter_repeat_anc_zi_eg:
+    input: 
+        vcf = os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic.vcf.gz"),
+        bed_file = os.path.join(config['ref_folder'],"repeat_6.bed")
+    output: os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic_clean.vcf")
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    shell: "bedtools subtract -header -a {input.vcf} -b {input.bed_file} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule make_sync_anc_all:
+    input: 
+        vcf = os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic_clean.vcf"),
+        mask = "../resources/Admixture_segments_westAFR_R6.txt"
+    output: os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic_clean.sync")
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    shell: "Rscript scripts/R/anc_vcf2sync.R -vcf {input.vcf} -m {input.mask} -chrom {wildcards.chrom} -o {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule join_sync_anc_all:
+    input: expand(os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_{chrom}_biallelic_clean.sync"), chrom = config['chrom'])
+    output: os.path.join(config['anc_folder'], "call/database_all_zi_eg/zi_eg_eu_westafr_all_chrom_biallelic_clean.sync")
+    shell: "(for file in {input}; do tail -n +2 \"$file\"; done) | cut -f 1,2,4,5,6,7,8 > {output}"
+
+
 #rule make_sync_anc: #FALTA ARRUMAR
 #    input:
 #        ref=config['ref_path'],

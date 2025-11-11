@@ -9,7 +9,7 @@ r1_fqs = glob.glob(os.path.join(config['raw_fqs_path'], f"*_R1.fastq.gz")) # pro
 fqs_pref = [str.replace(str.replace(fqname, '_R1.fastq.gz', ''), config['raw_fqs_path'], '') for fqname in r1_fqs] # guarda o prefixo dos arquivos .fastq.gz encontrados anteriormente. Exemplo: “data3/murillo/time_clines/data/seqs/raw/13_190808_L001_R1.fastq.gz" é armazenado como "13_190808_L001".
 grouped_fqs = {}
 for fq in fqs_pref:
-    finds = re.findall(r'(^.{2,5})_(19\d+)_.*L00', fq) # # guarda partes entre () do prefixo se for do padrao "**_19****_L001". Exemplo: "13_190808_L001" -> finds =  [('13', '190808')]
+    finds = re.findall(r'(^.{2,5})_(19\d+|22.+)_.*L00', fq) # # guarda partes entre () do prefixo se for do padrao "**_19****_L001". Exemplo: "13_190808_L001" -> finds =  [('13', '190808')]
     assert len(finds) <= 1 # interrompe execucao se expressao for FALSE
     if len(finds) == 0: # caso nao seja do padrao "**_19****_L001". Outros padroes sao "*_L1A1_*_L001" e "*_L002".
         assert fq not in grouped_fqs # testa se prefixo fq ja nao esta em grouped_fqs

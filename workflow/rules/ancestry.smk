@@ -11,6 +11,7 @@ rule ancestral_painel_prep:
     output: os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel_chrom_{chrom}.tsv")
     shell: "Rscript scripts/R/raw_ancestral_painel_prep.R -vcf {input} -out {output}"
 #-------------------------------------------------------------------------------------------------------------------------------------------
+#sync with only EU and westAFR
 rule make_ancestral_sync:
     input: os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel_chrom_{chrom}.tsv"),
     output: os.path.join(config['analysis_path'], "ancestry/ancestral_chrom_{chrom}.sync")
@@ -79,22 +80,23 @@ rule filter_file:
     shell: "grep 'NA' {input} | cut -f 1,2 | sed 's/\\t/:/g' | sed '1d' | sed 's/\"//g' > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+filtered_ids = [x for x in config['haploid_SRAs_dict'].keys() if not x.startswith('EG')]
+
 rule make_sync_anc: 
     input:
         ref=config['ref_path'],
         filter_file =  os.path.join(config['analysis_path'], "ancestry/all_snp_ids_filter2.tsv"),
-        bams = expand(os.path.join(config['anc_folder'], "align/{ids}.md.srt.bam"), ids = config['haploid_SRAs_dict'].keys())
+        bams = expand(os.path.join(config['anc_folder'], "align/{ids}.md.srt.bam"), ids = filtered_ids)
     output: os.path.join(config['anc_folder'], "call/all_variants_including_pool_samples_sync.sync")
     params: bam_path = os.path.join(config['anc_folder'], "align/"), outdir = os.path.join(config['anc_folder'], "call/")
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf sync \
+    shell: "/home/vitoria/bin/grenedalfv6.0/grenedalf-0.6.0/bin/grenedalf sync \
     --sam-path {params.bam_path} \
     --sam-min-map-qual 20 \
     --sam-min-base-qual 20 \
-    --with-header \
-    --reference-genome-fasta-file {input.ref} \
+    --reference-genome-fasta {input.ref} \
     --filter-region-list {input.filter_file} \
     --out-dir {params.outdir} \
-    --file-prefix all_variants_including_pool_samples_"
+    --file-prefix all_variants_including_pool_samples_" #--with-header \
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule fix_painel_na:
@@ -113,12 +115,56 @@ rule global_ancetral_pops_FST_autosome:
         rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
     output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_fst-list.csv")
     params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_autosome_"
-    shell: "/home/vitoria/bin/grenedalf/grenedalf/bin/grenedalf fst \
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta-file {input.ref} \
+    --filter-sample-min-count 1 \
+    --filter-sample-min-coverage 10 \
+    --rename-samples-file {input.rename} \
+    --filter-region 2L --filter-region 2R --filter-region 3L --filter-region 3R \
+    --window-type genome \
+    --method unbiased-hudson \
+    --filter-total-min-frequency 0.1 \
+    --pool-sizes {input.pool_sizes} \
+    --out-dir {params.outdir} \
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" # \--window-average-policy valid-loci \
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule make_freq_anc_table:
+    input:
+        sync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync"),
+        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
+        ref = config['ref_path'],
+        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
+    output: frequency_all = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/all_samples_sample_and_painel_fixed_frequency.csv")
+    params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="all_samples_sample_and_painel_fixed_"
+    shell:"/home/vitoria/bin/grenedalfv6.0/grenedalf-0.6.0/bin/grenedalf frequency\
+    --sync-path {input.sync} \
+    --reference-genome-fasta {input.ref} \
+    --rename-samples-list {input.rename} \
+    --filter-region 2L --filter-region 2R --filter-region 3L --filter-region 3R \
+    --write-sample-alt-freq \
+    --out-dir {params.outdir} \
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule global_ancetral_pops_FST_autosome_MAF_filtered:
+    input:
+        sync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync"),
+        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
+        ref = config['ref_path'],
+        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
+    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_MAF_filter_0.2_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_MAF_filter_0.2_fst-list.csv")
+    params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_autosome_MAF_filter_0.2_"
+    shell: "/home/vitoria/bin/grenedalfv6.0/grenedalf-0.6.0/bin/grenedalf fst\
     --sync-path {input.sync} \
     --reference-genome-fasta {input.ref} \
     --filter-sample-min-count 1 \
     --filter-sample-min-read-depth 10 \
     --rename-samples-list {input.rename} \
+    --filter-total-snp-min-frequency 0.2 \
     --filter-region 2L --filter-region 2R --filter-region 3L --filter-region 3R \
     --window-type genome \
     --method unbiased-hudson \
@@ -127,6 +173,35 @@ rule global_ancetral_pops_FST_autosome:
     --out-dir {params.outdir} \
     --file-prefix {params.prefix} \
     --allow-file-overwriting" # \
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule global_ancetral_pops_FST_per_autochrom:
+    input:
+        sync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync"),
+        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
+        ref = config['ref_path'],
+        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
+    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_{chrom}_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_{chrom}_fst-list.csv")
+    wildcard_constraints: chrom = "|".join(config['chrom'])
+    params: 
+        outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), 
+        prefix="Genome_FST_{chrom}_"
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
+    --sync-path {input.sync} \
+    --reference-genome-fasta-file {input.ref} \
+    --filter-sample-min-count 1 \
+    --filter-sample-min-coverage 10 \
+    --rename-samples-file {input.rename} \
+    --filter-region {wildcards.chrom} \
+    --window-type genome \
+    --method unbiased-hudson \
+    --filter-total-min-frequency 0.1 \
+    --pool-sizes {input.pool_sizes} \
+    --out-dir {params.outdir} \
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" # \--window-average-policy valid-loci \
+
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_ancetral_pops_FST_X:
     input:
@@ -136,93 +211,104 @@ rule global_ancetral_pops_FST_X:
         rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
     output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_X_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_X_fst-list.csv")
     params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_X_"
-    shell: "/home/vitoria/bin/grenedalf/grenedalf/bin/grenedalf fst \
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
     --sync-path {input.sync} \
-    --reference-genome-fasta {input.ref} \
+    --reference-genome-fasta-file {input.ref} \
     --filter-sample-min-count 1 \
-    --filter-sample-min-read-depth 10 \
-    --rename-samples-list {input.rename} \
+    --filter-sample-min-coverage 10 \
+    --rename-samples-file {input.rename} \
     --filter-region X \
     --window-type genome \
     --method unbiased-hudson \
-    --window-average-policy valid-loci \
+    --filter-total-min-frequency 0.1 \
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
     --file-prefix {params.prefix} \
-    --allow-file-overwriting" # \
+    --allow-file-overwriting" # \--window-average-policy valid-loci \
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule lm_plot_global_anc_fst:
     input:
         meta = config['meta_path'],
         fst = os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_{chrom_type}_fst-list.csv")
     output:
-        plot = "../results/fst_vs_eu_afr_per_lat_{chrom_type}.jpeg",
+        plot = "../results/fst_vs_eu_afr_per_lat_{chrom_type}.pdf",
         lm = "../results/fst_vs_eu_afr_per_lat_lm_{chrom_type}.txt"
-    wildcard_constraints: chrom_type = "(autosome|X)"
+    wildcard_constraints: chrom_type = "(autosome|X|autosome_MAF_filter_0.2)"
     shell: "Rscript scripts/R/fst_vs_anc_pop.R -fst {input.fst} -meta {input.meta} -lm {output.lm} -plot {output.plot}"
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-rule SNP_fst_EU_AFR: #para pegar os snps mais diferenciados entre europa e africa 
-    input: 
-        sync = os.path.join(config['analysis_path'], "ancestry/ancestral_EU_AFR.sync"),
-        ref = config['ref_path'],
-        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_EU_AFR.tsv"),
-        #regions = "../resources/regions.bed", #*#regions with recombination above 0.5 cM/Mb - from pool et al 2017 - lifted over for ref 6 genome with https://flybase.org/convert/coordinates
-        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_EU_AFR.csv"),
-    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/EU_AFR_SNPs_fst.csv")
-    params: out_dir = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/")
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
-    --sync-path {input.sync} \
-    --reference-genome-fasta-file {input.ref} \
-    --rename-samples-file {input.rename} \
-    --window-type single \
-    --omit-na-windows \
-    --method unbiased-nei \
-    --pool-sizes {input.pool_sizes} \
-    --verbose \
-    --out-dir {params.out_dir} \
-    --file-prefix EU_AFR_SNPs_"
+#rule SNP_fst_EU_AFR: #para pegar os snps mais diferenciados entre europa e africa 
+#    input: 
+#        sync = os.path.join(config['analysis_path'], "ancestry/ancestral_EU_AFR.sync"),
+#        ref = config['ref_path'],
+#        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_EU_AFR.tsv"),
+#        #regions = "../resources/regions.bed", #*#regions with recombination above 0.5 cM/Mb - from pool et al 2017 - lifted over for ref 6 genome with https://flybase.org/convert/coordinates
+#        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_EU_AFR.csv"),
+#    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/EU_AFR_SNPs_fst.csv")
+#    params: out_dir = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/")
+#    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+#    --sync-path {input.sync} \
+#    --reference-genome-fasta-file {input.ref} \
+#    --rename-samples-file {input.rename} \
+#    --window-type single \
+#    --omit-na-windows \
+#    --method unbiased-nei \
+#    --pool-sizes {input.pool_sizes} \
+#    --verbose \
+#    --out-dir {params.out_dir} \
+#    --file-prefix EU_AFR_SNPs_"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule max_fst_list:
-    input: 
-        painel = os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel.tsv"),
-        fst = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/EU_AFR_SNPs_fst.csv")
-    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/max_snp_fst_positions.tsv")
-    shell: "Rscript scripts/R/max_fst_snp_EU_AFR.R -painel {input.painel} -fst {input.fst} -o {output}"
+#rule max_fst_list:
+#    input: 
+#        painel = os.path.join(config['analysis_path'], "ancestry/raw_ancestry_painel.tsv"),
+#        fst = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/EU_AFR_SNPs_fst.csv")
+#    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/max_snp_fst_positions.tsv")
+#    shell: "Rscript scripts/R/max_fst_snp_EU_AFR.R -painel {input.painel} -fst {input.fst} -o {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule highly_diff_SNP_fst: #para pegar os snps mais diferenciados entre europa e africa 
-    input: 
-        sync = os.path.join(config['analysis_path'], "ancestry/all_samples.sync"),
-        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
-        ref = config['ref_path'],
-        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv"),
-        region = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/max_snp_fst_positions.tsv")
-    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/highly_diff_SNP_fst.csv")
-    params: out_dir = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/")
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
-    --sync-path {input.sync} \
-    --reference-genome-fasta-file {input.ref} \
-    --rename-samples-file {input.rename} \
-    --filter-region-list {input.region} \
-    --window-type single \
-    --omit-na-windows \
-    --method unbiased-nei \
-    --pool-sizes {input.pool_sizes} \
-    --verbose \
-    --out-dir {params.out_dir} \
-    --file-prefix highly_diff_SNP_"
+#rule highly_diff_SNP_fst: #para pegar os snps mais diferenciados entre europa e africa 
+#    input: 
+#        sync = os.path.join(config['analysis_path'], "ancestry/all_samples.sync"),
+#        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
+#        ref = config['ref_path'],
+#        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv"),
+#        region = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/max_snp_fst_positions.tsv")
+#    output: os.path.join(config['analysis_path'], "ancestry/FST_ancestry/highly_diff_SNP_fst.csv")
+#    params: out_dir = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/")
+#    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+#    --sync-path {input.sync} \
+#    --reference-genome-fasta-file {input.ref} \
+#    --rename-samples-file {input.rename} \
+#    --filter-region-list {input.region} \
+#    --window-type single \
+#    --omit-na-windows \
+#    --method unbiased-nei \
+#    --pool-sizes {input.pool_sizes} \
+#    --verbose \
+#    --out-dir {params.out_dir} \
+#    --file-prefix highly_diff_SNP_"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+#rule global_ancetral_pops_FST_autosome_MAF_filtered_grenedalfv3:
+#    input:
+#        sync = os.path.join(config['analysis_path'], "ancestry/all_samples_sample_and_painel_fixed.sync"),
+#        pool_sizes = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/pool_sizes_autosome_with_anc_painel.csv"),
+#        ref = config['ref_path'],
+#        rename = os.path.join(config['analysis_path'], "ancestry/FST_ancestry/rename_samples_anc_painel.tsv")
+#    output: os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_MAF_filter_0.2_V3_fst-matrix.csv"), os.path.join(config['analysis_path'],"ancestry/FST_ancestry/Genome_FST_autosome_MAF_filter_0.2_V3_fst-list.csv")
+#    params: outdir=os.path.join(config['analysis_path'], "ancestry/FST_ancestry/"), prefix="Genome_FST_autosome_MAF_filter_0.2_V3_"
+#    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst\
+#    --sync-path {input.sync} \
+#    --reference-genome-fasta-file {input.ref} \
+#    --filter-sample-min-count 1 \
+#    --filter-sample-min-coverage 10 \
+#    --rename-samples-file {input.rename} \
+#    --filter-total-min-frequency 0.2 \
+#    --filter-region 2L --filter-region 2R --filter-region 3L --filter-region 3R \
+#    --window-type genome \
+#    --method unbiased-hudson \
+#    --pool-sizes {input.pool_sizes} \
+#    --out-dir {params.outdir} \
+#    --file-prefix {params.prefix}"

@@ -88,7 +88,7 @@ rule call:
     max-cov=0.98\
     min-cov=15\
     min-count=5\
-    min-freq=0.001\
+    min-freq=0.01\
     miss-frac=0.1\
     jobs={threads}\
     BS=1\

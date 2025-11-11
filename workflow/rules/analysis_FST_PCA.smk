@@ -17,8 +17,8 @@ rule PCA:
         meta=config['meta_path'],
         freqs=os.path.join(config['call_path'], "freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
     output:
-        PC1x2all= "../results/PC1x2_all_pops.jpeg",
-        PC3x4all= "../results/PC3x4_all_pops.jpeg",
+        PC1x2all= "../results/PC1x2_all_pops.pdf",
+        PC3x4all= "../results/PC3x4_all_pops.pdf",
         PCAtime= "../results/PCA_per_time.jpeg",
         PCAchrom="../results/PCA_per_chrom.jpeg",
         lmALL = os.path.join(config['analysis_path'], "PCA/lm_PC1-4_all_variables.tsv"),
@@ -139,12 +139,13 @@ rule pop_stats_chrom_arms:
     output:
         per_pop = os.path.join(config['analysis_path'], "pop_stats/Global_stat_{stat}_per_pop.tsv"),
         per_year = os.path.join(config['analysis_path'], "pop_stats/Global_stat_{stat}_per_year.tsv"),
-        barplot = "../results/barplot_stat_{stat}.jpeg"
+        barplot = "../results/barplot_stat_{stat}.jpeg",
+        lm = "../results/diver_{stat}_lm.txt" # ta errado vou usar o lmm do diver_per_lat_lmm.R no lugar
     wildcard_constraints: stat = "(pi|th)"
     shell: "Rscript scripts/R/global_pop_stat.R -statA {input.statA} -statX {input.statX} \
     -wA {input.windowA} -wX {input.windowX} \
     -meta {input.meta} -vcf {input.vcf} \
-    -out {output.per_pop} -y {output.per_year} -bar {output.barplot}"
+    -out {output.per_pop} -y {output.per_year} -bar {output.barplot} -lm {output.lm}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule global_FST_autosome:
@@ -155,16 +156,18 @@ rule global_FST_autosome:
         rename = "../resources/rename_samples.tsv"
     output: os.path.join(config['FST_genome_path'],"Genome_FST_autosome_fst-matrix.csv")
     params: outdir=config['FST_genome_path'], prefix="Genome_FST_autosome_"
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
     --sync-path {input.sync} \
     --reference-genome-fasta-file {input.ref} \
     --filter-region 2L --filter-region 2R --filter-region 3L --filter-region 3R \
     --window-type genome \
     --method unbiased-hudson \
+    --filter-sample-min-coverage 10 \
     --rename-samples-file {input.rename} \
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
-    --file-prefix {params.prefix}"
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" #--window-average-policy valid-snps \
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule FST_per_chrom:
     input:
@@ -175,18 +178,18 @@ rule FST_per_chrom:
     output:fst = os.path.join(config['FST_genome_path'],"Genome_FST_{chrom}_fst-list.csv"),
     params: outdir=os.path.join(config['analysis_path'], "fst/genome"), prefix="Genome_FST_{chrom}_"
     wildcard_constraints: chrom = "|".join(config['chrom'])
-    shell: "/home/vitoria/bin/grenedalfv6.0/grenedalf-0.6.0/bin/grenedalf fst \
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
     --sync-path {input.sync} \
-    --reference-genome-fasta {input.ref} \
+    --reference-genome-fasta-file {input.ref} \
     --filter-region {wildcards.chrom}\
     --window-type genome \
     --method unbiased-hudson \
-    --rename-samples-list {input.rename} \
-    --filter-sample-min-read-depth 10 \
+    --rename-samples-file {input.rename} \
+    --filter-sample-min-coverage 10 \
     --pool-sizes {input.pool_sizes} \
-    --window-average-policy valid-snps \
     --out-dir {params.outdir} \
-    --file-prefix {params.prefix}"
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" #--window-average-policy valid-snps \
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule X_FST:
@@ -197,16 +200,18 @@ rule X_FST:
         rename = "../resources/rename_samples.tsv"
     output: os.path.join(config['FST_genome_path'],"Genome_FST_X_fst-matrix.csv"), os.path.join(config['FST_genome_path'],"Genome_FST_X_fst-list.csv")
     params: outdir=config['FST_genome_path'], prefix="Genome_FST_X_"
-    shell: "/home/vitoria/bin/grenedalf/bin/grenedalf fst \
+    shell: "/home/vitoria/bin/grenedalfv3.0/grenedalf-0.3.0/bin/grenedalf fst \
     --sync-path {input.sync} \
     --reference-genome-fasta-file {input.ref} \
     --filter-region X \
     --window-type genome \
     --method unbiased-hudson \
     --rename-samples-file {input.rename} \
+    --filter-sample-min-coverage 10 \
     --pool-sizes {input.pool_sizes} \
     --out-dir {params.outdir} \
-    --file-prefix {params.prefix}"
+    --file-prefix {params.prefix} \
+    --allow-file-overwriting" #--window-average-policy valid-snps \
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule plot_genome_FST:

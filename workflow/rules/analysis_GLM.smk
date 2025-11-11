@@ -76,42 +76,116 @@ rule annotate:
     shell: "java -Xmx8g -jar /home/vitoria/bin/snpEff/snpEff.jar -ud 1000 BDGP6.32.105 {input} > {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+rule find_intergenic:
+    input: 
+        gtf = os.path.join(config['ref_folder'], "dmel-6.32.gtf"),
+        chromSizes = os.path.join(config['ref_folder'], "chromSizes.txt")
+    output: temp(os.path.join(config['ref_folder'], "dmel-6.32_intergenic.bed"))
+    shell: "awk '$1 ~ /^(2L|2R|3L|3R|X)$/' {input.gtf} | sort -k1,1 -k4,4n -k5,5n | bedtools complement -i - -g {input.chromSizes} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule isolate_genes_exons_gtf:
+    input: os.path.join(config['ref_folder'], "dmel-6.32.gtf")
+    output: 
+        exons = temp(os.path.join(config['ref_folder'], "dmel-6.32_noIntron.bed"))
+    shell: "awk 'BEGIN {{OFS = \"\t\"}} {{ if (($1 ~ /^(2L|2R|3L|3R|X)$/) && ($3 == \"exon\" || $3 == \"5UTR\" || $3 == \"3UTR\")) print $1, $4, $5 }}' {input} | sort -k1,1 -k2,2n -k3,3n > {output.exons}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule find_introns:
+    input:
+        chromSizes = os.path.join(config['ref_folder'], "chromSizes.txt"),
+        exons = os.path.join(config['ref_folder'], "dmel-6.32_noIntron.bed"),
+        intergenic = os.path.join(config['ref_folder'], "dmel-6.32_intergenic.bed")
+    output: os.path.join(config['ref_folder'], "dmel-6.32_introns.bed")
+    shell: "cat {input.exons} {input.intergenic} | sort -k1,1 -k2,2n -k3,3n | bedtools complement -i - -g {input.chromSizes} > {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule short_introns:
+    input:
+        gtf = os.path.join(config['ref_folder'], "dmel-6.32.gtf"),
+        introns = os.path.join(config['ref_folder'], "dmel-6.32_introns.bed")
+    output: "../resources/dmel-6.32_neutral_short_introns.bed"
+    shell: "Rscript scripts/R/get_short_introns.R -gtf {input.gtf} -i {input.introns} -o {output}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
 rule get_effects: #get the strongest effect of each snp (the first from SNPeff)
     input:
         annvcf = os.path.join(config['call_path'], "PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.ann.vcf"),
         effects = "../resources/effects.tsv",
-        q = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
-    output: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+        introns = "../resources/dmel-6.32_neutral_short_introns.bed",
+        q = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv"),
+        rec_rate = "../resources/Dmel_recombination_rate_R6.bed"
+    #output: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+    output: os.path.join(config['analysis_path'], "time_GLM_lat/effects_with_shortI_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
-    shell: "Rscript scripts/R/get_effects.R -vcf {input.annvcf} -ef {input.effects} -qv {input.q} -o {output}"
+    shell: "Rscript scripts/R/get_effects.R -vcf {input.annvcf} -ef {input.effects} -i {input.introns} -r {input.rec_rate} -qv {input.q} -o {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule genomic_region_odr:
     input: 
-        qvalues = os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv"),
-    output: os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_{clinal_year}_clinal_at_{fdr}.tsv")
+        qvalues = os.path.join(config['analysis_path'], "time_GLM_lat/effects_with_shortI_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv"),
+    output: os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_{clinal_year}_clinal_at_{fdr}.tsv")
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), fdr = "|".join(config['FDR_cutoffs'])
     shell: "Rscript scripts/R/odds_ratio_to_random_sampling.R  -qv {input.qvalues} -cut {wildcards.fdr} -out {output}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule plot_genomic_region_odr_all:
     input: 
-        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_97_clinal_at_0.1.tsv"),
-        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910all_clinal_at_0.1.tsv"),
-    output: "../results/odr_genomic_region_random_sampling_all.jpeg"
+        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_97_clinal_at_{fdr}.tsv"),
+        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_0910all_clinal_at_{fdr}.tsv"),
+    output: "../results/odr_genomic_region_with_shortI_random_sampling_all_{fdr}.jpeg"
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), 
     shell: "Rscript scripts/R/plot_odd_ratio_sampling.R  -odr97 {input.odr97} -odr0910 {input.odr0910} -out {output}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 rule plot_genomic_region_odr_ms:
     input: 
-        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_97noMFL_clinal_at_0.1.tsv"),
-        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_0910FL2noDLnoJ_clinal_at_0.1.tsv"),
-    output: "../results/odr_genomic_region_random_sampling_matching_samples.jpeg"
+        odr97 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_97noMFL_clinal_at_{fdr}.tsv"),
+        odr0910 = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_0910FL2noDLnoJ_clinal_at_{fdr}.tsv"),
+    output: "../results/odr_genomic_region_with_shortI_random_sampling_matching_samples_{fdr}.jpeg"
     wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR']), 
     shell: "Rscript scripts/R/plot_odd_ratio_sampling.R  -odr97 {input.odr97} -odr0910 {input.odr0910} -out {output}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
+#falta ajustar para incluir outras corridas de glms - inclui outra regra mudando o input porque é mais fácil
+rule concordant_clines:
+    input: 
+        q97 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv"),
+        q0910 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910all.tsv")
+    output:
+        main_plot = "../results/concordant_snps_plot_all.pdf",
+        concord = "../results/concordant_snps_table_all.tsv",
+        q_summaries = "../results/q97_summaries_non_concordand_snps_all.tsv",
+        meanSdiff = "../results/mean_slope_diff_all.jpeg",
+        meanSdiff_lm = "../results/mean_slope_diff_lm_all.tsv",
+        coeffs = "../results/slope_lm_coeffs_all.tsv",
+        incr = os.path.join(config['analysis_path'], 'time_GLM_lat/incerasing_slope_snps_all.tsv')
+    shell: "Rscript scripts/R/clinal_concord.R  -q97 {input.q97} -q0910 {input.q0910} -painel {output.main_plot} -concord {output.concord} -qsu {output.q_summaries} -meanSdiff {output.meanSdiff} -meanSdiffCoef {output.meanSdiff_lm} -coeff {output.coeffs} -incr {output.incr}"
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule concordant_clines_ms:
+    input: 
+        q97 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97noMFL.tsv"),
+        q0910 = os.path.join(config['analysis_path'], "time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910FL2noDLnoJ.tsv")
+    output:
+        main_plot = "../results/concordant_snps_plot_matching_samples.pdf",
+        concord = "../results/concordant_snps_table_matching_samples.tsv",
+        q_summaries = "../results/q97_summaries_non_concordand_snps_matching_samples.tsv",
+        meanSdiff = "../results/mean_slope_diff_matching_samples.jpeg",
+        meanSdiff_lm = "../results/mean_slope_diff_lm_matching_samples.tsv",
+        coeffs = "../results/slope_lm_coeffs_matching_samples.tsv",
+        incr = os.path.join(config['analysis_path'], 'time_GLM_lat/incerasing_slope_snps_matching_samples.tsv')
+    shell: "Rscript scripts/R/clinal_concord.R  -q97 {input.q97} -q0910 {input.q0910} -painel {output.main_plot} -concord {output.concord} -qsu {output.q_summaries} -meanSdiff {output.meanSdiff} -meanSdiffCoef {output.meanSdiff_lm} -coeff {output.coeffs} -incr {output.incr}"
 
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------
+rule odds_ratio_increasing_slopes:
+    input:
+        q97 = os.path.join(config['analysis_path'], "time_GLM_lat/effects_with_shortI_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv"),
+        q0910 = os.path.join(config['analysis_path'], "time_GLM_lat/effects_with_shortI_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910all.tsv"),
+        incr = os.path.join(config['analysis_path'], 'time_GLM_lat/incerasing_slope_snps_all.tsv')
+    output: 
+        out = os.path.join(config['analysis_path'], "time_GLM_lat/genomic_region_odr/odds_ratio_with_shortI_inclreasing_slopes_AND_clinal_only0910_clinal_at_0.1.tsv"),
+        plot = "../results/odr_genomic_region_random_increasing_slopes_clinal0910_0.1.pdf"
+    shell: "Rscript scripts/R/odd_ratio_increasing_slopes.R -q97 {input.q97} -q0910 {input.q0910} -incr {input.incr} -out {output.out} -plot {output.plot}"
 
 
 #rule join_chances:
@@ -121,22 +195,22 @@ rule plot_genomic_region_odr_ms:
 #    shell: "Rscript scripts/R/join_perm_chances.R -cyear {wildcards.year} -pc {params.path}"
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule enrichment_odds_ratio:
-    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
-    output:
-        ench= "../results/odds_ratio_{clinal_year}.jpeg",
-        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_{clinal_year}.tsv"),
-        bar_plot = "../results/effect_summary_{clinal_year}.jpeg"
-    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
-    shell: "Rscript scripts/R/enrichment_effects.R -eff {input} -pen {output.ench} -out {output.table_odds} -cp {output.bar_plot}"
+#rule enrichment_odds_ratio:
+#    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+#    output:
+#        ench= "../results/odds_ratio_{clinal_year}.jpeg",
+#        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_{clinal_year}.tsv"),
+#        bar_plot = "../results/effect_summary_{clinal_year}.jpeg"
+#    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
+#    shell: "Rscript scripts/R/enrichment_effects.R -eff {input} -pen {output.ench} -out {output.table_odds} -cp {output.bar_plot}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-rule enrichment_to_integenic:
-    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
-    output:
-        ench= "../results/odds_ratio_to_integenic_{clinal_year}.jpeg",
-        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_to_intergenic_{clinal_year}.tsv")
-    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
-    shell: "Rscript scripts/R/enrichment_to_intergenic.R -eff {input} -pen {output.ench} -out {output.table_odds}"
+#rule enrichment_to_integenic:
+#    input: os.path.join(config['analysis_path'], "time_GLM_lat/effects_q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_{clinal_year}.tsv")
+#    output:
+#        ench= "../results/odds_ratio_to_integenic_{clinal_year}.jpeg",
+#        table_odds = os.path.join(config['analysis_path'], "time_GLM_lat/odds_ratio_to_intergenic_{clinal_year}.tsv")
+#    wildcard_constraints: clinal_year = "|".join(config['CLINAL_YEAR'])
+#    shell: "Rscript scripts/R/enrichment_to_intergenic.R -eff {input} -pen {output.ench} -out {output.table_odds}"
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 #rule make_perm_pvalue:
