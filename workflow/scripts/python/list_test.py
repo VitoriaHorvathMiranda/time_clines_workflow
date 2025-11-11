@@ -9,13 +9,13 @@ ref_path = "/dados/time_clines/data/reference/dmel-all-chromosome-r6.25.fasta" #
 ref_index_path = ref_path + ".pac" # index de referencia
 raw_fqs_path = "/dados/time_clines/data/seqs/raw/" # local dos arquivos fastq.gz
 meta_path = "/dados/time_clines/data/meta/seq_metadata.tsv" # metadados
-#meta = pd.read_csv(meta_path, sep="\t") # meta csv
+meta = pd.read_csv("/dados/time_clines/data/meta/seq_metadata.tsv", sep="\t") # meta csv
 
 r1_fqs = glob.glob(f"/dados/time_clines/data/seqs/raw/*_R1.fastq.gz") # procura todos arquivos com final _R1.fastq.gz
 fqs_pref = [str.replace(str.replace(fqname, '_R1.fastq.gz', ''), '/dados/time_clines/data/seqs/raw/', '') for fqname in r1_fqs] # guarda o prefixo dos arquivos .fastq.gz encontrados anteriormente. Exemplo: “data3/murillo/time_clines/data/seqs/raw/13_190808_L001_R1.fastq.gz" é armazenado como "13_190808_L001".
 grouped_fqs = {}
 for fq in fqs_pref:
-    finds = re.findall(r'(^.{2,5})_(19\d+)_.*L00', fq) # # guarda partes entre () do prefixo se for do padrao "**_19****_L001". Exemplo: "13_190808_L001" -> finds =  [('13', '190808')]
+    finds = re.findall(r'(^.{2,5})_(19\d+|22.+)_.*L00', fq) # # guarda partes entre () do prefixo se for do padrao "**_19****_L001". Exemplo: "13_190808_L001" -> finds =  [('13', '190808')]
     assert len(finds) <= 1 # interrompe execucao se expressao for FALSE
     if len(finds) == 0: # caso nao seja do padrao "**_19****_L001". Outros padroes sao "*_L1A1_*_L001" e "*_L002".
         assert fq not in grouped_fqs # testa se prefixo fq ja nao esta em grouped_fqs
@@ -33,44 +33,68 @@ for fq in fqs_pref:
             grouped_fqs[joined_name].append(fq) # se grupo existe, adiciona prefixo ao grupo
 
 test=",".join(list(grouped_fqs.keys()))
-#print(test)
+#print(grouped_fqs)
 
-male_ids = ["dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi"]
+read_groups = {}
+sample_names = {}
+def header_to_readgroup(sample, header):
+    rid = ".".join(str(header).split(":")[2:4])
+    return f'\"@RG\\tID:{rid}\\tSM:{sample}\\tPL:Illumina\"'
+for fqpath, fqname in zip(r1_fqs, fqs_pref): # zip => exemplo: a = (1, 2, 3, 4); d = (12, 13); zip(a, d) = [(1, 12), (2, 13)]
+    sampleid = fqname.split('_')[0]
+    sid = sampleid
+    if sampleid == "09":
+        sid="9"
+    samplename = meta[meta.seq_label==sid].population.values[0]
+    sample_names[sampleid] = samplename
+    f = gzip.open(fqpath, 'r')
+    line = f.readline()
+    read_groups[fqname] = header_to_readgroup(samplename, line)
+    f.close()
 
-IDs = list(grouped_fqs.keys())
-IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
-male_labels = [id + "_L001" for id in male_ids]
-IDs_female_pools = [e for e in IDs_deleted_samples if e not in male_labels]
+wildcards = "|".join(list(grouped_fqs.keys()))
+
+def join_input(wildcards):
+    inputs = grouped_fqs[wildcards]
+    return [i+'.fm.bam' for i in inputs]
+
+print(join_input("MFL23_L002"))
+#male_ids = ["dlSC10", "dlGA10", "dlFL10", "HFL97downto60mi"]
+
+#IDs = list(grouped_fqs.keys())
+#IDs_deleted_samples = [e for e in IDs if e not in ("17_L001", "09_L001", "A41_L002")] #deletes samples with low quality from the following analysis
+#male_labels = [id + "_L001" for id in male_ids]
+#IDs_female_pools = [e for e in IDs_deleted_samples if e not in male_labels]
 
 #meta_path = "/dados/time_clines/data/meta/seq_metadata.tsv"
-with open('/dados/time_clines/data/meta/seq_metadata.tsv', 'r') as file:
-    meta = [line.strip().split('\t') for line in file]
+#with open('/dados/time_clines/data/meta/seq_metadata.tsv', 'r') as file:
+#    meta = [line.strip().split('\t') for line in file]
         
 # Initialize an empty list to store the results
-IDs_bams = []
+#IDs_bams = []
 # Open the BAM list file in read mode
-with open('/dados/time_clines/data/seqs/align/bam_list_downsampled.txt', 'r') as file:
+#with open('/dados/time_clines/data/seqs/align/bam_list_downsampled.txt', 'r') as file:
     # Loop through each line in the file
-    for line in file:
+ #   for line in file:
         # Strip any leading/trailing whitespace (like newlines)
-        line = line.strip()
+#        line = line.strip()
         # Split the line at the first underscore and take the first part
-        first_part = line.split('_')[1]
-        id_name = first_part.split('/')[4]
+#        first_part = line.split('_')[1]
+#        id_name = first_part.split('/')[4]
         # Append the first part to the result list
-        IDs_bams.append(id_name)
+#        IDs_bams.append(id_name)
 
         # Initialize an empty list for sample names
-sample_names = []
+#sample_names = []
 # Map IDs to sample names using the metadata
-for string in IDs_bams:
-    for row in meta:
-        if string == row[0]:  # Find the row with the id
-            sample_names.append(row[1])  # Get the pop name
-            break  # Stop searching once a match is found
+#for string in IDs_bams:
+#    for row in meta:
+#        if string == row[0]:  # Find the row with the id
+#            sample_names.append(row[1])  # Get the pop name
+#            break  # Stop searching once a match is found
 
 
-print(IDs_bams)
+#print(IDs_bams)
 
 
 
