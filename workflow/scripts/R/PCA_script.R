@@ -5,6 +5,7 @@ library(data.table)
 library(tidyverse)
 library(nasapower)
 library(patchwork)
+library(ggrepel)
 
 #parse arguments 
 parser <- ArgumentParser(description= "Makes pca plots, all outputs are .jpeg")
@@ -20,10 +21,12 @@ xargs<- parser$parse_args()
 
 #get envi variables ---------------------------------------------------------------
 # seq_metadata <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
+pop_mean_depth <- fread("/home/vitoria/clinas/mean_seq_deapth_per_pop.tsv")
+
 seq_metadata <- fread(xargs$meta)
 
 meta <- seq_metadata |>
-  select(population, collection_year, latitude, longitude, collection_month)
+  select(population, collection_year, latitude, longitude, collection_month, seq_label)
 meta <- 
   meta[!(population %in% c("ESC97", "SNC10", "HFL97_new"))]
 
@@ -59,23 +62,23 @@ envi_info[, diff_to_c_month := ifelse(collection_year == YEAR,
                                       (collection_month-MM)+12)]
 
 
-envi_6months <- 
-  envi_info[diff_to_c_month <= 6 &
-              diff_to_c_month >= 0][,
-                                    .(tmin = min(T2M),
-                                      tmax = max(T2M),
-                                      tmean = mean(T2M),
-                                      preci_mean = mean(PRECTOTCORR)),
-                                    by = c("population","MM",
-                                           "collection_month", "diff_to_c_month")]
-
-envi_test_6months <- envi_6months[, .(tmin_6mday = min(tmin), tmax_6mday = max(tmax),
-                                     tmin_6month = min(tmean), tmax_6month = max(tmean),
-                                     tmean_6months = mean(tmean),
-                                     preci_max_6month = max(preci_mean),
-                                     preci_mean_6months = mean(preci_mean)),
-                                 by = c("population")]
-
+# envi_6months <- 
+#   envi_info[diff_to_c_month <= 6 &
+#               diff_to_c_month >= 0][,
+#                                     .(tmin = min(T2M),
+#                                       tmax = max(T2M),
+#                                       tmean = mean(T2M),
+#                                       preci_mean = mean(PRECTOTCORR)),
+#                                     by = c("population","MM",
+#                                            "collection_month", "diff_to_c_month")]
+# 
+# envi_test_6months <- envi_6months[, .(#tmin_6mday = min(tmin), tmax_6mday = max(tmax),
+#                                      tmin_6month = min(tmean), #tmax_6month = max(tmean),
+#                                      tmean_6months = mean(tmean),
+#                                      #preci_max_6month = max(preci_mean),
+#                                      preci_mean_6months = mean(preci_mean)),
+#                                  by = c("population")]
+# 
 
 envi_3months <- 
   envi_info[diff_to_c_month <= 3 &
@@ -84,23 +87,26 @@ envi_3months <-
                                       tmax = max(T2M),
                                       tmean = mean(T2M),
                                       preci_mean = mean(PRECTOTCORR)),
-                                    by = c("population","MM",
+                                    by = c("population", "seq_label","MM",
                                            "collection_month", "diff_to_c_month")]
 
-envi_test_3months <- envi_3months[, .(tmin_3mday = min(tmin), tmax_3mday = max(tmax),
-                                     tmin_3month = min(tmean), tmax_3month = max(tmean),
+envi_test_3months <- envi_3months[, .(#tmin_3mday = min(tmin), #tmax_3mday = max(tmax),
+                                     tmin_3month = min(tmean), #tmax_3month = max(tmean),
                                      tmean_3months = mean(tmean),
-                                     preci_max_3month = max(preci_mean),
+                                     #preci_max_3month = max(preci_mean),
                                      preci_mean_3months = mean(preci_mean)),
-                                 by = c("population")]
+                                 by = c("population", "seq_label")]
 
+envi_test_3months <- 
+  envi_test_3months[pop_mean_depth, on = c("seq_label")][, !"seq_label"]
 
+meta <- 
+  meta[, !"seq_label"]
 
 # gets freqs and all samples PCA --------------------------------------------------
 
-freqs <- fread(xargs$freqs)
-
 #freqs <- fread("/dados/time_clines/data/seqs/calls/freqs_and_depths_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
+freqs <- fread(xargs$freqs)
 
 chroms <- c("2L", "2R", "3L", "3R", "X")
 freqs <- freqs[depth >= 20]
@@ -140,7 +146,8 @@ pcs <- as.data.table(pcs)
 
 pc_info <- as.data.table(left_join(pcs, meta))
 pc_info <- as.data.table(left_join(pc_info, envi_test_3months))
-pc_info <- as.data.table(left_join(pc_info, envi_test_6months))
+pc_info <- pc_info[, !"longitude", with = FALSE]
+#pc_info <- as.data.table(left_join(pc_info, envi_test_6months))
 
 PC_names <- paste0("PC", c(1:length(pca_var)))
 
@@ -192,21 +199,35 @@ setnames(test[[2]], "value", "r_squared")
 setnames(test[[3]], "value", "r_squared_adj")
 
 all_tests <- reduce(test, left_join)
+# all_tests <- all_tests[test_variable != "longitude" &
+#             test_variable != "tmean_3months"]
+setorder(all_tests, pvalue)
+all_tests[, n := .I]
+all_tests[, adj_critical_alpha := 0.1/(nrow(all_tests)+1 - n)] # essa tab vai para o sup
+all_tests2 <- all_tests
 
-all_tests[, r_sq := fcase(pvalue <= 0.01, paste0(r_squared, "***"),
-                          pvalue <= 0.05, paste0(r_squared, "**"),
-                          pvalue <= 0.1, paste0(r_squared, "*"),
-                          pvalue <= 0.12, paste0(r_squared, "."),
-                          rep(TRUE, .N), as.character(r_squared))]
+# all_tests2[, r_sq := fcase(pvalue <= 0.01, paste0(r_squared, "***"),
+#                           pvalue <= 0.05, paste0(r_squared, "**"),
+#                           pvalue <= 0.1, paste0(r_squared, "*"),
+#                           pvalue <= 0.12, paste0(r_squared, "."),
+#                           rep(TRUE, .N), as.character(r_squared))]
 
-fwrite(all_tests, file = xargs$lmALL, sep = "\t")
+all_tests2[, r_squared := round(r_squared, 3)]
+all_tests2[, r_sq := ifelse(pvalue <= adj_critical_alpha,
+                            paste0(r_squared, "*"), r_squared)]
+
+fwrite(all_tests, #"/dados/time_clines/analysis/PCA/lm_PC1-4_all_variables.tsv",
+       file = xargs$lmALL,
+       sep = "\t")
 
 p_table <- 
 dcast.data.table(data = all_tests,
                  formula = test_variable ~ resposta, 
                  value.var = "r_sq")
 
-fwrite(p_table, xargs$Rsq, sep = "\t")
+fwrite(p_table, #"/dados/time_clines/analysis/PCA/Rsq_PC1-4_all_variables.tsv",
+       xargs$Rsq, 
+       sep = "\t")
 
 #plot PC1x2 e PC3x4 todas as variáveis -----------------------------------------
 
@@ -229,17 +250,51 @@ pc_info |>
   ggplot(aes(x = PC1, y = PC2)) +
   geom_point(aes(color = latitude), size = 4, alpha = 0.7) +
   scale_color_viridis_c(option = "B") +
-  geom_text(aes(label = population), size = 1.5, nudge_y = 3) +
+  geom_text_repel(aes(label = population), size = 3,
+                  arrow = arrow(length = unit(0, "npc"), type = "open"),
+                  segment.size = 0.2,       # Adjusts the line width
+                  segment.linetype = "solid", # Ensures lines are solid
+                  force = 5,               # Strengthens repulsion
+                  max.overlaps = Inf,      # Prevents removal due to overlaps
+                  box.padding = 0.5,       # Space around the label box
+                  point.padding = 0.3,      # Space around the data point
+                  #ylim = c(0.2, 0.5),
+                  min.segment.length = 0, 
+                  seed = 15) +
   xlab(paste("PC1 - ", pca_var_per[1], "%", sep = "")) +
   ylab(paste("PC2 - ", pca_var_per[2], "%", sep = "")) +
   theme_minimal()
+
+# PC1x3_ALL <- 
+#   pc_info |>
+#   ggplot(aes(x = PC1, y = PC3)) +
+#   geom_point(aes(color = latitude), size = 6, alpha = 0.7) +
+#   scale_color_viridis_c(option = "B") +
+#   geom_text_repel(aes(label = population), size = 4,
+#                   arrow = arrow(length = unit(0, "npc"), type = "open"),
+#                   segment.size = 0.2,       # Adjusts the line width
+#                   segment.linetype = "solid", # Ensures lines are solid
+#                   force = 5,               # Strengthens repulsion
+#                   max.overlaps = Inf,      # Prevents removal due to overlaps
+#                   box.padding = 0.5,       # Space around the label box
+#                   point.padding = 0.3,      # Space around the data point
+#                   #ylim = c(0.2, 0.5),
+#                   min.segment.length = 0, 
+#                   seed = 15) +
+#   xlab(paste("PC1 - ", pca_var_per[1], "%", sep = "")) +
+#   ylab(paste("PC3 - ", pca_var_per[2], "%", sep = "")) +
+#   theme_minimal() +
+#   theme(axis.title=element_text(size=18),
+#         legend.title = element_text(size=18),
+#         legend.text = element_text(size = 16))
+
 
 PC3x4_ALL <- 
   pc_info |>
   ggplot(aes(x = PC3, y = PC4)) +
   geom_point(aes(color = collection_year), size = 4, alpha = 0.5) +
   scale_color_viridis_b(option = "C") +
-  geom_text(aes(label = population), size = 1.5, nudge_y = 3) +
+  geom_text(aes(label = population), size = 2, nudge_y = 2) +
   xlab(paste("PC3 - ", pca_var_per[3], "%", sep = "")) +
   ylab(paste("PC4 - ", pca_var_per[4], "%", sep = "")) +
   labs(color = "Collection Year") +
@@ -434,20 +489,25 @@ graph_table_per_chrom |>
 
 ####### saves images -----------------------------------------------
 
-jpeg(filename = xargs$PC1x2all,
-     width = 25,
-     height = 15,
-     units = "cm",
-     res = 1200)
+pdf(file = xargs$PC1x2all, #"PC1x2_all_pops.pdf",
+    width = 16/1.5, 
+    height = 10/1.5
+     )
 PC1x2_ALL
 dev.off()
 
+# jpeg(filename = "PC1x3_all_pops.jpeg",
+#      width = 23,
+#      height = 15,
+#      units = 'cm',
+#      res = 1300)
+# PC1x3_ALL
+# dev.off()
 
-jpeg(filename = xargs$PC3x4all,
-     width = 25,
-     height = 15,
-     units = "cm",
-     res = 1200)
+
+pdf(file = xargs$PC3x4all,
+     width = 16/1.5, 
+     height = 10/1.5)
 PC3x4_ALL
 dev.off()
 

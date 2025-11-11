@@ -12,6 +12,9 @@ parser$add_argument('--chrom', '-c', help= 'chromosome')
 parser$add_argument('--output', '-o', help= 'tsv, with: chrom, sample, window, mean_depth before and after downsample')
 xargs<- parser$parse_args()
 
+# chrom <- "X"
+# depth_pre_path <- "/dados/time_clines/data/seqs/processed/qltctrl/pre_downsample/samtools_depth_stats_include_unmerged_flag.tsv"
+# depth_pos_path <- "/dados/time_clines/data/seqs/processed/qltctrl/pos_downsample/samtools_depth_stats_include_unmerged_flag.tsv"
 
 chrom <- xargs$chrom
 depth_pre_path <- xargs$PreDepthFile
@@ -28,16 +31,16 @@ depth_pos <- fread(cmd = paste("grep", chrom , depth_pos_path))
 metadata <- fread("/dados/time_clines/data/meta/seq_metadata.tsv", fill = TRUE)
 
 #fix variables names
-sample_ids_pos <- colnames(depth_pos_header)[3:20] |> 
+sample_ids_pos <- colnames(depth_pos_header)[3:length(depth_pos_header)] |> 
   str_split_i(pattern = "/", i = 7) |> 
   str_split_i(pattern = "_", i = 1)
 
-sample_ids_pre <- colnames(depth_pre_header)[3:20] |> 
+sample_ids_pre <- colnames(depth_pre_header)[3:length(depth_pre_header)] |> 
   str_split_i(pattern = "/", i = 7) |> 
   str_split_i(pattern = "_", i = 1)
 
-setnames(depth_pre, colnames(depth_pre)[3:20], sample_ids_pre)
-setnames(depth_pos, colnames(depth_pos)[3:20], sample_ids_pos)
+setnames(depth_pre, colnames(depth_pre)[3:length(depth_pre)], sample_ids_pre)
+setnames(depth_pos, colnames(depth_pos)[3:length(depth_pos)], sample_ids_pos)
 setnames(depth_pre, c("V1", "V2"), c("CHROM", "POS"))
 setnames(depth_pos, c("V1", "V2"), c("CHROM", "POS"))
 
@@ -49,12 +52,12 @@ depth_pos[, window := cut(POS, windows)]
 
 #samples(pops) to row
 depths_pre_tidy <- melt.data.table(data = depth_pre,
-                                   measure = 3:20,
+                                   measure = 3:(length(depth_pre)-1),
                                    value.name = "depth",
                                    variable.name = "seq_label")
 
 depths_pos_tidy <- melt.data.table(data = depth_pos,
-                                   measure = 3:20,
+                                   measure = 3:(length(depth_pre)-1),
                                    value.name = "depth",
                                    variable.name = "seq_label")
 

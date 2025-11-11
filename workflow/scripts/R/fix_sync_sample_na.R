@@ -15,7 +15,7 @@ xargs<- parser$parse_args()
 all_sync <- fread(xargs$sync)
 #setnames(all_sync, colnames(all_sync)[1:3], c("CHROM", "POS", "REF"))
 
-# BS <- fread("importand_bed_sites.tsv",
+# BS <- fread("/dados/time_clines/analysis/ancestry/all_snp_ids_BS.tsv",
 #             col.names = c("CHROM", "POS", "bs"),
 #             colClasses = c("character", "integer", "character"))
 
@@ -24,13 +24,13 @@ BS <- fread(xargs$bs,
             colClasses = c("character", "integer", "character"))
 
 
-BS[, paste0("V", 4:22, "bs") := tstrsplit(bs, "", fixed = TRUE) ]
+BS[, paste0("V", 4:23, "bs") := tstrsplit(bs, "", fixed = TRUE) ]
 
 par_fixed <- merge.data.table(all_sync, BS, by = c("CHROM", "POS"), all.x = TRUE)
 
 # Get the column names
-V_cols <- paste0("V", 4:22)        # V4 to V22
-Vbs_cols <- paste0("V", 4:22, "bs") # V4bs to V22bs
+V_cols <- paste0("V", 4:23)        # V4 to V22
+Vbs_cols <- paste0("V", 4:23, "bs") # V4bs to V22bs
 
 # Loop through each pair of V and Vbs columns
 for (i in seq_along(V_cols)) {

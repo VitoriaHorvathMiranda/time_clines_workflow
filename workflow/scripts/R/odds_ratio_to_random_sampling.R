@@ -33,7 +33,7 @@ n_snps[, chance_r := n_r/total_clinal]
 #pega 100000 snps aleatórios e calcula a chance dele daquela determindade classe genômica
 get_controls <- 
 function(dt, effects){
-  control_snps <- dt[qvalue > 0.1][sample(.N, 100000)]
+  control_snps <- dt[qvalue > critical_q][sample(.N, 100000)]
   
   n_control <- control_snps[,.(n = nrow(.SD)), by = "effect"]
   n_control[, total_n_class := sum(n_control$n)-n]

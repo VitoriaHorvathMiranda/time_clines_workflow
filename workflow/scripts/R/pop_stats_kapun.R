@@ -13,6 +13,12 @@ parser$add_argument('--stats', '-stats', help = "stats path and prefix")
 parser$add_argument('--plots', '-plots', help= 'plots path and prexix')
 xargs<- parser$parse_args()
 
+# small_vcf <- fread("/dados/time_clines/data/seqs/calls/PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf",
+#                   skip = "#CHROM",
+#                   nrows = 1,
+#                   drop = c("#CHROM","POS","ID","REF","ALT","QUAL","FILTER",
+#                            "INFO","FORMAT"))
+
 
 small_vcf <- fread(xargs$vcf,
                    skip = "#CHROM",
@@ -20,21 +26,15 @@ small_vcf <- fread(xargs$vcf,
                    drop = c("#CHROM","POS","ID","REF","ALT","QUAL","FILTER",
                             "INFO","FORMAT"))
 
+# meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv",
+#               select = c("population", "latitude", "collection_year"))
 
-# small_vcf <- fread("/dados/time_clines/data/seqs/calls/PoolSNP_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_clean.h.vcf",
-#                   skip = "#CHROM",
-#                   nrows = 1,
-#                   drop = c("#CHROM","POS","ID","REF","ALT","QUAL","FILTER",
-#                            "INFO","FORMAT"))
 
 meta <- fread(xargs$meta,
               select = c("population", "latitude", "collection_year"))
 
-# meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv",
-#               select = c("population", "latitude", "collection_year"))
-
+#arg_stats <- "/dados/time_clines/analysis/pop_stats/pop_stats_kapun_auto_miss_fraq0.60_200000_200000"
 arg_stats <- xargs$stats
-#arg_stats <- "/dados/time_clines/analysis/pop_stats/pop_stats_kapun_auto_200000_200000"
 path <- str_split_i(arg_stats, "/pop_stats_", 1)
 pattern_auto <- str_split_i(arg_stats, "/", 6)
 pattern_X <-  str_replace(pattern_auto, "auto", "X")
@@ -90,6 +90,19 @@ merged_data[, plot_year := fcase(collection_year == "1997", "1997",
                                  collection_year == "2009" | collection_year == "2010", "2009/2010",
                                  collection_year == "2022" | collection_year == "2023" | collection_year == "2017", "2017/2022/2023")]
 
+
+# rec_rate <- fread("~/time_clines_workflow/resources/Dmel_recombination_rate_R6.bed")
+# setnames(rec_rate, 'chrom', 'CHROM')
+# # rec_rate[, START := start]
+# # rec_rate[, END := end]
+# rec_rate[, c('start', 'end') := lapply(.SD, as.integer),
+#          .SDcols = c('start', 'end')]
+# 
+# rec_rate[, mid_pos := start+((end-start)/2)]
+# scale_factor <- max(merged_data$pi, na.rm = TRUE) / max(rec_rate$rec_rate, na.rm = TRUE)
+# rec_rate[, rec_rate_scaled := rec_rate * scale_factor]
+
+
 PI <- 
 merged_data |> 
   ggplot() +
@@ -97,6 +110,7 @@ merged_data |>
                 color = state, group = pop),
             #show.legend = FALSE,
             linewidth = 0.5) +
+  geom_line(data = rec_rate, aes(x= mid_pos, y = rec_rate)) +
   facet_grid(cols = vars(CHROM), rows = vars(plot_year), scales = "free_x") +
   scale_color_tableau() +
   theme_light() + 
@@ -111,6 +125,8 @@ merged_data |>
         axis.title.x = element_text(size = 10),
         legend.title = element_text(size = 12),
         title = element_text(size = 14)) 
+
+
 
 W <- 
 merged_data |> 
@@ -164,17 +180,16 @@ w <- paste0(plot_path, "w.jpeg")
 d <- paste0(plot_path, "D.jpeg")
 
 jpeg(filename = pi,
-     width = 23,
+     width = 30,
      height = 17,
      units = "cm",
      res = 1200)
-
 PI
 
 dev.off()
 
 jpeg(filename = w,
-     width = 23,
+     width = 30,
      height = 17,
      units = "cm",
      res = 1200)
@@ -184,7 +199,7 @@ W
 dev.off()
 
 jpeg(filename = d,
-     width = 23,
+     width = 30,
      height = 17,
      units = "cm",
      res = 1200)

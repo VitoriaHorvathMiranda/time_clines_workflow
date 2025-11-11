@@ -21,6 +21,7 @@ meta <- fread(xargs$meta,
               select = c("population", "latitude", "longitude"))
 fst_2 <- fread(xargs$FST)
 
+setnames(fst_2, colnames(fst_2), c("first", "second", "fst"))
 
 fst <- 
 fst_2[(first %in% c("EU", "AFR")) | (second %in% c("EU", "AFR")),
@@ -37,33 +38,67 @@ fst <-
 PLOT_LAT <- 
 fst |>
   ggplot(aes(x = latitude, y = fst, shape = second, color = year)) +
-  geom_point(size = 3) +
-  geom_smooth(method = lm) +
-  labs(shape = "", y = "FST", x = "Latitude") +
+  geom_point(size = 5) +
+  geom_smooth(data = fst[year %in% c("1997", "2009/2010")], method = lm) +
+  labs(shape = "", y = expression("F"[ST]), x = "Latitude") +
   scale_color_brewer(palette = "Dark2") +
-  theme_minimal() 
+  theme_minimal() +
+  theme(legend.text = element_text(size = 14),
+        legend.title = element_text(size = 18),
+        axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))
 
 lm_eu <- 
 lm(fst ~ latitude + year,
    data = fst[second == "EU" & year %in% c("2009/2010", "1997")])
 
+lm_eu_int <- 
+  lm(fst ~ latitude * year,
+     data = fst[second == "EU" & year %in% c("2009/2010", "1997")])
+
+anova(lm_eu, lm_eu_int)
+
 lm_afr <- 
   lm(fst ~ latitude + year,
      data = fst[second == "AFR" & year %in% c("2009/2010", "1997")])
 
+lm_afr_int <- 
+  lm(fst ~ latitude * year,
+     data = fst[second == "AFR" & year %in% c("2009/2010", "1997")])
+
 sink(xargs$outputLM)
 print(summary(lm_eu))
+print(summary(lm_eu_int))
+anova(lm_eu, lm_eu_int)
+
+
 print(summary(lm_afr))
+print(summary(lm_afr_int))
+anova(lm_afr, lm_afr_int)
 sink()
 
-jpeg(filename = xargs$plot,
-     width = 25,
-     height = 17,
-     units = "cm",
-     res = 1200)
+pdf(file = xargs$plot, #"fst_vs_eu_afr_per_lat_autossome.pdf", #
+    width = 16/1.5, 
+    height = 12/1.5)
 
 PLOT_LAT
 
 dev.off()
+
+# jpeg(filename = "fst_vs_eu_afr_per_lat_autossome.jpeg", 
+#      width = 27,
+#      height = 15,
+#      units = "cm",
+#      res = 1200)
+# 
+# PLOT_LAT
+# 
+# dev.off()
+
+
+
+
+
+
 
 

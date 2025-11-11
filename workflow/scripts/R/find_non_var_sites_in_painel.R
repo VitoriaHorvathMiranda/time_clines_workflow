@@ -44,9 +44,9 @@ melted_sync[, pop := ifelse(sample %like% "AFR", "AFR", "EU")]
 melted_sync[, c("A","T","C","G","N","del") := lapply(.SD, as.integer),
             .SDcols = c("A","T","C","G","N","del")]
 
-#filter positions that don't look like heterozygotes 
+#filter positions that don't look like homozygotes 
 #there shouldn't be heterozygotes positions because the samples are haploid
-melted_sync[, all_bases := rowSums(.SD),
+melted_sync[, all_bases := rowSums(.SD, na.rm = TRUE),
             .SDcols = c("A","T", "C", "G", "N", "del")]
 
 melted_sync[, maxdepth := max(A,`T`,C,G,N,del),
@@ -87,12 +87,12 @@ melted_sync[, c("A","T","C","G","N","del") :=
 
 
 pre_sync <- 
-melted_sync[, .(A = sum(A),
-               `T` = sum(`T`),
-                C = sum(C),
-                G = sum(G),
-                N = sum(N),
-                del = sum(del)), by = c("chr", "pos", "ref", "pop")]
+melted_sync[, .(A = sum(A, na.rm = TRUE),
+               `T` = sum(`T`,na.rm = TRUE),
+                C = sum(C, na.rm = TRUE),
+                G = sum(G, na.rm = TRUE),
+                N = sum(N, na.rm = TRUE),
+                del = sum(del, na.rm = TRUE)), by = c("chr", "pos", "ref", "pop")]
 
 
 pre_sync[, genotype := paste(A,`T`,C,G,N,del, sep = ":")]

@@ -30,7 +30,8 @@ painels <- lapply(painel_files, fread)
 
 painel <- rbindlist(painels)
 
-#painel <- fread()
+#freqs <- fread("/dados/time_clines/data/seqs/calls/NE_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15.tsv")
+#meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
 freqs <- fread(xargs$freqNE)
 meta <- fread(xargs$meta)
 
@@ -212,7 +213,7 @@ mean_european_ancestry <-
   scale_color_brewer(palette = "Dark2") +
   theme_minimal() +
   #coord_cartesian(ylim = c(0,1)) +
-  labs(y = "Mean African Ancestry", x = "Latitude", color = "") +
+  labs(y = "Mean European Ancestry", x = "Latitude", color = "") +
   theme(strip.background = element_rect(fill = "white"),
         strip.text = element_text(color = "black", size = 12),
         #legend.position = "none",

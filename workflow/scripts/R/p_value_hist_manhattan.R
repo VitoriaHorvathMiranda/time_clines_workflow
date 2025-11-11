@@ -35,18 +35,20 @@ for (i in seq_along(chrom)) {
 
 
 p_values <- rbindlist(p_values)
-
+#q_values <- fread("/dados/time_clines/analysis/time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910all.tsv")
 
 HIST <- 
 p_values |>
   ggplot() +
   geom_histogram(aes(p_value), boundary = 0, binwidth = 0.02) +
   coord_cartesian(ylim = c(0, 2.2e5)) +
-  labs(x = "p-value",
-       caption = "min-freq = 0.001, min-cov = 15, min-count = 5") +
+  labs(x = "p-value" #,
+       #caption = "min-freq = 0.001, min-cov = 15, min-count = 5"
+       ) +
   theme_minimal() +
-  theme(strip.text = element_text(size = 14))
-
+  theme(strip.text = element_text(size = 14),
+        axis.title = element_text(size = 25),
+        axis.text = element_text(size = 20))
 
 ######get FDR cutof 1997 ---------------
 Pvalue <- p_values$p_value #all_ps[year == "1997"]$p_value
@@ -65,6 +67,10 @@ p_value_cutoff_0.01 <- max(qobj$pvalues[qobj$qvalues <= 0.01])
 p_values[, qvalue := qobj$qvalues]
 
 fwrite(p_values, file = xargs$output, sep = "\t")
+
+# p_values_0910 <- fread("/dados/time_clines/analysis/time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_0910all.tsv")
+# p_values_97 <- fread("/dados/time_clines/analysis/time_GLM_lat/q-values_noSNC10_noESC97_with_dlGA10_dlSC10_mincount5_minfreq0.001_cov15_97.tsv")
+
 
 #### q-plots -----------------------------------------------
 
@@ -100,22 +106,25 @@ axisdf <-
 MANHATTAN <- 
 p_values |>
   ggplot(aes(x = ID, y =-log10(p_value))) +
-  geom_point(aes(color=as.factor(CHROM)), alpha=0.8, size=0.7) +
-  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.1)), color = "darkgreen") +
-  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.01)), color = "blue") +
-  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.05)), color = "red") +
+  geom_point(aes(color=as.factor(CHROM)), alpha=0.8, size=0.9) +
+  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.1)), 
+             color = "darkgreen", linewidth = 1) +
+  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.01)), 
+             color = "blue", linewidth = 1) +
+  geom_hline(aes(yintercept = -log10(p_value_cutoff_0.05)), 
+             color = "red", linewidth = 1) +
   geom_text(aes(x = max(ID)+10,
                 y = -log10(p_value_cutoff_0.1) + 0.25,
                 label = "FDR 10%"),
-            size = 2.5, color = "darkgreen") +
+            size = 3, color = "darkgreen") +
   geom_text(aes(x = max(ID)+10,
                 y = -log10(p_value_cutoff_0.01) + 0.25,
                 label = "FDR 1%"),
-            size = 2.5, color = "blue") +
+            size = 3, color = "blue") +
   geom_text(aes(x = max(ID)+10,
                 y = -log10(p_value_cutoff_0.05) + 0.25,
                 label = "FDR 5%"),
-            size = 2.5, color = "red") +
+            size = 3, color = "red") +
   scale_color_manual(values = rep(c("lightblue3", "lightcoral"), 5)) +
   scale_x_continuous(label = axisdf$CHROM, breaks= axisdf$center) +
   scale_y_continuous(expand = c(0, 0)) +
@@ -126,14 +135,16 @@ p_values |>
     panel.border = element_blank(),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
-    plot.title = element_text(size = 15)
+    plot.title = element_text(size = 15),
+    axis.title = element_text(size = 28),
+    axis.text = element_text(size = 25)
   ) + 
   labs(title = "1997", y = "-log10(p-value)", x = "Chromosome")
 
 
 #### save images -----------------------------------------------------
 
-jpeg(filename = xargs$man,
+jpeg(filename = xargs$man, #"manhattan_0910_all.jpeg",
      width = 25,
      height = 15,
      units = "cm",
@@ -143,8 +154,8 @@ MANHATTAN
 dev.off()
 
 
-jpeg(filename = xargs$hist,
-     width = 26,
+jpeg(filename = xargs$hist, #"hist_p-values_97_all.jpeg", 
+     width = 24,
      height = 14,
      units = "cm",
      res = 1200)

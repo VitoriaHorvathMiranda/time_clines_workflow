@@ -1,5 +1,6 @@
 library(data.table)
 library(tidyverse)
+library(lme4)
 library(argparse)
 
 #parse arguments 
@@ -13,6 +14,7 @@ parser$add_argument('--vcf', '-vcf', help= 'vcf for header')
 parser$add_argument('--output', '-out', help= 'global stat per chrom per pop')
 parser$add_argument('--yearStat', '-y', help= 'global stat per chrom per year')
 parser$add_argument('--statBar', '-bar', help= 'barplot of output, jpeg')
+parser$add_argument('--diverLM', '-lm', help= 'lm diver per year')
 xargs<- parser$parse_args()
 
 
@@ -66,16 +68,48 @@ merged_data <-
 merge.data.table(melted_stats[[1]], melted_stats[[2]],
                  by = c("CHROM", "population", "window"))
 
+# merged_data_test <- 
+# merged_data[pop_info, on = "population", nomatch = 0][
+#   ,plot_collection_year :=
+#     fcase(collection_year == "2009" | collection_year == "2010", "2009/2010", 
+#           collection_year == "2022" | collection_year == "2023", "2022/2023",
+#           rep(TRUE, .N), as.character(collection_year))]
+# 
+# test <- glmer(stat ~ latitude + population + (1 | window),
+#               family = binomial,
+#               data = merged_data_test,
+#               weights = sizes)
+# 
+# summary(test)
+
 ## Compute chromosomal stat --------------------------------
 merged_data[, weighted_stat := stat*sizes]
 
 merged_data[, sizes := ifelse(is.na(stat), NA, sizes)]
+
 
 global_stat <- 
 merged_data[, .(whole_size = sum(sizes, na.rm = TRUE),
                 sum_stats = sum(weighted_stat, na.rm = TRUE)#,
                 ),
             by = c("CHROM", "population")][, global_stat := sum_stats/whole_size]
+
+merged_data <- 
+merge.data.table(merged_data, global_stat, by = c("population", "CHROM"))
+
+merged_data[, w_var := sizes *((stat - global_stat)^2)]
+
+global_sd <- 
+merged_data[, .(whole_size = sum(sizes, na.rm = TRUE),
+                sum_vars = sum(w_var, na.rm = TRUE)),
+            by = c("CHROM", "population")][
+              , sd := sqrt(sum_vars/(whole_size*
+                                  ((nrow(merged_data[!is.na(sizes)])-1)/
+                                     nrow(merged_data[!is.na(sizes)]))))]
+
+global_stat <- 
+merge.data.table(global_stat, global_sd)
+
 
 global_stat <- 
 global_stat[pop_info, on = "population", nomatch = 0][
@@ -94,9 +128,13 @@ global_stat[,state := fct_reorder(as.factor(state), latitude)]
 
 global_stat[, population := fct_reorder(as.factor(population), collection_year)]
 
-global_stats_supl <- 
-dcast.data.table(global_stat, formula = CHROM ~ population,
-                 value.var = "global_stat")
+global_stats_supl <- global_stat[, !c("whole_size.x", "sum_stats",
+                                      "whole_size.y", "sum_vars", 
+                                      "plot_collection_year", "state")]
+
+# global_stats_supl <- 
+# dcast.data.table(global_stat, formula = CHROM ~ population,
+#                  value.var = "global_stat")
 
 fwrite(global_stats_supl, xargs$output, sep = "\t")
 
@@ -118,27 +156,46 @@ BAX_GLOBA_stat
 
 dev.off()
 
+#global_stat <- global_stat[, !c("collection_year")]
 
+setnames(global_stat, c("plot_collection_year", "collection_year"),
+         c("collection_year", "year"))
 
 global_stat_per_year <- 
 global_stat[, .(mean(global_stat)),
-            by = c("CHROM", "plot_collection_year")]
+            by = c("CHROM", "collection_year")]
 global_stat_per_year_noCMD97B <- 
 global_stat[population != "CMD97B" & population %like% "97"][
   , .(mean(global_stat)),
-  by = c("CHROM", "plot_collection_year")][
-    , plot_collection_year := "1997_noCMD97B"
+  by = c("CHROM", "collection_year")][
+    , collection_year := "1997_noCMD97B"
   ]
 
 global_stat_per_year <- 
 rbindlist(list(global_stat_per_year, global_stat_per_year_noCMD97B))
 
+
 global_stat_per_year <-
 dcast(global_stat_per_year,
-      CHROM ~ plot_collection_year,
+      CHROM ~ collection_year,
       value.var = "V1")
 
 fwrite(global_stat_per_year, xargs$yearStat, sep = "\t")
 
 
+global_stat_noCMD97B <- 
+global_stat[collection_year == "1997" & population != "CMD97B"]
+
+global_stat_noCMD97B[, collection_year := "1997_noCMD97B"]
+
+global_stat <- 
+merge.data.table(global_stat, global_stat_noCMD97B,
+                 by = colnames(global_stat), all = TRUE)
+
+lm_diver <- lm(data = global_stat,
+               global_stat ~ collection_year)
+
+sink(xargs$diverLM)
+summary(lm_diver)
+sink()
 

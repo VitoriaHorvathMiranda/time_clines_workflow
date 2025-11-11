@@ -24,6 +24,7 @@ all_or[, effect_plot := fcase(effect == "NON_SYNONYMOUS_CODING", "NSYN",
                               effect == "SYNONYMOUS_CODING", "SYN",
                               effect == "UTR_3", "3'UTR",
                               effect == "UTR_5", "5'UTR",
+                              effect == "SHORT_INTRON", "SHORT INTRON",
                               rep(TRUE, .N), effect)]
 
 PLOT <- 
@@ -39,7 +40,7 @@ all_or[effect != "-"] |>
         strip.background = element_rect(fill = "grey95"))
 
 jpeg(filename = xargs$out,
-     width = 25,
+     width = 28,
      height = 15,
      units = "cm",
      res = 500)
@@ -47,3 +48,41 @@ jpeg(filename = xargs$out,
 PLOT
 
 dev.off()
+
+# pdf(file = "~/clinas/odr_genomic_region_with_shortI_random_sampling_all_0.1.pdf",
+#     width = 14,
+#     height = 6*1.2)
+# PLOT
+# dev.off()
+
+
+# Plot defesa ------------------------------------------------------------------
+
+# PLOT <- 
+#   all_or[!(effect %in% c("-", "UTR_3", "UTR_5", "DOWNSTREAM"))] |>
+#   ggplot(aes(x= odds_ratio)) +
+#   geom_histogram(aes(),  binwidth = 0.005) +
+#   geom_vline(xintercept = 1, color = "red", linetype = "dashed") +
+#   facet_grid(cols = vars(effect_plot), rows = vars(clinal_year),
+#              scales = "free_x") +
+#   theme_bw() +
+#   labs(x = "Odds Ratio") +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
+#         axis.text.y = element_text(size = 14),
+#         axis.title = element_text(size = 19),
+#         strip.text.x = element_text(size = 17),
+#         strip.text.y = element_text(size = 18),
+#         strip.background = element_rect(fill = "grey95"))
+# 
+# jpeg(filename = "odds_ratio_genomic_regions_defesa.jpeg",
+#      width = 26.5,
+#      height = 13,
+#      units = "cm",
+#      res = 1000)
+# 
+# PLOT
+# 
+# dev.off()
+
+
+

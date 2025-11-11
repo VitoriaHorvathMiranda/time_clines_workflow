@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+#snakemake script
 
 library(argparse)
 library(tidyverse)
@@ -28,11 +29,28 @@ dcasted_freqs <-
                    formula = population + CHROM + POS + REF + ALT ~ mutation_type,
                    value.var = "freq")
 
-freq_ti_tv <- 
-  dcasted_freqs[, .(Ti = sum(Ti, na.rm = T), Tv = sum(Tv, na.rm = T)),
-                by = population]
-
-freq_ti_tv[, ratio := Ti/Tv]
+dcasted_freqs[, c("Ti", "Tv") := lapply(.SD, as.double), .SDcols = c("Ti", "Tv")]
 
 
-fwrite(freq_ti_tv, file = xargs$out)
+# freq_ti_tv <- 
+#   dcasted_freqs[, .(Ti = sum(Ti, na.rm = T), Tv = sum(Tv, na.rm = T)),
+#                 by = population]
+# 
+# freq_ti_tv[, ratio := (Ti/2)/(Tv/4)]
+
+n_ti <- 
+  dcasted_freqs[!(is.na(Ti)) & Ti != 0,
+                .(Ti = nrow(.SD)), by = population]
+
+n_tv <- 
+  dcasted_freqs[!(is.na(Tv)) & Tv != 0,
+                .(Tv = nrow(.SD)), by = population]
+
+n_ti_tv <- 
+merge.data.table(n_ti, n_tv, by = "population")
+
+n_ti_tv[, ratio := (Ti/2)/(Tv/4)]
+
+#"/dados/time_clines/analysis/quality/Ti_Tv.tsv"
+fwrite(n_ti_tv, file = xargs$out)
+

@@ -15,10 +15,17 @@ parser$add_argument('--outputAll', '-oall', help= 'A jpeg with FST between all p
 parser$add_argument('--outputTime', '-otime', help= 'A jpeg with FST between pops from 1997 and 2009/2010 separated')
 xargs<- parser$parse_args()
 
+# autosomes <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_X_fst-matrix.csv")
+# Xchrom <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_autosome_fst-matrix.csv")
+# meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv")
 
 autosomes <- fread(xargs$FSTauto)
 Xchrom <- fread(xargs$FSTX)
 meta <- fread(xargs$metadata)
+
+setnames(autosomes, colnames(autosomes)[1], "sample")
+setnames(Xchrom, colnames(Xchrom)[1], "sample")
+
 pop_info <- meta |>
   select(population, latitude, collection_year)
 

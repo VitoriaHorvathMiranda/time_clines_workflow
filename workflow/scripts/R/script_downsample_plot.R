@@ -10,8 +10,9 @@ parser$add_argument('--PreCovPath', '-precp', help= 'Pre downsample samtools cov
 parser$add_argument('--PosCovPath', '-poscp', help= 'Pos downsample samtools coverage path')
 parser$add_argument('--maleIDs', '-mIDs', help= 'pop names of pools with male flies "_" separated')
 parser$add_argument('--DepthperPOS', '-dpos', help= 'path to folder with script_depth_per_pos output')
-parser$add_argument('--output', '-o', help= 'Single Jpeg with all plots')
+parser$add_argument('--output', '-o', help= 'Single pdf with all plots')
 parser$add_argument('--boxplot', '-box', help = 'boxplot of mean depth per chrom per year')
+parser$add_argument('--preposStats', '-stats', help = 'table with all stats per chrom')
 xargs<- parser$parse_args()
 
 
@@ -53,6 +54,10 @@ files_cov_pos_down_all <- files_cov_pos_down1[!str_detect(files_cov_pos_down1, m
 
 files_cov_pos_down_all <- c(files_cov_pos_down_all, files_cov_pos_down2)
 
+#filter bed samples out
+files_cov_pos_down_all <- files_cov_pos_down_all[!str_detect(files_cov_pos_down_all, "HFL97downto40mi|/17|A41|/09")]
+
+files_cov_pre_down <- files_cov_pre_down[!str_detect(files_cov_pre_down, "HFL97downto40mi|/17|A41|/09")]
 
 #gets the samples ids because files are out of order
 sample_ids_pre <- lapply(files_cov_pre_down, str_split_i, pattern = "/", i = 10) |>
@@ -93,6 +98,18 @@ function(data, name) {
 all_cov_pre_down <- get_names(chrom_pre_down, sample_ids_pre)
 all_cov_pos_down1 <- get_names(chrom_pos_down1, sample_ids_pos_down_all)
 
+all_cov_pos_down1[, weighted_depth := meandepth*covbases]
+
+pop_mean_depth <- 
+  all_cov_pos_down1[, .(total_covbases = sum(covbases),
+                        chrom = chrom,
+                        weighted_depth = weighted_depth),
+                    by = seq_label][
+                      , .(pop_mean_depth = sum(weighted_depth)/total_covbases),
+                      by = c("seq_label", "total_covbases")]
+
+fwrite(pop_mean_depth, file = "/home/vitoria/clinas/mean_seq_deapth_per_pop.tsv",
+       col.names = TRUE, sep = "\t")
 
 ## plots -----------------------------------------------------------------------
 
@@ -113,6 +130,44 @@ return(test)
 
 box_table_pre <- boxplot_data(all_cov_pre_down, meta)
 box_table_pos1 <- boxplot_data(all_cov_pos_down1, meta)
+
+# box_table_pre <- box_table_pre[, !c("startpos", "endpos", "numreads", "covbases",
+#                                     "collection_year", "latitude", "longitude",
+#                                     "collection_month", "seq_tech", "company",
+#                                     "n_females", "seq_label", "fly_sex",
+#                                     "flies_per_lin", "location")]
+# box_table_pos1 <- box_table_pos1[, !c("startpos", "endpos", "numreads", "covbases",
+#                                       "collection_year","collection_month",
+#                                       "seq_tech", "company", "latitude", "longitude",
+#                                       "n_females", "seq_label", "fly_sex",
+#                                       "flies_per_lin", "location")]
+
+
+all_covs <- 
+merge.data.table(box_table_pre, box_table_pos1, 
+                 by = c("population", "chrom", "year",
+                        "collection_year","collection_month",
+                        "seq_tech", "company", "latitude", "longitude",
+                        "n_females", "seq_label", "fly_sex",
+                        "flies_per_lin", "location"))
+
+all_covs <- all_covs[, !c("year",
+                          "startpos", "endpos", "numreads", "covbases",
+                          "collection_year","collection_month",
+                          "seq_tech", "company", "latitude", "longitude",
+                          "n_females", "seq_label", "fly_sex",
+                          "flies_per_lin", "location",
+                          "startpos.x", "endpos.x", "numreads.x", "covbases.x",
+                          "startpos.y", "endpos.y", "numreads.y", "covbases.y")]  
+
+
+pre_values <- colnames(all_covs) |> str_subset(".x") |> str_replace(".x", ".pre_down")
+pos_values <- colnames(all_covs) |> str_subset(".y") |> str_replace(".y", ".aft_down")
+
+setnames(all_covs, colnames(all_covs)[3:10], c(pre_values, pos_values))
+
+fwrite(all_covs, file = xargs$preposStats, 
+       sep = "\t", col.names = TRUE)
 
 BOX_PRE <- 
 box_table_pre |>
@@ -138,11 +193,12 @@ box_table_pos1 |>
         axis.text.x = element_blank())
 
 
-jpeg(filename = xargs$boxplot,
+pdf(file = xargs$boxplot,
      width = 25,
      height = 30,
-     units = "cm",
-     res = 1200)
+     #units = "cm",
+     #res = 1200
+    )
 
 BOX_PRE / BOX_POS
 
@@ -153,7 +209,7 @@ dev.off()
 summarise_depths <- 
   function(data){
     plot_table <- data |>
-      group_by(population, year, n_females, fly_sex) %>%
+      group_by(population, year) %>%
       summarise(total_pos = sum(endpos),
                 total_covbases = sum(covbases),
                 total_coverage = sum(covbases)/sum(endpos),
@@ -187,6 +243,11 @@ B <- plot_table_pos1 %>%
 
 # Depths per Pos PLot ----------------------------------------------------------
 ## read window depth -----------------------------------------------------------
+
+# depth_per_win_paths <- 
+#   list.files(path = "/dados/time_clines/data/seqs/processed/qltctrl",
+#              pattern = '_80kb_window_(2L|2R|3R|3L|X).tsv',  full.names = TRUE)
+
 
 depth_per_win_paths <- 
   list.files(path = xargs$DepthperPOS,
@@ -258,11 +319,12 @@ plot_all <- (A + B) / (C + D) +
 
 xargs$output
 
-jpeg(filename = xargs$output,
-     width = 25,
-     height = 15,
-     units = "cm",
-     res = 1200)
+pdf(file = xargs$output,
+     width = 12.9,
+     height = 9.7,
+     #units = "cm",
+     #res = 1200
+    )
 plot_all
 
 dev.off()

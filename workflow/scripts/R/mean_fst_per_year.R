@@ -18,9 +18,11 @@ xargs<- parser$parse_args()
 
 # meta <- fread("/dados/time_clines/data/meta/seq_metadata.tsv",
 #               select = c("population", "latitude", "longitude"))
-# FST_auto <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_2R_fst-list.csv")
+# FST_auto <- fread("/dados/time_clines/analysis/fst/genome/Genome_FST_autosome_fst-list.csv")
 FST_auto <- fread(xargs$FST)
 meta <- fread(xargs$meta)
+
+setnames(FST_auto, "FST", "fst")
 
 FST_auto[, year_1 := fcase(first %like% "10" | first %like% "09", "2009/2010",
                            first %like% "97", "1997",
@@ -35,14 +37,21 @@ FST_auto[, year_2 := fcase(second %like% "10" | second %like% "09", "2009/2010",
 
 FST_auto[, matching_year := fcase(year_1 == "2009/2010" & year_2 == "2009/2010", "2009/2010",
                                   year_1 == "1997" & year_2 == "1997", "1997",
+                                  year_1 == "2017" & year_2 == "2017", "2017",
                                   year_1 == "2022/2023" & year_2 == "2022/2023", "2022/2023",
                                   default = "no_match")]
 
-FST <- FST_auto[matching_year != "no_match"]
+FST_with17 <- FST_auto[matching_year != "no_match"]
+FST <- FST_auto[matching_year != "no_match" & year_1 != "2017"]
 
 # test differences -------------------------------------------------------
-lm <- lm(fst ~ matching_year,
-         data = FST)
+#não usei esse modelo
+FST_with17[, collection_year := case_when(matching_year == "2009/2010" ~ 2009.5,
+                                        matching_year == "2022/2023" ~ 2022.5,
+                                        .default = as.double(matching_year))]
+
+lm <- lm(fst ~ collection_year,
+         data = FST_with17)
 mary <- summary(lm)
 
 # table <- 
@@ -51,8 +60,8 @@ mary <- summary(lm)
 #   rownames_to_column() 
 
 #remove CMD97B just to be sure
-lm_noCMD97B <- lm(fst ~ matching_year,
-   data = FST[first != "CMD97B" & second != "CMD97B"])
+lm_noCMD97B <- lm(fst ~ collection_year,
+   data = FST_with17[first != "CMD97B" & second != "CMD97B"])
 
 sink(xargs$outputLM)
 print(summary(lm))
@@ -80,7 +89,7 @@ sink()
 
 # plot -------------------
 MEAN_FST_YEAR <- 
-FST_auto[matching_year != "no_match"] |>
+FST[matching_year != "no_match"] |>
   ggplot() +
   geom_boxplot(aes(x = matching_year, y = fst, fill = matching_year)) +
   labs(x = "Year") +
@@ -122,17 +131,22 @@ FST[, distance := mapply(calculate_distance,
                          lon2 = longitude.y,
                          lat2 = latitude.y)]
 FST_DIST <- 
-FST |>
-ggplot(aes(x = distance, y = fst, color = matching_year)) +
-  geom_point(aes()) +
+FST[matching_year != "2022/2023"] |> 
+  ggplot(aes(x = distance, y = fst, color = matching_year)) +
+  geom_point(aes(), size = 5) +
   geom_smooth(method = 'lm') +
-  labs(x = "Distance in km", color = "Collection Year") +
+  labs(x = "Distance in km", y = expression("F"[ST]),
+       color = "Collection Year") +
   scale_color_manual(values = c("#1B9E77", "#D95F02", "#E7298A")) +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.text = element_text(size = 14),
+        legend.title = element_text(size = 18),
+        axis.title = element_text(size = 18),
+        axis.text = element_text(size = 14))
 
-jpeg(filename = xargs$distFST,
-     width = 25,
-     height = 17,
+jpeg(filename = xargs$distFST, #"fst_year_dist_autossome.jpeg", 
+     width = 27,
+     height = 15,
      units = "cm",
      res = 1200)
 
@@ -147,6 +161,13 @@ distance_lm <- lm(fst~ distance + matching_year,
 distance_lm_int <- lm(fst~ distance * matching_year,
                   FST[matching_year != "2022/2023"])
 
+distance_lm_noCMD97B <- lm(fst~ distance + matching_year,
+                           FST[first != "CMD97B" & second != "CMD97B" &
+                                 matching_year != "2022/2023"])
+
+distance_lm_int_noCMD97B <- lm(fst~ distance * matching_year,
+                               FST[first != "CMD97B" & second != "CMD97B" &
+                                     matching_year != "2022/2023"])
 
 
 sink(xargs$distanceLM)
@@ -154,4 +175,12 @@ print(summary(distance_lm))
 print(summary(distance_lm_int))
 print(anova(distance_lm_int, distance_lm))
 sink()
+
+sink("lm_fst_dist_year_noCMD97B.txt")
+summary(distance_lm_noCMD97B)
+summary(distance_lm_int_noCMD97B)
+anova(distance_lm_noCMD97B, distance_lm_int_noCMD97B)
+sink()
+
+
 

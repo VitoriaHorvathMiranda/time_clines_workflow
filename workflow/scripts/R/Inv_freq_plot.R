@@ -5,6 +5,7 @@ library(data.table)
 library(tidyverse)
 library(RColorBrewer)
 library(ggrepel)
+library(MASS)
 
 
 #parse arguments 
@@ -48,7 +49,8 @@ inv_freq |>
   ggplot(aes(x = latitude, y = freq, color = test_year, weight=chrom_n)) +
   geom_point() +
   geom_text(aes(label = population, y = freq*1.12), size = 2) +
-  geom_smooth(method = "glm",
+  geom_smooth(data = inv_freq[test_year %in% c("1997", "2009/2010")],
+              method = "glm",
               method.args = list(family = "binomial"),
                                  #weights = chrom_n),
               level=0.9) +
@@ -69,23 +71,65 @@ INV_FREQ_PLOT
 
 dev.off()
 
+# pdf(file = "~/clinas/Inv_freq_per_lat.pdf",
+#     width = 12,
+#     height = 6)
+# 
+# INV_FREQ_PLOT
+# 
+# dev.off()
+
 
 ##---------------- GLM summaries
 
 inversions <- 
   unique(inv_freq$Inv)
 
+# [1] "In(2L)t"     "In(2R)Ns"    "In(3L)P"     "In(3R)K"    
+# [5] "In(3R)Payne" "In(3R)Mo"    "In(3R)C" 
+
+models_int <- 
+  lapply(inversions, function(x) glm(formula = 
+                                       freq ~ latitude * test_year,
+                                     data = inv_freq[Inv == x & 
+                                                       (test_year == "1997" |
+                                                       test_year == "2009/2010")],
+                                     family = binomial(),
+                                     weights = chrom_n))
 
 models <- 
   lapply(inversions, function(x) glm(formula = 
                                        freq ~ latitude + test_year,
+                                     data = inv_freq[Inv == x & 
+                                                       (test_year == "1997" |
+                                                          test_year == "2009/2010")],
+                                     family = binomial(),
+                                     weights = chrom_n))
+
+
+
+test_anovas <- vector("list", length(inversions))
+for (i in seq_along(inversions)) {
+  test_anovas[[i]] <- anova(models[[i]], models_int[[i]])
+}
+
+lapply(models_int, dropterm)
+
+
+models2 <- 
+  lapply(inversions, function(x) glm(formula = 
+                                     freq ~ latitude + collection_year,
                                      data = inv_freq[Inv == x],
                                      family = binomial(),
                                      weights = chrom_n))
 
+lapply(models, summary)[[1]]
+
 sink(xargs$outputGLM)
 inversions
 lapply(models, summary)
+print('####################################################################################')
+lapply(models2, summary)
 sink()
 
 
